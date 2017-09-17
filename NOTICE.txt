@@ -1,7 +1,7 @@
 Contributed by Amazon.com as open source under the Apache 2.0 license, 2017-09-16.
 
 Initial commit: 
-https://github.com/wahpenayo/zana/commit/xxxxxxxxxx
+https://github.com/wahpenayo/zana/commit/770f8d9a6797c3d58d5e8a6f26b62105cf99e0f3
 Copyright 2017 Amazon.com, Inc. or its affiliates. 
 
 Subsequent modifications copyrighted by their contributors.
