@@ -1,13 +1,14 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2017-01-13"
+(ns ^{:author "John Alan McDonald" 
+      :date "2017-10-21"
       :doc "Primary external interface to Zana, providing a subset of the
             functions found in other <code>zana.xxx</code> namespaces,
             created using [Potemkin](https://github.com/ztellman/potemkin)." }
 
     zana.api
   
-  (:refer-clojure :exclude [assoc compare concat contains? count cube? distinct 
+  (:refer-clojure :exclude [any? assoc compare concat contains? count cube? distinct 
                             doall double-array drop empty? every? filter first 
                             frequencies get group-by index intersection keys 
                             last list map map? map-indexed mapcat max merge min

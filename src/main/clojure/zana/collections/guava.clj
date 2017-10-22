@@ -1,11 +1,12 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-10-28"
+(ns ^{:author "John Alan McDonald" 
+      :date "2017-10-21"
       :doc "Eager versions of filter, map, reduce, etc." }
 
     zana.collections.guava
   
-  (:refer-clojure :exclude [compare concat count doall drop empty? every? filter 
+  (:refer-clojure :exclude [any? compare concat count doall drop empty? every? filter 
                             first list map map-indexed mapcat next nth pmap 
                             remove repeatedly second shuffle some sort sort-by 
                             split-at take])

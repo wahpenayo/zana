@@ -1,6 +1,6 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-11-14"
+(ns ^{:author "John Alan McDonald" :date "2017-10-21"
       :doc "Text input." }
     
     zana.data.textin
@@ -109,57 +109,57 @@
         arg (with-meta tuple {:tag 'java.util.Map})
         archetype (gensym "archetype")]
     (if (r/datum-class? c)
-      `(fn parse-datum ~(with-meta `[~arg ~archetype] {:tag c})
+      `(fn ~'parse-datum ~(with-meta `[~arg ~archetype] {:tag c})
          (let [^String ~value (~k ~tuple)]
            (~(r/qualified-symbol c "parse-tuple") ~value ~archetype)))
       (case hint
         ;; map empty Strings, "nil", etc, to nil == missing
         ;; TODO: support general codes for missing
-        String `(fn parse-string ~(with-meta `[~arg ~archetype] {:tag 'String})
+        String `(fn ~'parse-string ~(with-meta `[~arg ~archetype] {:tag 'String})
                   (let [~(with-meta value {:tag 'String}) (~k ~tuple)]
                     (when ~value
                       (case (.toLowerCase ~value)
                         ("" "nil" "null") nil 
                         (~archetype ~value)))))
         ;; missing not possible for boolean, char, byte, short, int, and long
-        boolean `(fn parse-boolean ~(with-meta `[~arg ~archetype] {:tag 'Boolean})
+        boolean `(fn ~'parse-boolean ~(with-meta `[~arg ~archetype] {:tag 'Boolean})
                    (let [^String ~value (~k ~tuple)]
                      (if ~value (Boolean/parseBoolean ~value) false)))
-        char `(fn parse-char ~(with-meta `[~arg ~archetype] {:tag 'Character})
+        char `(fn ~'parse-char ~(with-meta `[~arg ~archetype] {:tag 'Character})
                 (let [^String ~value (~k ~tuple)]
                   (when ~value 
                     (assert (== 1 (count ~value)) (pr-str ~value)) 
                     (first ~value))))
-        byte `(fn parse-byte ~(with-meta `[~arg ~archetype] {:tag long})
+        byte `(fn ~'parse-byte ~(with-meta `[~arg ~archetype] {:tag long})
                 (let [^String ~value (~k ~tuple)]
                   (long (Byte/parseByte ~value))))
-        short `(fn parse-short ~(with-meta `[~arg ~archetype] {:tag long})
+        short `(fn ~'parse-short ~(with-meta `[~arg ~archetype] {:tag long})
                  (let [^String ~value (~k ~tuple)]
                    (long (Short/parseShort ~value))))
-        int `(fn parse-int ~(with-meta `[~arg ~archetype] {:tag long})
+        int `(fn ~'parse-int ~(with-meta `[~arg ~archetype] {:tag long})
                (let [^String ~value (~k ~tuple)]
                  (long (Integer/parseInt ~value))))
-        long `(fn parse-long ~(with-meta `[~arg ~archetype] {:tag long})
+        long `(fn ~'parse-long ~(with-meta `[~arg ~archetype] {:tag long})
                 (let [^String ~value (~k ~tuple)]
                   (Long/parseLong ~value)))
         ;; missing == NaN, map "NaN" and empty strings to NaN
-        float `(fn parse-float ~(with-meta `[~arg ~archetype] {:tag double})
+        float `(fn ~'parse-float ~(with-meta `[~arg ~archetype] {:tag double})
                  (let [^String ~value (~k ~tuple)]
                    (double (if-not (empty? ~value) 
                              (Float/parseFloat ~value) 
                              Float/NaN))))
-        double `(fn parse-double ~(with-meta `[~arg ~archetype] {:tag double})
+        double `(fn ~'parse-double ~(with-meta `[~arg ~archetype] {:tag double})
                   (let [^String ~value (~k ~tuple)]
                     (if-not (empty? ~value) 
                       (Double/parseDouble ~value) 
                       Double/NaN)))
-        java.time.LocalDate `(fn parse-local-date 
+        java.time.LocalDate `(fn ~'parse-local-date 
                                ~(with-meta `[~arg ~archetype] {:tag java.time.LocalDate})
                                (let [^String ~value (~k ~tuple)]
                                  (when-not (empty? ~value)
                                    (~archetype 
                                      (java.time.LocalDate/parse ~value)))))
-        java.time.LocalDateTime `(fn parse-local-date-time
+        java.time.LocalDateTime `(fn ~'parse-local-date-time
                                    ~(with-meta `[~arg ~archetype] 
                                       {:tag java.time.LocalDateTime})
                                    (let [^String ~value (~k ~tuple)]

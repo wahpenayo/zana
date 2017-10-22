@@ -1,6 +1,6 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-08-312"
+(ns ^{:author "John Alan McDonald" :date "2017-10-21"
       :doc "Syntatic sugar for categorical 'enum' type definition.
             Note: one per namespace; some names (eg 'singleton') are reserved.
             Best practice is one enum and a small number of related functions
@@ -108,7 +108,7 @@
                (and (instance? ~ename ~that)
                     (= ~label ~(access ename label that)))))
          clojure.lang.Named (getName [~this] (name ~label)))
-       (refer-clojure :exclude [get])
+       (refer-clojure :exclude [~'get])
        (def ~singletons
          (into {} (map (fn [~label] [~label (~(constructor cname) ~label)])
                        [~@values])))
