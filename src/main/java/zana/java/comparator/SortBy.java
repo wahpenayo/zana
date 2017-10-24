@@ -6,7 +6,8 @@ import java.util.List;
 /** Quicksort of List by clojure.lang.IFn.OD, etc.
  *
  * @author John Alan McDonald
- * @version 2017-01-03
+ * @since 2017-01-03
+ * @version 2017-10-23
  */
 
 @SuppressWarnings("unchecked") 
@@ -16,7 +17,6 @@ public final class SortBy extends Object {
   /** Swap <code>i</code>th and <code>j</code>th elements of <code>a</code> and
    * <code>p</code>.
    * @param a modified by swap.
-   * @param p modified by swap.
    * @param i index of element to swap.
    * @param j index of element to swap.
    */
@@ -142,9 +142,6 @@ public final class SortBy extends Object {
     innerQuicksort(z, a, start, length); }
   //----------------------------------------------------------------------------
   /** @param a List to sort
-   * @param p elements are subject to the same permutation as the elements of
-   *          <code>a</code>. Usually starts as integers in order, so it records
-   *          the permutation of <code>a</code>.
    */
   public static final void quicksort (final clojure.lang.IFn.OD z,
                                       final List a) {
