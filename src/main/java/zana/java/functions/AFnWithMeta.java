@@ -8,8 +8,8 @@ import clojure.lang.ISeq;
  * This is a base class for function wrappers that permit adding arbitrary meta
  * data while preserving the return type hint.
  *
- * @author John Alan McDonald
- * @version 2016-02-02
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 @SuppressWarnings("unchecked")
@@ -20,6 +20,7 @@ public abstract class AFnWithMeta extends Object implements IObj, IFn {
   //----------------------------------------------------------------------------
   
   private final IPersistentMap _meta;
+  @Override
   public final IPersistentMap meta () { return _meta; }
   
   //----------------------------------------------------------------------------

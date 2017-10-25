@@ -2,24 +2,23 @@ package zana.java.functions;
 
 import java.util.AbstractList;
 import java.util.Iterator;
-import java.util.List;
+
+import com.google.common.collect.Iterators;
 
 import clojure.lang.Fn;
 import clojure.lang.IFn;
 import clojure.lang.ISeq;
 import clojure.lang.Named;
 
-import com.google.common.collect.Iterators;
-
 //----------------------------------------------------------------------------
 /** A Function mapping int/long indexes to Object and vice versa.
  *
- * @author John Alan McDonald
- * @version 2016-09-09
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 @SuppressWarnings("unchecked")
 public final class ArrayLookup extends AbstractList
-implements Fn, IFn, IFn.LO, IFn.DO, List, Named {
+implements Fn, IFn, IFn.LO, IFn.DO, Named {
   //----------------------------------------------------------------------------
   // fields
   //----------------------------------------------------------------------------
@@ -40,6 +39,7 @@ implements Fn, IFn, IFn.LO, IFn.DO, List, Named {
   //----------------------------------------------------------------------------
   // IFn interface
   //----------------------------------------------------------------------------
+  @Override
   public final Object invoke (final Object x) {
     if (x instanceof Double) {
       return value((int) Math.round(((Double) x).doubleValue())); }
@@ -49,11 +49,13 @@ implements Fn, IFn, IFn.LO, IFn.DO, List, Named {
   //----------------------------------------------------------------------------
   // IFn.LO interface
   //----------------------------------------------------------------------------
+  @Override
   public final Object invokePrim (final long x) {
     return value((int) x); }
   //----------------------------------------------------------------------------
   // IFn.DO interface
   //----------------------------------------------------------------------------
+  @Override
   public final Object invokePrim (final double x) {
     return value((int) Math.round(x)); }
   //----------------------------------------------------------------------------
@@ -68,8 +70,10 @@ implements Fn, IFn, IFn.LO, IFn.DO, List, Named {
   //----------------------------------------------------------------------------
   // Named interface
   //----------------------------------------------------------------------------
+  @Override
   public final String getName () { return name(); }
   // TODO: don't implement clojure.lang.Named, since that assumes a namespace?
+  @Override
   public final String getNamespace () { 
     throw new UnsupportedOperationException(getClass().getName()); }
   //----------------------------------------------------------------------------

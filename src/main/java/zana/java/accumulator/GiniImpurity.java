@@ -3,8 +3,8 @@ package zana.java.accumulator;
 //------------------------------------------------------------------------------
 /** Gini impurity for binary classification/probability, with case weights.
  *
- * @author John Alan McDonald
- * @version 2016-12-16
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 public final class GiniImpurity extends BinaryAccumulatorBase {
@@ -20,14 +20,12 @@ public final class GiniImpurity extends BinaryAccumulatorBase {
     if (0 == netCount()) { // edge case
       assert 0 == positiveCount();
       return 0.0; }
-    
-    else { // usual case
-      assert 0 < netCount();
-      assert 0 <= positiveCount();
-      assert positiveCount() <= netCount();
-        
-      return ((double) (positiveCount() * (netCount() - positiveCount())))
-        / netCount(); } }
+    assert 0 < netCount();
+    assert 0 <= positiveCount();
+    assert positiveCount() <= netCount();
+      
+    return ((double) (positiveCount() * (netCount() - positiveCount())))
+      / netCount(); }
   
   @Override
   public final double minimum () { return 0.0; }

@@ -3,8 +3,8 @@ package zana.java.accumulator;
 //------------------------------------------------------------------------------
 /** Proxy for MSE that's more efficient at choosing a split.
  *
- * @author John Alan McDonald
- * @version 2017-01-17
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 public final class
@@ -26,14 +26,12 @@ VectorMSSN extends VectorSumBase {
       final int n = dimension();
       for (int i=0;i<n;i++) { assert 0.0 == sum()[i]; }
       return 0.0; }
-    
-    else { // normal case
-      assert 0 < netCount();
-      final int n = dimension();
-      final double[] s = sum();
-      double ss = 0.0;
-      for (int i=0;i<n;i++) { final double si = s[i]; ss += si*si; }
-      return - ss / netCount(); } }
+    assert 0 < netCount();
+    final int n = dimension();
+    final double[] s = sum();
+    double ss = 0.0;
+    for (int i=0;i<n;i++) { final double si = s[i]; ss += si*si; }
+    return - ss / netCount(); }
   
   //----------------------------------------------------------------------------
   // construction

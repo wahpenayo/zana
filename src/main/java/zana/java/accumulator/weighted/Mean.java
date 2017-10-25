@@ -5,8 +5,8 @@ package zana.java.accumulator.weighted;
  * <p>
  * TODO: at least offer a more numerically stable, if slower, version.
  *
- * @author John Alan McDonald
- * @version 2016-11-29
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 public final class
@@ -28,10 +28,10 @@ extends WeightedSumBase {
       assert 0 <= netCount();
       assert 0.0 == sum();
       return 0.0; }
-    else { // normal case
-      assert 0 < netCount();
-      assert 0.0 <= netWeight();
-      return sum() / netWeight(); } }
+    // normal case
+    assert 0 < netCount();
+    assert 0.0 <= netWeight();
+    return sum() / netWeight(); }
   
   //----------------------------------------------------------------------------
   // construction

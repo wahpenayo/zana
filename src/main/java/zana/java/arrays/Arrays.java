@@ -8,8 +8,8 @@ import clojure.lang.IFn;
 //----------------------------------------------------------------------------
 /** Numerical array utilities for use with Clojure code.
  *
- * @author John Alan McDonald
- * @version 2016-12-16
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 public final class Arrays extends Object {
@@ -73,7 +73,7 @@ public final class Arrays extends Object {
 
     int i = 0;
     for (final Object record : records) {
-      final double xi = (double) xf.invokePrim(record);
+      final double xi = xf.invokePrim(record);
       final double yi = yf.invokePrim(record);
       if (!Double.isNaN(yi)) { x[i] = xi; y[i] = yi; i++; } }
     
@@ -159,7 +159,7 @@ public final class Arrays extends Object {
 
     int i = 0;
     for (final Object record : records) {
-      final double xi = (double) xf.invokePrim(record);
+      final double xi = xf.invokePrim(record);
       final double yi = yf.invokePrim(record);
       final double wi = wf.invokePrim(record);
       assert (! Double.isNaN(wi)) : "weight is missing for " + record;

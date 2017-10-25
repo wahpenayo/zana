@@ -1,8 +1,9 @@
 package zana.java.geometry.z1;
 
 /** An immutable interval on the integers.
- * @author John Alan McDonald
- * @version 2016-09-13
+ *
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 @SuppressWarnings("unchecked")
@@ -16,14 +17,17 @@ public final class Interval implements Comparable, zana.java.geometry.Interval {
   //----------------------------------------------------------------------------
   // Interval
   //----------------------------------------------------------------------------
+  @Override
   public final boolean contains (final long x) { 
     return (z0() <= x) && (x < z1()); }
   
   // only exact integer values accepted
+  @Override
   public final boolean contains (final double x) { 
     final long l = (long) x;
-    return (x == ((double) l)) && contains(l); }
+    return (x == (l)) && contains(l); }
   
+  @Override
   public final boolean contains (final Object o) {
     if (o instanceof Long) { 
       return contains(((Long) o).longValue()); }

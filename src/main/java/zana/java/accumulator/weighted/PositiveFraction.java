@@ -4,8 +4,8 @@ package zana.java.accumulator.weighted;
 /** Fraction of case weights corresponding to positive class for binary 
  * classification/probability.
  *
- * @author John Alan McDonald
- * @version 2016-11-29
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 public final class
@@ -28,11 +28,11 @@ extends BinaryAccumulatorBase {
       assert 0.0 == positiveWeight();
       return 0.0; }
     
-    else { // normal case
-      assert 0 < netCount();
-      assert 0.0 <= positiveWeight();
-      assert positiveWeight() <= netWeight();
-      return positiveWeight() / netWeight(); } }
+    // normal case
+    assert 0 < netCount();
+    assert 0.0 <= positiveWeight();
+    assert positiveWeight() <= netWeight();
+    return positiveWeight() / netWeight(); }
   
   //----------------------------------------------------------------------------
   // construction

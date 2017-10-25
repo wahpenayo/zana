@@ -3,8 +3,8 @@ package zana.java.accumulator;
 //------------------------------------------------------------------------------
 /** Proxy for MSE that's more efficient at choosing a split.
  *
- * @author John Alan McDonald
- * @version 2016-12-16
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 public final class
@@ -27,10 +27,8 @@ extends SumBase {
       assert 0 <= netCount();
       assert 0.0 == sum();
       return 0.0; }
-    
-    else { // normal case
-      assert 0 < netCount();
-      return - (sum() * sum()) / netCount(); } }
+    assert 0 < netCount();
+    return - (sum() * sum()) / netCount(); }
   
  //----------------------------------------------------------------------------
   // construction

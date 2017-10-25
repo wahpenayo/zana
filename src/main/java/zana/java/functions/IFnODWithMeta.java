@@ -7,8 +7,8 @@ import clojure.lang.IPersistentMap;
  * This is a base class for function wrappers that permit adding arbitrary meta
  * data while preserving the return type hint.
  *
- * @author John Alan McDonald
- * @version 2016-02-02
+ * @author palisades dot lakes at gmail dot com
+ * @version 2017-10-24
  */
 
 @SuppressWarnings("unchecked")
@@ -28,6 +28,7 @@ public final class IFnODWithMeta extends AFnWithMeta implements IFn.OD {
   // IObj interface
   //----------------------------------------------------------------------------
   
+  @Override
   public final IObj withMeta (final IPersistentMap m) {
     return wrap(functionOD(), meta()); }
  
