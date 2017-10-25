@@ -7,7 +7,8 @@ package zana.java.arrays;
  * xxx.
  *
  * @author John Alan McDonald
- * @version 2016-08-29
+ * @since 2016-08-29
+ * @version 2017-10-24
  */
 
 public final class Sorter extends Object {
@@ -336,8 +337,7 @@ public final class Sorter extends Object {
    *  if there are any NaNs.
    * @param a array to sort
    * @param p elements are subject to the same permutation as the elements of
-   *          <code>a</code>. Usually starts as integers in order, so it records
-   *          the permutation of <code>a</code>.
+   *          <code>a</code>.
    */
   public static final void quicksort (final double[] a,
                                       final double[] p) {
