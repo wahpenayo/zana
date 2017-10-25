@@ -266,7 +266,7 @@ In the <code>Typical</code> example, we would get:
 <code>(default-header-keys "N X String P_TF P_B P_SH ... YMD DT")
 </code>
 returns
-<code>[:n :x :string [:p :b] [:p :sh] ... :ymd :dt]</code>
+<code>[:n :x :string [:p :b] &#91;:p :sh] ... :ymd :dt]</code>
 </li>
 <li><code>(read-tsv-file ^File f ^Pattern sep ^IFn header-keys)</code>
 reads the whole file, using a custom <code>header-keys</code>.
