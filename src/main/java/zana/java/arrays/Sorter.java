@@ -6,9 +6,11 @@ package zana.java.arrays;
  * <code>(xxx[],yyy[],...)</code> are quicker for sorting yyy by the values in
  * xxx.
  *
+ * TODO: use commons math3 MathArrays instead?
+ * 
  * @author John Alan McDonald
  * @since 2016-08-29
- * @version 2017-10-24
+ * @version 2017-10-25
  */
 
 public final class Sorter extends Object {
