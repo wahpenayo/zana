@@ -1,6 +1,8 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-12-21"
+(ns ^{:author "palisades dot lakes at gmail dot com" 
+      :since "2016-12-21"
+      :date "2017-10-25"
       :doc "Stats that don't have an obvious home." }
     
     zana.stats.statistics
