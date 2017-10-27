@@ -2,18 +2,91 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "palisades dot lakes at gmail dot com" 
       :since "2017-10-24"
-      :date "2017-10-25"
+      :date "2017-10-26"
       :doc "Probability measures over <b>R</b>." }
     
     zana.prob.measure
   
+  (:refer-clojure :exclude [every? ])
+  
   (:import [java.util Arrays]
-           [org.apache.commons.math3.stat StatUtils]
-           [org.apache.commons.math3.util MathArrays
-            MathArrays$OrderDirection]
+           [clojure.lang IFn$DO IFn$DDO]
            [zana.java.arrays Sorter]))
 ;;----------------------------------------------------------------
+;; TODO: use float arrays but calculate in double to eliminate 
+;; Math/ulp in comparisons?
+;; Probably want to move interface and classes to Java in that case...
+;;----------------------------------------------------------------
 ;; TODO: move elsewhere
+(defn- positive? [^double z] (< 0.0 z))
+(defn- non-negative? [^double z] (<= 0.0 z))
+(defn- convex-weight? [^double z] (<= 0.0 z 1.0))
+
+(defn- every? 
+  ([^IFn$DO f ^doubles z]
+    (let [n (int (alength z))]
+      (loop [i (int 0)]
+        (cond (<= n i) true
+              (.invokePrim f (aget z i)) (recur (inc i))
+              :else false))))
+  ([^IFn$DDO f ^doubles z0 ^doubles z1]
+    (assert (== (alength z0) (alength z1)))
+    (let [n (int (alength z0))]
+      (loop [i (int 0)]
+        (cond 
+          (<= n i) true
+          (.invokePrim f (aget z0 i) (aget z1 i)) (recur (inc i))
+          :else false)))))
+
+(defn- increasing? [^doubles z]
+  (let [n (int (alength z))]
+    (loop [i (int 1)
+           z0 (aget z 0)]
+      (if (<= n i) 
+        true
+        (let [z1 (aget z i)]
+          (if (>= z0 z1)
+            false
+            (recur (inc i) z1)))))))
+
+(defn- non-decreasing? [^doubles z]
+  (let [n (int (alength z))]
+    (loop [i (int 1)
+           z0 (aget z 0)]
+      (if (<= n i) 
+        true
+        (let [z1 (aget z i)]
+          (if (> z0 z1)
+            false
+            (recur (inc i) z1)))))))
+
+(defn- approximately== 
+  ([^double x ^double y ^double delta]
+    (<= (Math/abs (- x y)) delta))
+  ([^double x ^double y]
+    (approximately== 
+      x y (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y)))))))
+
+(defn- naive-sum 
+  (^double [^doubles z]
+    (let [n (int (alength z))]
+      (loop [i (int 0)
+             s (double 0.0)]
+        (if (<= n i)
+          s
+          (recur (inc i) (+ s (aget z i)))))))
+  (^double [^doubles z ^long i0 ^long i1]
+    (let [i1 (int i1)]
+      (loop [i (int i0)
+             s (double 0.0)]
+        (if (<= i1 i)
+          s
+          (recur (inc i) (+ s (aget z i))))))))
+
+(defn- convex? [^doubles z]
+  (and (every? convex-weight? z)
+       (approximately== 1.0 (naive-sum z))))
+
 (defn- quicksort 
   "Non-destructive sort. <code>z</code> is made non-decreasing
    and <code>w</code> is permuted in the same way."
@@ -24,9 +97,8 @@
     [z w]))
 ;;----------------------------------------------------------------
 (defn- compact [^doubles z ^doubles w]
-  (MathArrays/checkOrder 
-    z MathArrays$OrderDirection/INCREASING false)
-  (MathArrays/checkPositive w)
+  (assert (non-decreasing? z))
+  (assert (every? positive? w))
   (let [n (int (alength w))]
     (assert (== n (alength z)))
     (loop [z0 (aget z 0)
@@ -56,21 +128,45 @@
               (recur z1 w1 i0 (inc i1)))))))))
 ;;----------------------------------------------------------------
 ;; TODO: replace naive sum with something more accurate
-(defn- sums
+(defn- normalize
+  "Return a new array which is an element-wise scaler multiple of
+   <code>w</code>, whose elements sum to 1.
+   Elements of <code>w</code> must be non-negaitve."
+  (^doubles [^doubles w]
+    (assert (every? non-negative? w))
+    (let [s (/ 1.0 (naive-sum w))
+          n (int (alength w))
+          ^doubles u (double-array n)]
+      (dotimes[i n] 
+        (aset-double 
+          u i 
+          (Math/min (Math/max 0.0 (* (aget w i) s)) 1.0)))
+      u)))
+;;----------------------------------------------------------------
+;; TODO: replace naive sum with something more accurate
+(defn- normalized-sums
   "Return a new array whose ith element is the sum from 0 to i
-   (inclusive) of the elements of <code>w</code>."
-  [^doubles w]
-  (let [n (int (alength w))
-        ^doubles w (aclone w)]
-    (loop [i (int 1)
-           w0 (aget w 0)]
-      (if (>= i n) 
-        w
-        (let [wi (+ w0 (aget w i))]
-          (aset-double w i wi)
-          (recur (inc i) wi))))))
+   (inclusive) of the elements of <code>w</code>,
+   divided by the sum of all the elements."
+  (^doubles [^doubles w]
+    (assert (every? non-negative? w))
+    (let [s (/ 1.0 (naive-sum w))
+          n (int (alength w))
+          ^doubles u (double-array n)
+          u0 (* s (aget w 0))
+          u0 (Math/min (Math/max 0.0 u0) 1.0) ]
+      (aset-double u 0 u0)
+      (loop [i (int 1)
+             u0 u0]
+        (if (>= i n) 
+          u
+          (let [u1 (+ u0 (* s (aget w i)))
+                u1 (Math/min (Math/max 0.0 u1) 1.0)]
+            (aset-double u i u1)
+            (recur (inc i) u1)))))))
 ;;----------------------------------------------------------------
 ;; Probability measure &mu; on the real line, <b>R</b>.
+;; Not supporting mass at +/-&infin;.
 (definterface RealProbabilityMeasure
   ;; TODO: probability of more general sets
   
@@ -81,10 +177,10 @@
   (^double cdf [^double z])
   
   ;; Pseudo inverse of <code>cdf</code>.
-  ;; <code>(quantile p)</code> is maximum <code>z</code such that
-  ;; <code>(<= (cdf z) p)</code>.
+  ;; <code>(quantile p)</code> is infimum of the <code>z</code
+  ;; where <code>(>= (cdf z) p)</code>.
   ;; Must have <code>(<= 0.0 p 1.0).
-  ;; May return +/- &infin;. 
+  ;; May return +/- &infin;.
   (^double quantile [^double p]))
 ;;----------------------------------------------------------------
 ;; Weighted empirical probabilty density, a collection of point
@@ -116,10 +212,26 @@
         (assert (<= 0 k))
         (if (== 0 k)
           0.0
-          (StatUtils/sum w 0 k)))))
+          (Math/min (Math/max 0.0 (naive-sum w 0 k)) 1.0)))))
   
   (^double quantile [this ^double p]
-    (throw (UnsupportedOperationException.)))
+    (assert (convex-weight? p) p)
+    (double
+      (cond (== 0.0 p) Double/NEGATIVE_INFINITY
+            (== 1.0 p) (aget z (dec (alength z)))
+            :else 
+            (let [n (int (alength z))]
+              (loop [i0 (int 0)
+                     s0 (aget w 0)]
+                ;; shouldn't be possible to go outside array bounds 
+                ;; with valid <code>z,w</code>.
+                (assert (< i0 n))
+                (if (< (- p s0) (Math/ulp 1.0)) 
+                  (aget z i0)
+                  (let [i1 (inc i0)
+                        s1 (+ s0 (aget w i1))
+                        s1 (Math/min (Math/max 0.0 s1) 1.0)]
+                    (recur i1 s1))))))))
   
   Object
   
@@ -134,15 +246,15 @@
   
   (equals [this that]
     (and (instance? WEPDF that)
-         (Arrays/equals z ^doubles (.z ^WEPDF that))
-         (Arrays/equals w ^doubles (.w ^WEPDF that))))
+         (every? approximately== z ^doubles (.z ^WEPDF that))
+         (every? approximately== w ^doubles (.w ^WEPDF that))))
   
   ;; TODO: fix for large sample arrays
   (toString [this]
     (str "(WEPDF " (vec z) " " (vec w) ")")))
 ;;----------------------------------------------------------------
 ;; TODO: normalize w?
-(defn- make-WEPDF 
+(defn make-WEPDF 
   
   "Create an instance of <code>zana.prob.measure.WEPDF</code>.
   Sorts <code>z</code> and removes ties." 
@@ -151,17 +263,23 @@
     (assert (== (alength z) (alength w)))
     (assert (not (nil? z)))
     (assert (not (nil? w)))
+    (assert (every? positive? w) (str (vec w)))
     (let [[^doubles z ^doubles w] (quicksort z w)
-          [^doubles z ^doubles w] (compact z w)]
-      (MathArrays/checkOrder 
-        z MathArrays$OrderDirection/INCREASING true)
-      (MathArrays/checkPositive w)
+          [^doubles z ^doubles w] (compact z w)
+          w (normalize w)]
+      (assert (increasing? z))
+      (assert (convex? w))
       (WEPDF. z w)))
   
   (^zana.prob.measure.WEPDF [^doubles z]
     (let [n (int (alength z))
           w (double-array n (/ 1.0 n))]
       (make-WEPDF z w))))
+;;----------------------------------------------------------------
+(defn average-wepdfs
+  "Return the mean probability measure."
+  (^zana.prob.measure.WEPDF [^Iterable wepdfs]
+    ))
 ;;----------------------------------------------------------------
 ;; Weighted empirical cumulative probabilty, a non-decreasing step
 ;; function mapping <b>R</b> to [0,1].
@@ -193,7 +311,22 @@
         (if (== -1 k) 0.0 (aget w k)))))
   
   (^double quantile [this ^double p]
-    (throw (UnsupportedOperationException.)))
+    (assert (convex-weight? p))
+    (double
+      (cond (== 0.0 p) Double/NEGATIVE_INFINITY
+            (== 1.0 p) (aget z (dec (alength z)))
+            :else 
+            (let [i (int (Arrays/binarySearch w p))
+                  ii (int (if (<= 0 i) i (- -1 i)))
+                  zii (aget z ii)
+                  zii-1 (if (< 0 ii) (aget z (dec ii)) Double/NEGATIVE_INFINITY)
+                  pii-1 (.cdf this zii-1)]
+              #_(println p i ii zii zii-1)
+              #_(println (.cdf this zii))
+              #_(println (.cdf this zii-1))
+              (if (< (- p pii-1) (Math/ulp 1.0))
+                zii-1
+                zii)))))
   
   Object
   
@@ -208,8 +341,8 @@
   
   (equals [this that]
     (and (instance? WECDF that)
-         (Arrays/equals z ^doubles (.z ^WECDF that))
-         (Arrays/equals w ^doubles (.w ^WECDF that))))
+         (every? approximately== z ^doubles (.z ^WECDF that))
+         (every? approximately== w ^doubles (.w ^WECDF that))))
   
   ;; TODO: fix for large sample arrays
   (toString [this]
@@ -229,13 +362,13 @@
           #_(println (vec z) (vec w))
           [^doubles z ^doubles w] (compact z w)
           #_(println (vec z) (vec w))
-          ^doubles w (sums w)]
+          ^doubles w (normalized-sums w)]
       #_(println (vec z) (vec w))
-      (MathArrays/checkOrder 
-        z MathArrays$OrderDirection/INCREASING true)
-      (MathArrays/checkOrder 
-        w MathArrays$OrderDirection/INCREASING true)
-      (MathArrays/checkPositive w)
+      (assert (increasing? z) (str (vec z)))
+      (assert (increasing? w) (str (vec w)))
+      (assert (every? convex-weight? w) (str (vec w)))
+      (assert (approximately== 1.0 (aget w (dec (alength w))))
+              (str (vec w)))
       (WECDF. z w)))
   
   (^zana.prob.measure.WECDF [^doubles z]
