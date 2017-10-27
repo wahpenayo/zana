@@ -10,6 +10,7 @@
   (:refer-clojure :exclude [every? ])
   
   (:import [java.util Arrays]
+           [com.carrotsearch.hppc DoubleArrayList]
            [clojure.lang IFn$DO IFn$DDO]
            [zana.java.arrays Sorter]))
 ;;----------------------------------------------------------------
@@ -91,6 +92,7 @@
   "Non-destructive sort. <code>z</code> is made non-decreasing
    and <code>w</code> is permuted in the same way."
   [^doubles z ^doubles w]
+  (assert (== (alength z) (alength w)))
   (let [z (aclone z)
         w (aclone w)]
     (Sorter/quicksort z w)
@@ -295,21 +297,29 @@
   "Create an instance of <code>zana.prob.measure.WEPDF</code>.
   Sorts <code>z</code> and removes ties." 
   
-  (^zana.prob.measure.WEPDF [^doubles z ^doubles w]
-    (assert (== (alength z) (alength w)))
+  (^zana.prob.measure.WEPDF [z w]
     (assert (not (nil? z)))
     (assert (not (nil? w)))
-    (assert (every? positive? w) (str (vec w)))
-    (let [[^doubles z ^doubles w] (quicksort z w)
+    (let [^doubles z (if (instance? DoubleArrayList z)
+                       (.toArray ^DoubleArrayList z)
+                       z)
+          ^doubles w (if (instance? DoubleArrayList w)
+                       (.toArray ^DoubleArrayList w)
+                       w)
+          [^doubles z ^doubles w] (quicksort z w)
           [^doubles z ^doubles w] (compact z w)
           w (normalize w)]
       (assert (increasing? z))
       (assert (convex? w))
       (WEPDF. z w)))
   
-  (^zana.prob.measure.WEPDF [^doubles z]
-    (let [n (int (alength z))
-          w (double-array n (/ 1.0 n))]
+  (^zana.prob.measure.WEPDF [z]
+    (assert (not (nil? z)))
+    (let [^doubles z (if (instance? DoubleArrayList z)
+                       (.toArray ^DoubleArrayList z)
+                       z)
+          n (int (alength z))
+          w (double-array n 1.0)]
       (make-WEPDF z w))))
 ;;----------------------------------------------------------------
 (defn average-wepdfs
@@ -392,11 +402,16 @@
   "Create an instance of <code>zana.prob.measure.WECDF</code>.
   Sorts <code>z</code> and removes ties." 
   
-  (^zana.prob.measure.WECDF [^doubles z ^doubles w]
-    (assert (== (alength z) (alength w)))
+  (^zana.prob.measure.WECDF [z w]
     (assert (not (nil? z)))
     (assert (not (nil? w)))
-    (let [[^doubles z ^doubles w] (quicksort z w)
+    (let [^doubles z (if (instance? DoubleArrayList z)
+                       (.toArray ^DoubleArrayList z)
+                       z)
+          ^doubles w (if (instance? DoubleArrayList w)
+                       (.toArray ^DoubleArrayList w)
+                       w)
+          [^doubles z ^doubles w] (quicksort z w)
           #_(println (vec z) (vec w))
           [^doubles z ^doubles w] (compact z w)
           #_(println (vec z) (vec w))
@@ -407,12 +422,15 @@
       (assert (every? convex-weight? w) (str (vec w)))
       (assert (approximately== 1.0 (aget w (dec (alength w))))
               (str (vec w)))
-  
+      
       (WECDF. z w)))
   
-  (^zana.prob.measure.WECDF [^doubles z]
-    (let [n (int (alength z))
-          w (double-array n (/ 1.0 n))]
+  (^zana.prob.measure.WECDF [z]
+    (let [^doubles z (if (instance? DoubleArrayList z)
+                       (.toArray ^DoubleArrayList z)
+                       z)
+          n (int (alength z))
+          w (double-array n 1.0)]
       (make-WECDF z w))))
 ;;----------------------------------------------------------------
 (defn wepdf-to-wecdf
@@ -423,4 +441,9 @@
   "Convert a cumulative representation to a point mass density one."
   (^zana.prob.measure.WEPDF [^zana.prob.measure.WECDF cdf]
     (make-WEPDF (.z cdf) (difference (.w cdf)))))
+;;----------------------------------------------------------------
+(defn quantile ^double [^RealProbabilityMeasure rpm ^double p]
+  (.quantile rpm p))
+(defn cdf ^double [^RealProbabilityMeasure rpm ^double z]
+  (.cdf rpm z))
 ;;----------------------------------------------------------------

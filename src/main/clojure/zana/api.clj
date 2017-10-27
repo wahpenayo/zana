@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "John Alan McDonald" 
-      :date "2017-10-21"
+      :date "2017-10-27"
       :doc "Primary external interface to Zana, providing a subset of the
             functions found in other <code>zana.xxx</code> namespaces,
             created using [Potemkin](https://github.com/ztellman/potemkin)." }
@@ -45,6 +45,7 @@
             [zana.stats.ranks :as ranks]
             [zana.stats.statistics :as stats]
             [zana.prob.empirical :as empirical]
+            [zana.prob.measure :as measure]
             [zana.time.core :as time]))
 ;;------------------------------------------------------------------------------
 ;; commons
@@ -308,8 +309,13 @@
                 stats/singular?
                 stats/sum
                 stats/mean)
-(pn/import-vars empirical/quantile
+#_(pn/import-vars empirical/quantile
                 empirical/cdf)
+(pn/import-vars measure/average-wepdfs
+                measure/cdf
+                measure/quantile
+                measure/wecdf-to-wepdf
+                measure/wepdf-to-wecdf)
 ;;------------------------------------------------------------------------------
 ;; ranks
 ;;------------------------------------------------------------------------------

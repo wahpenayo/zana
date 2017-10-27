@@ -1,7 +1,10 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-09-09"
-      :doc "Real-valued empirical cdf and quantile functions." }
+(ns ^{:author "John Alan McDonald" 
+      :since "2016-09-09"
+      :date "2017-10-27"
+      :doc "Real-valued empirical cdf and quantile functions." 
+      :deprecated "2017-10-27"}
     
     zana.prob.empirical
   
