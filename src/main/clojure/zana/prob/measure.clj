@@ -2,7 +2,7 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "palisades dot lakes at gmail dot com" 
       :since "2017-10-24"
-      :date "2017-10-26"
+      :date "2017-10-27"
       :doc "Probability measures over <b>R</b>." }
     
     zana.prob.measure
@@ -165,6 +165,42 @@
             (aset-double u i u1)
             (recur (inc i) u1)))))))
 ;;----------------------------------------------------------------
+;; TODO: replace naive sum with something more accurate
+;; TODO: ensure convex?
+(defn- difference
+  "Return a new array whose ith element is the difference 
+   <code>(- (aget w i) (aget w (dec i)))</code>
+   where <code>(aget w -1)</code> is treated as zero."
+  (^doubles [^doubles w]
+    (let [n (int (alength w))
+          ^doubles dw (double-array n)
+          w0 (aget w 0)]
+      (aset-double dw 0 w0)
+      (loop [i (int 1)
+             w0 w0]
+        (if (>= i n) 
+          dw
+          (let [w1 (aget w i)]
+            (aset-double dw i (- w1 w0))
+            (recur (inc i) w1)))))))
+;;----------------------------------------------------------------
+(defn- dmapcat 
+  "Assume f returns <code>double[]</code>. Concatenate the arrays
+   into one big array."
+  ^doubles [f ^Iterable objects]
+  (let [arrays (mapv f objects)
+        m (count arrays)
+        n (int (reduce + 0 (map #(alength ^doubles %) arrays)))
+        out (double-array n)]
+    (loop [i 0
+           arrays arrays] 
+      (if (empty? arrays)
+        out
+        (let [^doubles zi (first arrays)
+              ni (alength zi)]
+          (System/arraycopy zi 0 out i ni)
+          (recur (+ i ni) (rest arrays)))))))
+;;----------------------------------------------------------------
 ;; Probability measure &mu; on the real line, <b>R</b>.
 ;; Not supporting mass at +/-&infin;.
 (definterface RealProbabilityMeasure
@@ -278,8 +314,10 @@
 ;;----------------------------------------------------------------
 (defn average-wepdfs
   "Return the mean probability measure."
-  (^zana.prob.measure.WEPDF [^Iterable wepdfs]
-    ))
+  (^zana.prob.measure.WEPDF [& wepdfs]
+    (let [zs (dmapcat #(.z ^WEPDF %) wepdfs)
+          ws (dmapcat #(.w ^WEPDF %) wepdfs)]
+      (make-WEPDF zs ws))))
 ;;----------------------------------------------------------------
 ;; Weighted empirical cumulative probabilty, a non-decreasing step
 ;; function mapping <b>R</b> to [0,1].
@@ -349,7 +387,7 @@
     (str "(WECDF " (vec z) " " (vec w) ")")))
 ;;----------------------------------------------------------------
 ;; TODO: normalize w?
-(defn- make-WECDF 
+(defn make-WECDF 
   
   "Create an instance of <code>zana.prob.measure.WECDF</code>.
   Sorts <code>z</code> and removes ties." 
@@ -369,10 +407,20 @@
       (assert (every? convex-weight? w) (str (vec w)))
       (assert (approximately== 1.0 (aget w (dec (alength w))))
               (str (vec w)))
+  
       (WECDF. z w)))
   
   (^zana.prob.measure.WECDF [^doubles z]
     (let [n (int (alength z))
           w (double-array n (/ 1.0 n))]
       (make-WECDF z w))))
+;;----------------------------------------------------------------
+(defn wepdf-to-wecdf
+  "Convert a point mass density representation to a cumulative one."
+  (^zana.prob.measure.WECDF [^zana.prob.measure.WEPDF pdf]
+    (make-WECDF (.z pdf) (.w pdf))))
+(defn wecdf-to-wepdf
+  "Convert a cumulative representation to a point mass density one."
+  (^zana.prob.measure.WEPDF [^zana.prob.measure.WECDF cdf]
+    (make-WEPDF (.z cdf) (difference (.w cdf)))))
 ;;----------------------------------------------------------------
