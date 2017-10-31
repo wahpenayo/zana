@@ -13,7 +13,7 @@ import clojure.lang.Named;
 //----------------------------------------------------------------------------
 /** A Function mapping int/long indexes to Object and vice versa.
  *
- * @author palisades dot lakes at gmail dot com
+ * @author wahpenayo at gmail dot com
  * @version 2017-10-24
  */
 @SuppressWarnings("unchecked")

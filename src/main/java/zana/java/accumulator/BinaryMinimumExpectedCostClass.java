@@ -4,8 +4,8 @@ package zana.java.accumulator;
 //------------------------------------------------------------------------------
 /** Minimum cost class for binary classification/probability, with case weights.
  *
- * @author palisades dot lakes at gmail dot com
- * @version 2017-10-24
+ * @author wahpenayo at gmail dot com
+ * @version 2017-10-31
  */
 
 public final class BinaryMinimumExpectedCostClass 

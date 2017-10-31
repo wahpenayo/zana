@@ -2,7 +2,7 @@ package zana.java.geometry.z1;
 
 /** An immutable interval on the integers.
  *
- * @author palisades dot lakes at gmail dot com
+ * @author wahpenayo at gmail dot com
  * @version 2017-10-24
  */
 

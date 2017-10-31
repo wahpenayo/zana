@@ -7,7 +7,7 @@ import clojure.lang.IPersistentMap;
  * This is a base class for function wrappers that permit adding arbitrary meta
  * data while preserving the return type hint.
  *
- * @author palisades dot lakes at gmail dot com
+ * @author wahpenayo at gmail dot com
  * @version 2017-10-24
  */
 

@@ -8,8 +8,8 @@ import java.util.Arrays;
  * TODO: have an explicit codomain vector space object, used to generate mutable 
  * _sum and _corrrection instances, and determine what add means.
  * 
- * @author palisades dot lakes at gmail dot com
- * @version 2017-10-24
+ * @author wahpenayo at gmail dot com
+ * @version 2017-10-31
  */
 
 public abstract class VectorSumBase extends AccumulatorBase {

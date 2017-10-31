@@ -5,8 +5,8 @@ package zana.java.accumulator.weighted;
  * <p>
  * TODO: at least offer a more numerically stable, if slower, version.
  *
- * @author palisades dot lakes at gmail dot com
- * @version 2017-10-24
+ * @author wahpenayo at gmail dot com
+ * @version 2017-10-31
  */
 
 public final class

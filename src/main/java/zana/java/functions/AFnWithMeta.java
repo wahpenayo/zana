@@ -8,8 +8,8 @@ import clojure.lang.ISeq;
  * This is a base class for function wrappers that permit adding arbitrary meta
  * data while preserving the return type hint.
  *
- * @author palisades dot lakes at gmail dot com
- * @version 2017-10-24
+ * @author wahpenayo at gmail dot com
+ * @version 2017-10-31
  */
 
 @SuppressWarnings("unchecked")

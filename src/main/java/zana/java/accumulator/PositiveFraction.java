@@ -4,8 +4,8 @@ package zana.java.accumulator;
 /** Fraction of case weights corresponding to positive class for binary 
  * classification/probability.
  *
- * @author palisades dot lakes at gmail dot com
- * @version 2017-10-24
+ * @author wahpenayo at gmail dot com
+ * @version 2017-10-31
  */
 
 public final class
