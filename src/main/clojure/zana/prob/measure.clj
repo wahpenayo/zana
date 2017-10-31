@@ -292,7 +292,7 @@
     (str "(WEPDF " (vec z) " " (vec w) ")")))
 ;;----------------------------------------------------------------
 ;; TODO: normalize w?
-(defn make-WEPDF 
+(defn make-wepdf 
   
   "Create an instance of <code>zana.prob.measure.WEPDF</code>.
   Sorts <code>z</code> and removes ties." 
@@ -320,14 +320,14 @@
                        z)
           n (int (alength z))
           w (double-array n 1.0)]
-      (make-WEPDF z w))))
+      (make-wepdf z w))))
 ;;----------------------------------------------------------------
 (defn average-wepdfs
   "Return the mean probability measure."
   (^zana.prob.measure.WEPDF [& wepdfs]
     (let [zs (dmapcat #(.z ^WEPDF %) wepdfs)
           ws (dmapcat #(.w ^WEPDF %) wepdfs)]
-      (make-WEPDF zs ws))))
+      (make-wepdf zs ws))))
 ;;----------------------------------------------------------------
 ;; Weighted empirical cumulative probabilty, a non-decreasing step
 ;; function mapping <b>R</b> to [0,1].
@@ -440,7 +440,7 @@
 (defn wecdf-to-wepdf
   "Convert a cumulative representation to a point mass density one."
   (^zana.prob.measure.WEPDF [^zana.prob.measure.WECDF cdf]
-    (make-WEPDF (.z cdf) (difference (.w cdf)))))
+    (make-wepdf (.z cdf) (difference (.w cdf)))))
 ;;----------------------------------------------------------------
 (defn quantile ^double [^RealProbabilityMeasure rpm ^double p]
   (.quantile rpm p))

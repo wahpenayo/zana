@@ -313,6 +313,7 @@
                 empirical/cdf)
 (pn/import-vars measure/average-wepdfs
                 measure/cdf
+                measure/make-wepdf
                 measure/quantile
                 measure/wecdf-to-wepdf
                 measure/wepdf-to-wecdf)
