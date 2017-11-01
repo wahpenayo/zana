@@ -1,6 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-11-25"
+(ns ^{:author "wahpenayo at gmail dot com" 
+      :date "2017-10-31"
       :doc "Generic versions of clojure functions.
             Some implemented with defmulti, some with defprotocol, some by hand.
             <br>
@@ -18,8 +19,8 @@
   
   (:refer-clojure :exclude [compare concat count doall drop empty? every? filter 
                             first get last list map map-indexed mapcat next nth 
-                            pmap remove repeatedly second shuffle some sort 
-                            sort-by split-at split-with take])
+                            partition pmap remove repeatedly second shuffle some sort 
+                            sort-by split-with take])
   (:require [zana.commons.core :as cc])
   (:import [java.util ArrayList Arrays Collection Collections HashMap 
             IdentityHashMap Iterator List Map Map$Entry NoSuchElementException 
@@ -453,14 +454,14 @@
 ;; preserve Clojure behavior on Clojure data structures.
 ;; TODO: is this what we want?
 #_(defmethod filter [IFn Seqable] [^IFn f ^Seqable things]
-  (clojure.core/filter f things))
+    (clojure.core/filter f things))
 
 #_(prefer-method filter [IFn Seqable] [IFn Collection])
 
 #_(prefer-method filter [IFn Seqable] [IFn Iterable])
 
 #_(defmethod filter [IFn IPersistentMap] [^IFn f ^IPersistentMap things]
-  (clojure.core/filter f things))
+    (clojure.core/filter f things))
 
 #_(prefer-method filter [IFn IPersistentMap] [IFn Collection])
 
@@ -502,12 +503,12 @@
         a1 (ArrayList.)
         n (int (.size things))]
     (dotimes [i n]
-        (let [nxt (.get things i)
-              fi (f nxt)]
-          (if fi
-            (.add a0 nxt)
-            (.add a1 nxt))))
-      [a0 a1]))
+      (let [nxt (.get things i)
+            fi (f nxt)]
+        (if fi
+          (.add a0 nxt)
+          (.add a1 nxt))))
+    [a0 a1]))
 
 (prefer-method !split-with [IFn RandomAccess] [IFn Iterable])
 
@@ -537,6 +538,26 @@
     (if (instance? java.util.Map things)
       [(Collections/unmodifiableMap x0) (Collections/unmodifiableMap x1)]
       [(Collections/unmodifiableList x0) (Collections/unmodifiableList x1)])))
+;;------------------------------------------------------------------------------
+(defn partition
+  "Return a list of lists of the elements of <code>things</code>.
+   Each inner sublist is length <code>n</code>, except the last,
+   which has however many remaining elements there are after as
+   many as possible <code>n</code> sized lists are created.<br>
+   <b>Note:</b> no support for <code>step</code> or 
+   <code>pad</code> (yet)."
+  ([^long n ^Iterable things]
+    (let [outer (ArrayList. 2)
+          it (iterator things)]
+      (while (.hasNext it)
+        (let [inner (ArrayList. (int n))]
+          (loop [i (int 0)]
+            (if (or (not (.hasNext it)) (<= n i))
+              (.add outer (Collections/unmodifiableList inner))
+              (do
+                (.add inner (.next it))
+                (recur (inc i)))))))
+      (Collections/unmodifiableList outer))))
 ;;------------------------------------------------------------------------------
 ;; map-into: data structure into possibly different type of data structure
 ;; TODO: defmulti 

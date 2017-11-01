@@ -1,20 +1,22 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" 
-      :date "2017-10-27"
+(ns ^{:author "wahpenayo at gmail dot com" 
+      :date "2017-10-31"
       :doc "Primary external interface to Zana, providing a subset of the
             functions found in other <code>zana.xxx</code> namespaces,
             created using [Potemkin](https://github.com/ztellman/potemkin)." }
 
     zana.api
   
-  (:refer-clojure :exclude [any? assoc compare concat contains? count cube? distinct 
-                            doall double-array drop empty? every? filter first 
-                            frequencies get group-by index intersection keys 
-                            last list map map? map-indexed mapcat max merge min
-                            name next nth pmap range remove repeatedly second 
-                            shuffle some sort sort-by sorted-map split-at 
-                            split-with take with-meta union vals vector? zipmap])
+  (:refer-clojure 
+    :exclude [any? assoc compare concat contains? count cube? 
+              distinct doall double-array drop empty? every? 
+              filter first frequencies get group-by index 
+              intersection keys last list map map? map-indexed 
+              mapcat max merge min name next nth partition pmap 
+              range remove repeatedly second shuffle some 
+              sort sort-by sorted-map split-at split-with take 
+              with-meta union vals vector? zipmap])
   
   (:require [potemkin.namespaces :as pn]
             [zana.commons.core :as cc]
@@ -47,9 +49,9 @@
             [zana.prob.empirical :as empirical]
             [zana.prob.measure :as measure]
             [zana.time.core :as time]))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; commons
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars cc/letters
                 cc/letters-and-digits
                 cc/binding-var-root
@@ -76,9 +78,9 @@
                 cc/seconds
                 cc/short-array?
                 cc/skewer)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; io
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars paths/delete-files
                 paths/directory?
                 paths/file?
@@ -100,9 +102,9 @@
                 edn/add-edn-readers!
                 edn/read-edn
                 edn/write-edn)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; collections
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars generic/add!
                 generic/add-all!
                 guava/any?
@@ -134,6 +136,7 @@
                 generic/nmapc
                 generic/nmapcat
                 guava/not-nil
+                generic/partition
                 generic/pmap
                 generic/pmap-doubles
                 #_generic/pmap-indexed
@@ -150,7 +153,7 @@
                 generic/!split-with
                 generic/split-with
                 guava/take)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars maps/assoc
                 maps/map?
                 maps/merge
@@ -170,7 +173,7 @@
                 maps/sorted-map
                 maps/vals
                 maps/zipmap)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars sets/contains?
                 sets/count-distinct
                 sets/distinct
@@ -178,7 +181,7 @@
                 sets/intersection
                 sets/intersects?
                 sets/union)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars hppc/add-values
                 hppc/double-array
                 hppc/entries
@@ -190,16 +193,16 @@
                 hppc/object-double-map?
                 hppc/object-long-map
                 hppc/object-long-map?)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-fn cube/attributes cube-attributes)
 (pn/import-fn cube/has-attribute? cube-has-attribute?)
 (pn/import-fn cube/range cube-range)
 #_(pn/import-fn cube/project project-cube)
 (pn/import-fn cube/slice slice-cube)
 (pn/import-vars cube/cube cube/cube?)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars cio/split-lines)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-fn table/get table-get)
 #_(pn/import-fn table/map table-map)
 (pn/import-fn table/nrows table-nrows)
@@ -214,9 +217,9 @@
                 table/col-keys
                 table/row-keys
                 table/tabulate)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; functions
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars wrap/array-lookup
                 wrap/array-lookup?
                 wrap/dataset-id
@@ -244,9 +247,9 @@
                 fgeneric/integral-domain?
                 fgeneric/ordinal-domain?
                 fgeneric/vector?)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; data
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars datum/archetyper)
 (pn/import-macro datum/define define-datum)
 (pn/import-macro enum/ordered define-ordered-enum)
@@ -264,9 +267,9 @@
                 missing/finite?
                 #_missing/select-finite
                 missing/select-finite-values)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; prng
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars prng/bernoulli-generator
                 prng/continuous-uniform-generator
                 prng/mersenne-twister-generator
@@ -275,9 +278,9 @@
                 prng/reset-mersenne-twister-seeds
                 prng/sample
                 prng/sample-with-replacement)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; geometry
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-fn z1/interval integer-interval)
 (pn/import-fn r1/interval real-interval)
 (pn/import-fn z1/interval? integer-interval?)
@@ -288,9 +291,9 @@
                 gg/interval-max
                 gg/interval-min
                 gg/interval-length)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; stats
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars stats/bounding-box
                 stats/bounds
                 stats/constantly-0d
@@ -317,14 +320,14 @@
                 measure/quantile
                 measure/wecdf-to-wepdf
                 measure/wepdf-to-wecdf)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; ranks
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars ranks/franks 
                 ranks/ranks)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; accumulators
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-fn accumulators/mean mean-accumulator)
 (pn/import-fn accumulators/mssn mssn-accumulator)
 
@@ -355,13 +358,13 @@
 
 (pn/import-fn accumulators/make-calculator make-calculator)
 (pn/import-fn accumulators/make-object-calculator make-object-calculator)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; slide show
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-fn slides/show slide-show)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; time
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (pn/import-vars time/after?
                 time/basic-iso
                 time/before?
@@ -392,4 +395,4 @@
                 time/string-to-date-range
                 time/today
                 time/week-of)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------

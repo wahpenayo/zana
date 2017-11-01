@@ -86,7 +86,8 @@
 
 (defn- convex? [^doubles z]
   (and (every? convex-weight? z)
-       (approximately== 1.0 (naive-sum z))))
+       (approximately== 1.0 (naive-sum z) 
+                        (Math/ulp (double (alength z))))))
 
 (defn- quicksort 
   "Non-destructive sort. <code>z</code> is made non-decreasing
@@ -310,7 +311,7 @@
           [^doubles z ^doubles w] (compact z w)
           w (normalize w)]
       (assert (increasing? z))
-      (assert (convex? w))
+      (assert (convex? w) (str (naive-sum w) "\n" (vec w)))
       (WEPDF. z w)))
   
   (^zana.prob.measure.WEPDF [z]
