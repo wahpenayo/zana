@@ -2,17 +2,18 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2017-10-24"
-      :date "2017-10-27"
+      :date "2017-11-01"
       :doc "Probability measures over <b>R</b>." }
     
     zana.prob.measure
   
-  (:refer-clojure :exclude [every? ])
+  (:refer-clojure :exclude [every?])
   
   (:import [java.util Arrays]
            [com.carrotsearch.hppc DoubleArrayList]
            [clojure.lang IFn$DO IFn$DDO]
-           [zana.java.arrays Sorter]))
+           [zana.java.arrays Sorter]
+           [zana.java.prob RealProbabilityMeasure]))
 ;;----------------------------------------------------------------
 ;; TODO: use float arrays but calculate in double to eliminate 
 ;; Math/ulp in comparisons?
@@ -206,21 +207,21 @@
 ;;----------------------------------------------------------------
 ;; Probability measure &mu; on the real line, <b>R</b>.
 ;; Not supporting mass at +/-&infin;.
-(definterface RealProbabilityMeasure
-  ;; TODO: probability of more general sets
+#_(definterface RealProbabilityMeasure
+   ;; TODO: probability of more general sets
   
-  ;; Probability of the singleton &mu;({z})
-  (^double pointmass [^double z])
+   ;; Probability of the singleton &mu;({z})
+   (^double pointmass [^double z])
   
-  ;; Probability of the half line &mu;((-&infin;,z]).
-  (^double cdf [^double z])
+   ;; Probability of the half line &mu;((-&infin;,z]).
+   (^double cdf [^double z])
   
-  ;; Pseudo inverse of <code>cdf</code>.
-  ;; <code>(quantile p)</code> is infimum of the <code>z</code
-  ;; where <code>(>= (cdf z) p)</code>.
-  ;; Must have <code>(<= 0.0 p 1.0).
-  ;; May return +/- &infin;.
-  (^double quantile [^double p]))
+   ;; Pseudo inverse of <code>cdf</code>.
+   ;; <code>(quantile p)</code> is infimum of the <code>z</code
+   ;; where <code>(>= (cdf z) p)</code>.
+   ;; Must have <code>(<= 0.0 p 1.0).
+   ;; May return +/- &infin;.
+   (^double quantile [^double p]))
 ;;----------------------------------------------------------------
 ;; Weighted empirical probabilty density, a collection of point
 ;; masses.

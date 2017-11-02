@@ -1,9 +1,10 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-08-31"
-      :doc "Pseudo-random number generators, constructed from a resource
-            of truly random seeds." }
-     
+(ns ^{:author "wahpenayo at gmail dot com" 
+      :date "2016-08-31"
+      :doc "Pseudo-random number generators, constructed from 
+            a resource of truly random seeds." }
+    
     zana.stats.prng
   
   (:require [clojure.java.io :as io]
@@ -20,8 +21,8 @@
 ;; Good enough for small collections, but...
 ;; TODO: replace with Waterman/Knuth algorithm.
 (defn- sample-collection [^Random prng
-                         ^long sample-size
-                         ^java.util.Collection data]
+                          ^long sample-size
+                          ^java.util.Collection data]
   (let [copy (ArrayList. data)]
     (Collections/shuffle copy prng)
     (Collections/unmodifiableList
@@ -30,8 +31,8 @@
         (ArrayList. (.subList copy 0 sample-size))))))
 
 (defn- sample-ipm [^Random prng
-                  ^long sample-size
-                  ^clojure.lang.IPersistentMap data]
+                   ^long sample-size
+                   ^clojure.lang.IPersistentMap data]
   (into (sorted-map) 
         (sample-collection prng sample-size (seq data))))
 
@@ -78,7 +79,7 @@
                   (gz/reader 
                     (io/resource 
                       "zana/stats/mersenne-twister-seeds.edn")))]
-      (edn/read r)))
+    (edn/read r)))
 ;;------------------------------------------------------------------------------
 ;; TODO: add seeds for other generator classes
 ;; TODO: fetch new seeds when these run out, and persist all of them.
@@ -94,13 +95,13 @@
   (dosync (alter mersenne-twister-seeds read-mersenne-twister-seeds)))
 ;;------------------------------------------------------------------------------
 (defn mersenne-twister-seed 
-   "Zana maintains a thread-safe finite sequence of truly random 
+  "Zana maintains a thread-safe finite sequence of truly random 
    mersenne twister seeds. This consumes the next seed in the sequence, 
    resetting the sequence to its original start when it runs out.
    See [[reset-mersenne-twister-seeds]]."
-   
-   ^String []
-
+  
+  ^String []
+  
   (when-not (deref mersenne-twister-seeds)
     (reset-mersenne-twister-seeds))
   (dosync
@@ -123,7 +124,7 @@
       (mersenne-twister-generator seed))))
 ;;------------------------------------------------------------------------------
 (defn continuous-uniform-generator 
-
+  
   "Return a function which, when called, returns uniformly distributed 
    pseudo-random <code>double</code> values, based on <code>prng</code>.
    <dl>
@@ -143,16 +144,16 @@
    </dl>"
   
   (^clojure.lang.IFn$D [^double x0 ^double x1 prng]
-  (cond (instance? java.util.Random prng)
-        (let [cug (ContinuousUniformGenerator. x0 x1 prng)]
-          (fn generate-continuous-uniform ^double [] (.nextValue cug)))
-        
-        (string? prng)
-        (continuous-uniform-generator x0 x1 (mersenne-twister-generator prng))
-        
-        :else 
-        (throw (IllegalArgumentException. 
-                 (pr-str "can't create a generator from" prng)))))
+    (cond (instance? java.util.Random prng)
+          (let [cug (ContinuousUniformGenerator. x0 x1 prng)]
+            (fn generate-continuous-uniform ^double [] (.nextValue cug)))
+          
+          (string? prng)
+          (continuous-uniform-generator x0 x1 (mersenne-twister-generator prng))
+          
+          :else 
+          (throw (IllegalArgumentException. 
+                   (pr-str "can't create a generator from" prng)))))
   (^clojure.lang.IFn$D [prng] (continuous-uniform-generator 0.0 1.0 prng)))
 ;;------------------------------------------------------------------------------
 (deftype BernoulliGenerator [^double p ^ContinuousUniformGenerator cug]
@@ -246,16 +247,16 @@
         (org.uncommons.maths.random.DefaultSeedGenerator/getInstance)
         m (alength (.getSeed (org.uncommons.maths.random.MersenneTwisterRNG.)))
         generate (fn generate [_]
-          (org.uncommons.maths.binary.BinaryUtils/convertBytesToHexString
-            (.generateSeed generator m)))
+                   (org.uncommons.maths.binary.BinaryUtils/convertBytesToHexString
+                     (.generateSeed generator m)))
         seeds (mapv generate-seed (range (* 8 2048)))]
     (with-open [w (java.io.FileWriter. "seeds.clj")]
       (binding [*out* w] (pprint seeds))))
   (let [generator (org.uncommons.maths.random.DevRandomSeedGenerator.)
         m (alength (.getSeed (org.uncommons.maths.random.MersenneTwisterRNG.)))
         seed (fn seed [_]
-          (org.uncommons.maths.binary.BinaryUtils/convertBytesToHexString
-            (.generateSeed generator m)))
+               (org.uncommons.maths.binary.BinaryUtils/convertBytesToHexString
+                 (.generateSeed generator m)))
         seeds (mapv seed (range (* 8 2048)))]
     (with-open [w (java.io.FileWriter. 
                     (clojure.java.io/file "main" "resources" "zana" "stats"

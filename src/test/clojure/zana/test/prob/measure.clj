@@ -2,7 +2,7 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "palisades dot lakes at gmail dot com"
       :since "2017-10-24"
-      :date "2017-10-27"
+      :date "2017-11-01"
       :doc "Unit tests for zana.prob.measure."}
     
     zana.test.prob.measure
@@ -10,8 +10,8 @@
   (:require [clojure.test :as test]
             [zana.prob.measure :as zpm])
   (:import [java.util Arrays]
-           [zana.prob.measure 
-            RealProbabilityMeasure WECDF WEPDF]))
+           [zana.java.prob RealProbabilityMeasure]
+           [zana.prob.measure WECDF WEPDF]))
 ;; mvn -Dtest=zana.test.prob.measure clojure:test
 ;; TODO: randomized data for larger tests
 ;;----------------------------------------------------------------

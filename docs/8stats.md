@@ -46,7 +46,7 @@ applied to the datum, and the accumulator is updated with the result.
 
 ## zana.stats.prng
 
-Pseudo-random number generators plus a little truly random seeds for those generators, based primarily on <a href="http://maths.uncommons.org/">Uncommons Maths</a>.
+Pseudo-random number generators plus a few truly random seeds for those generators, based primarily on <a href="http://maths.uncommons.org/">Uncommons Maths</a>.
 
 Functions using pseudo-random number generators to sample from collections.
 
