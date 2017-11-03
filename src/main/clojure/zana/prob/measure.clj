@@ -2,22 +2,28 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2017-10-24"
-      :date "2017-11-01"
+      :date "2017-11-02"
       :doc "Probability measures over <b>R</b>." }
     
     zana.prob.measure
   
   (:refer-clojure :exclude [every?])
-  
+  (:require [zana.commons.core :as zcc]
+            [zana.stats.statistics :as zss])
   (:import [java.util Arrays]
            [com.carrotsearch.hppc DoubleArrayList]
            [clojure.lang IFn$DO IFn$DDO]
+           [org.apache.commons.math3.distribution
+            RealDistribution]
+           [org.apache.commons.math3.random RandomGenerator]
            [zana.java.arrays Sorter]
-           [zana.java.prob RealProbabilityMeasure]))
+           [zana.java.math Statistics]
+           [zana.java.prob ApproximatelyEqual WEPDF]))
 ;;----------------------------------------------------------------
 ;; TODO: use float arrays but calculate in double to eliminate 
 ;; Math/ulp in comparisons?
-;; Probably want to move interface and classes to Java in that case...
+;; Probably want to move interface and classes to Java in that 
+;; case...
 ;;----------------------------------------------------------------
 ;; TODO: move elsewhere
 (defn- positive? [^double z] (< 0.0 z))
@@ -62,33 +68,11 @@
             false
             (recur (inc i) z1)))))))
 
-(defn- approximately== 
-  ([^double x ^double y ^double delta]
-    (<= (Math/abs (- x y)) delta))
-  ([^double x ^double y]
-    (approximately== 
-      x y (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y)))))))
-
-(defn- naive-sum 
-  (^double [^doubles z]
-    (let [n (int (alength z))]
-      (loop [i (int 0)
-             s (double 0.0)]
-        (if (<= n i)
-          s
-          (recur (inc i) (+ s (aget z i)))))))
-  (^double [^doubles z ^long i0 ^long i1]
-    (let [i1 (int i1)]
-      (loop [i (int i0)
-             s (double 0.0)]
-        (if (<= i1 i)
-          s
-          (recur (inc i) (+ s (aget z i))))))))
-
 (defn- convex? [^doubles z]
   (and (every? convex-weight? z)
-       (approximately== 1.0 (naive-sum z) 
-                        (Math/ulp (double (alength z))))))
+       (zss/approximately== 
+         (Math/ulp (double (alength z)))
+         1.0 (Statistics/kahanSum z))))
 
 (defn- quicksort 
   "Non-destructive sort. <code>z</code> is made non-decreasing
@@ -138,7 +122,7 @@
    Elements of <code>w</code> must be non-negaitve."
   (^doubles [^doubles w]
     (assert (every? non-negative? w))
-    (let [s (/ 1.0 (naive-sum w))
+    (let [s (/ 1.0 (Statistics/kahanSum w))
           n (int (alength w))
           ^doubles u (double-array n)]
       (dotimes[i n] 
@@ -154,7 +138,7 @@
    divided by the sum of all the elements."
   (^doubles [^doubles w]
     (assert (every? non-negative? w))
-    (let [s (/ 1.0 (naive-sum w))
+    (let [s (/ 1.0 (Statistics/kahanSum w))
           n (int (alength w))
           ^doubles u (double-array n)
           u0 (* s (aget w 0))
@@ -205,130 +189,102 @@
           (System/arraycopy zi 0 out i ni)
           (recur (+ i ni) (rest arrays)))))))
 ;;----------------------------------------------------------------
-;; Probability measure &mu; on the real line, <b>R</b>.
-;; Not supporting mass at +/-&infin;.
-#_(definterface RealProbabilityMeasure
-   ;; TODO: probability of more general sets
-  
-   ;; Probability of the singleton &mu;({z})
-   (^double pointmass [^double z])
-  
-   ;; Probability of the half line &mu;((-&infin;,z]).
-   (^double cdf [^double z])
-  
-   ;; Pseudo inverse of <code>cdf</code>.
-   ;; <code>(quantile p)</code> is infimum of the <code>z</code
-   ;; where <code>(>= (cdf z) p)</code>.
-   ;; Must have <code>(<= 0.0 p 1.0).
-   ;; May return +/- &infin;.
-   (^double quantile [^double p]))
-;;----------------------------------------------------------------
-;; Weighted empirical probabilty density, a collection of point
-;; masses.
-;; <ul>
-;; <li><code>ws</code> weights.
-;; <li><code>zs</code> sorted unique domain values.
-;; </ul>
-;; Probability of <code>z==z[i]</code> is <code>w[i]</code>.
 
-(deftype WEPDF [^doubles z
-                ^doubles w]
+#_(deftype WEPDF [^doubles z
+                 ^doubles w]
   
-  RealProbabilityMeasure
+   RealDistribution
   
-  (^double pointmass [this ^double x]
-    (double
-      (let [i (Arrays/binarySearch z x)]
-        (if (> 0 i) 
-          (double 0.0) 
-          (double (aget w i))))))
+   (^double probability [_ ^double x]
+     (double
+       (let [i (Arrays/binarySearch z x)]
+         (if (> 0 i) 
+           (double 0.0) 
+           (double (aget w i))))))
   
-  (^double cdf [this ^double x]
-    (double
-      (let [i (Arrays/binarySearch z x)
-            k (int (if (<= 0 i) 
-                     (inc i) 
-                     (- -1 i)))]
-        (assert (<= 0 k))
-        (if (== 0 k)
-          0.0
-          (Math/min (Math/max 0.0 (naive-sum w 0 k)) 1.0)))))
+   (^double cumulativeProbability [_ ^double x]
+     (double
+       (let [i (Arrays/binarySearch z x)
+             k (int (if (<= 0 i) 
+                      (inc i) 
+                      (- -1 i)))]
+         (assert (<= 0 k))
+         (if (== 0 k)
+           0.0
+           (Math/min (Math/max 0.0 (Statistics/kahanSum w 0 k)) 1.0)))))
   
-  (^double quantile [this ^double p]
-    (assert (convex-weight? p) p)
-    (double
-      (cond (== 0.0 p) Double/NEGATIVE_INFINITY
-            (== 1.0 p) (aget z (dec (alength z)))
-            :else 
-            (let [n (int (alength z))]
-              (loop [i0 (int 0)
-                     s0 (aget w 0)]
-                ;; shouldn't be possible to go outside array bounds 
-                ;; with valid <code>z,w</code>.
-                (assert (< i0 n))
-                (if (< (- p s0) (Math/ulp 1.0)) 
-                  (aget z i0)
-                  (let [i1 (inc i0)
-                        s1 (+ s0 (aget w i1))
-                        s1 (Math/min (Math/max 0.0 s1) 1.0)]
-                    (recur i1 s1))))))))
+   (^double inverseCumulativeProbability [_ ^double p]
+     (assert (convex-weight? p) p)
+     (double
+       (cond (== 0.0 p) Double/NEGATIVE_INFINITY
+             (== 1.0 p) (aget z (dec (alength z)))
+             :else 
+             (let [n (int (alength z))]
+               (loop [i0 (int 0)
+                      s0 (aget w 0)]
+                 ;; shouldn't be possible to go outside array bounds 
+                 ;; with valid <code>z,w</code>.
+                 (assert (< i0 n))
+                 (if (< (- p s0) (Math/ulp 1.0)) 
+                   (aget z i0)
+                   (let [i1 (inc i0)
+                         s1 (+ s0 (aget w i1))
+                         s1 (Math/min (Math/max 0.0 s1) 1.0)]
+                     (recur i1 s1))))))))
   
-  Object
+   Object
   
-  (hashCode [this] 
-    (unchecked-add-int
-      (unchecked-multiply-int
-        37
-        (unchecked-add-int
-          (unchecked-multiply-int 37 17)
-          (Arrays/hashCode w)))
-      (Arrays/hashCode z)))
+   (hashCode [_] 
+     (unchecked-add-int
+       (unchecked-multiply-int
+         37
+         (unchecked-add-int
+           (unchecked-multiply-int 37 17)
+           (Arrays/hashCode w)))
+       (Arrays/hashCode z)))
   
-  (equals [this that]
-    (and (instance? WEPDF that)
-         (every? approximately== z ^doubles (.z ^WEPDF that))
-         (every? approximately== w ^doubles (.w ^WEPDF that))))
+   (equals [_ that]
+     (and (instance? WEPDF that)
+          (every? zss/approximately== z ^doubles (.z ^WEPDF that))
+          (every? zss/approximately== w ^doubles (.w ^WEPDF that))))
   
-  ;; TODO: fix for large sample arrays
-  (toString [this]
-    (str "(WEPDF " (vec z) " " (vec w) ")")))
+   ;; TODO: fix for large sample arrays
+   (toString [_]
+     (str "(WEPDF " (vec z) " " (vec w) ")")))
+;;----------------------------------------------------------------
+(defn- to-doubles ^doubles [z]
+  (assert (not (nil? z)))
+  (cond 
+    (zcc/double-array? z) z
+    (instance? DoubleArrayList z) (.toArray ^DoubleArrayList z)
+    (vector? z) (double-array z)
+    :else (throw 
+            (IllegalArgumentException.
+              (str "can't convert " (class z) " to double[]")))))
 ;;----------------------------------------------------------------
 ;; TODO: normalize w?
 (defn make-wepdf 
   
-  "Create an instance of <code>zana.prob.measure.WEPDF</code>.
-  Sorts <code>z</code> and removes ties." 
+  "Create an instance of <code>WEPDF</code>." 
   
-  (^zana.prob.measure.WEPDF [z w]
-    (assert (not (nil? z)))
-    (assert (not (nil? w)))
-    (let [^doubles z (if (instance? DoubleArrayList z)
-                       (.toArray ^DoubleArrayList z)
-                       z)
-          ^doubles w (if (instance? DoubleArrayList w)
-                       (.toArray ^DoubleArrayList w)
-                       w)
-          [^doubles z ^doubles w] (quicksort z w)
-          [^doubles z ^doubles w] (compact z w)
-          w (normalize w)]
-      (assert (increasing? z))
-      (assert (convex? w) (str (naive-sum w) "\n" (vec w)))
-      (WEPDF. z w)))
+  (^WEPDF [^RandomGenerator prng z w]
+    (let [^doubles z (to-doubles z)
+          ^doubles w (to-doubles w)]
+      (WEPDF/make prng z w)))
   
-  (^zana.prob.measure.WEPDF [z]
+  (^WEPDF [z w] (make-wepdf nil z w))
+  
+  (^WEPDF [z]
     (assert (not (nil? z)))
-    (let [^doubles z (if (instance? DoubleArrayList z)
-                       (.toArray ^DoubleArrayList z)
-                       z)
-          n (int (alength z))
-          w (double-array n 1.0)]
+    (let [^doubles z (to-doubles z)
+          ^doubles w (double-array (alength z) 1.0)]
       (make-wepdf z w))))
 ;;----------------------------------------------------------------
 (defn average-wepdfs
   "Return the mean probability measure."
-  (^zana.prob.measure.WEPDF [& wepdfs]
-    (let [zs (dmapcat #(.z ^WEPDF %) wepdfs)
-          ws (dmapcat #(.w ^WEPDF %) wepdfs)]
+  (^WEPDF [& wepdfs]
+    (let [zs (dmapcat #(.getZ ^WEPDF %) wepdfs)
+          ws (dmapcat #(.getW ^WEPDF %) wepdfs)]
       (make-wepdf zs ws))))
 ;;----------------------------------------------------------------
 ;; Weighted empirical cumulative probabilty, a non-decreasing step
@@ -342,9 +298,9 @@
 (deftype WECDF [^doubles z
                 ^doubles w]
   
-  RealProbabilityMeasure
+  RealDistribution
   
-  (^double pointmass [this ^double x]
+  (^double probability [_ ^double x]
     (double
       (let [i (Arrays/binarySearch z x)]
         (cond
@@ -352,7 +308,7 @@
           (< 0 i) (- (aget w i) (aget w (dec i)))
           :else (double 0.0)))))
   
-  (^double cdf [this ^double x]
+  (^double cumulativeProbability [_ ^double x]
     (double
       (let [i (Arrays/binarySearch z x)
             k (int (if (<= 0 i) 
@@ -360,7 +316,7 @@
                      (- -2 i)))]
         (if (== -1 k) 0.0 (aget w k)))))
   
-  (^double quantile [this ^double p]
+  (^double inverseCumulativeProbability [this ^double p]
     (assert (convex-weight? p))
     (double
       (cond (== 0.0 p) Double/NEGATIVE_INFINITY
@@ -370,17 +326,27 @@
                   ii (int (if (<= 0 i) i (- -1 i)))
                   zii (aget z ii)
                   zii-1 (if (< 0 ii) (aget z (dec ii)) Double/NEGATIVE_INFINITY)
-                  pii-1 (.cdf this zii-1)]
+                  pii-1 (.cumulativeProbability this zii-1)]
               #_(println p i ii zii zii-1)
-              #_(println (.cdf this zii))
-              #_(println (.cdf this zii-1))
+              #_(println (.cumulativeProbability this zii))
+              #_(println (.cumulativeProbability this zii-1))
               (if (< (- p pii-1) (Math/ulp 1.0))
                 zii-1
                 zii)))))
-  
+
+  ApproximatelyEqual
+  (approximatelyEqual [_ that]
+     (and (instance? WECDF that)
+          (Statistics/approximatelyEqual z ^doubles (.z ^WECDF that)) 
+          (Statistics/approximatelyEqual w ^doubles (.w ^WECDF that)))) 
+  (approximatelyEqual [_ delta that]
+     (and (instance? WECDF that)
+          (Statistics/approximatelyEqual delta z ^doubles (.z ^WECDF that)) 
+          (Statistics/approximatelyEqual delta w ^doubles (.w ^WECDF that)))) 
+
   Object
   
-  (hashCode [this] 
+  (hashCode [_] 
     (unchecked-add-int
       (unchecked-multiply-int
         37
@@ -389,17 +355,17 @@
           (Arrays/hashCode w)))
       (Arrays/hashCode z)))
   
-  (equals [this that]
+  (equals [_ that]
     (and (instance? WECDF that)
-         (every? approximately== z ^doubles (.z ^WECDF that))
-         (every? approximately== w ^doubles (.w ^WECDF that))))
+         (every? zss/approximately== z ^doubles (.z ^WECDF that))
+         (every? zss/approximately== w ^doubles (.w ^WECDF that))))
   
   ;; TODO: fix for large sample arrays
-  (toString [this]
+  (toString [_]
     (str "(WECDF " (vec z) " " (vec w) ")")))
 ;;----------------------------------------------------------------
 ;; TODO: normalize w?
-(defn make-WECDF 
+(defn make-wecdf 
   
   "Create an instance of <code>zana.prob.measure.WECDF</code>.
   Sorts <code>z</code> and removes ties." 
@@ -422,7 +388,7 @@
       (assert (increasing? z) (str (vec z)))
       (assert (increasing? w) (str (vec w)))
       (assert (every? convex-weight? w) (str (vec w)))
-      (assert (approximately== 1.0 (aget w (dec (alength w))))
+      (assert (zss/approximately== 1.0 (aget w (dec (alength w))))
               (str (vec w)))
       
       (WECDF. z w)))
@@ -433,19 +399,22 @@
                        z)
           n (int (alength z))
           w (double-array n 1.0)]
-      (make-WECDF z w))))
+      (make-wecdf z w))))
 ;;----------------------------------------------------------------
 (defn wepdf-to-wecdf
   "Convert a point mass density representation to a cumulative one."
-  (^zana.prob.measure.WECDF [^zana.prob.measure.WEPDF pdf]
-    (make-WECDF (.z pdf) (.w pdf))))
+  (^zana.prob.measure.WECDF [^WEPDF pdf]
+    (make-wecdf (.getZ pdf) (.getW pdf))))
 (defn wecdf-to-wepdf
   "Convert a cumulative representation to a point mass density one."
-  (^zana.prob.measure.WEPDF [^zana.prob.measure.WECDF cdf]
+  (^WEPDF [^zana.prob.measure.WECDF cdf]
     (make-wepdf (.z cdf) (difference (.w cdf)))))
 ;;----------------------------------------------------------------
-(defn quantile ^double [^RealProbabilityMeasure rpm ^double p]
-  (.quantile rpm p))
-(defn cdf ^double [^RealProbabilityMeasure rpm ^double z]
-  (.cdf rpm z))
+;; TODO: generic function api for general probability measures
+(defn pointmass ^double [^RealDistribution rpm ^double z]
+  (.probability rpm z))
+(defn cdf ^double [^RealDistribution rpm ^double z]
+  (.cumulativeProbability rpm z))
+(defn quantile ^double [^RealDistribution rpm ^double p]
+  (.inverseCumulativeProbability rpm p))
 ;;----------------------------------------------------------------

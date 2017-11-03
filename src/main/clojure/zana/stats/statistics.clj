@@ -2,7 +2,7 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2016-12-21"
-      :date "2017-10-25"
+      :date "2017-11-02"
       :doc "Stats that don't have an obvious home." }
     
     zana.stats.statistics
@@ -15,8 +15,24 @@
   (:import [clojure.lang IFn IFn$OD IFn$OL]
            [org.apache.commons.math3.stat.descriptive DescriptiveStatistics]
            [zana.java.functions IFnODWithMeta]
-           [zana.java.math Statistics]))
-;;------------------------------------------------------------------------------
+           [zana.java.math Statistics]
+           [zana.java.prob ApproximatelyEqual]))
+;;----------------------------------------------------------------
+;; TODO: move somewhere else?
+(defn approximately== 
+  ([^double delta ^double x ^double y]
+    (<= (Math/abs (- x y)) delta))
+  ([^double x ^double y]
+    (approximately== 
+      (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y))))
+      x y)))
+(defn approximatelyEqual 
+  ([^ApproximatelyEqual x ^ApproximatelyEqual y]
+    (.approximatelyEqual x y))
+  ([^ApproximatelyEqual x ^ApproximatelyEqual y & more]
+    (and (approximatelyEqual x y)
+         (apply approximatelyEqual y (first more) (rest more)))))
+;;----------------------------------------------------------------
 ;; TODO: move to function namespace
 (defn numerical?
   "Does <code>f</code> return primitive <code>double</code> or <code>long</code>
@@ -34,7 +50,7 @@
           (RuntimeException.
             (print-str "numerical?" f (class data) (g/count data))
             t))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: move to function namespace
 (defn constantly-0d 
   "An instance of <code>clojure.lang.IFn$OD</code> that returns a primitve
@@ -44,7 +60,7 @@
   "An instance of <code>clojure.lang.IFn$OD</code> that returns a primitve
   <code>double</code> 1.0, regardless of input."
   ^double [arg] 1.0)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- singular-longs? [^clojure.lang.IFn$OL z ^Iterable data]
   (let [it (g/iterator data)]
     (if (.hasNext it)
@@ -73,16 +89,16 @@
                          (recur)
                          zi))
                      Double/NaN)))] 
-          ;; if all NaN, then .hasNext is false
-          (loop []
-            (if (.hasNext it)
-              (let [d1 (.next it)
-                    z1 (.invokePrim z d1)]
-                (if (> (Math/abs (- z0 z1)) delta)
-                  false
-                  ;; else z1 is NaN and/or different from z0
-                  (recur)))
-              true))))))
+        ;; if all NaN, then .hasNext is false
+        (loop []
+          (if (.hasNext it)
+            (let [d1 (.next it)
+                  z1 (.invokePrim z d1)]
+              (if (> (Math/abs (- z0 z1)) delta)
+                false
+                ;; else z1 is NaN and/or different from z0
+                (recur)))
+            true))))))
 
 (defn- singular-objects? [^clojure.lang.IFn z ^Iterable data]
   (if (nil? data)
@@ -105,7 +121,7 @@
                   (recur)
                   false))
               true)))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn singular? 
   "Is there more than one distinct value in <code>a</code> or in the values of
    <code>z</code> mapped over <code>data</code>."
@@ -115,11 +131,11 @@
     (cond (instance? clojure.lang.IFn$OD z) (singular-doubles? z data)
           (instance? clojure.lang.IFn$OL z) (singular-longs? z data)
           :else (singular-objects? z data))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; a mess of functions computing bounds of various kinds.
 ;; TODO: rationalize this, maybe move some to a geometry package.
 ;; TODO: minmax, bounds, bounding-box, range are all variations on the same thing
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: handle any Comparable, accept comparator function
 ;; TODO: compare speed to Java implementation.
 ;; TODO: move to zana/tu.geometry?
@@ -145,7 +161,7 @@
                   (recur x xmax)
                   (recur x x)))))
           (r1/interval xmin (Math/nextUp xmax)))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- bounds-fast 
   
   (^zana.java.geometry.r1.Interval [^clojure.lang.IFn$OD f
@@ -171,7 +187,7 @@
                   (recur x xmax)
                   (recur x x)))))
           (r1/interval xmin (Math/nextUp xmax)))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn bounds 
   
   (^zana.java.geometry.r1.Interval [^Iterable data 
@@ -209,7 +225,7 @@
   
   (^zana.java.geometry.r1.Interval [^clojure.lang.IFn f ^Iterable data]
     (bounds f data Double/POSITIVE_INFINITY Double/NEGATIVE_INFINITY)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- bounding-box-slow 
   
   (^java.awt.geom.Rectangle2D$Double [^clojure.lang.IFn xf
@@ -237,7 +253,7 @@
             (recur xmin xmax ymin ymax))
           (java.awt.geom.Rectangle2D$Double.
             xmin ymin (- xmax xmin) (- ymax ymin)))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- bounding-box-fast 
   
   (^java.awt.geom.Rectangle2D$Double [^clojure.lang.IFn$OD xf
@@ -265,8 +281,8 @@
                 ymax (if (> y ymax) y ymax)]
             (recur xmin xmax ymin ymax))
           (java.awt.geom.Rectangle2D$Double.
-             xmin ymin (- xmax xmin) (- ymax ymin)))))))
-;;------------------------------------------------------------------------------
+            xmin ymin (- xmax xmin) (- ymax ymin)))))))
+;;----------------------------------------------------------------
 (defn bounding-box 
   (^java.awt.geom.Rectangle2D$Double [^clojure.lang.IFn xf
                                       ^clojure.lang.IFn yf
@@ -276,13 +292,13 @@
       (bounding-box-fast xf yf data)
       ;;(Statistics/bounds xf yf data)
       (bounding-box-slow xf yf data))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn symmetric-bounds
   ^java.awt.geom.Rectangle2D$Double [^clojure.lang.IFn$OD xf
                                      ^clojure.lang.IFn$OD yf
                                      ^Iterable data]
   (Statistics/symmetricBounds xf yf data))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- minmax-long [^clojure.lang.IFn$OL z ^Iterable data]
   (assert (not (g/empty? data)))
   (let [i (g/iterator data)
@@ -334,7 +350,7 @@
           :else (throw
                   (IllegalArgumentException.
                     (print-str "can't find the minmax values of " (class z)))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn fast-min ^double [^clojure.lang.IFn$OD f ^Iterable data]
   (let [it (.iterator data)]
     (loop [xmin Double/POSITIVE_INFINITY]
@@ -346,7 +362,7 @@
               (recur xmin)
               (recur x))))
         xmin))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn min
   (^double [^clojure.lang.IFn f ^Iterable data]
     (if (instance? IFn$OD f)
@@ -372,7 +388,7 @@
                 (recur xmin)
                 (recur x))))
           xmin)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; return Double/NEGATIVE_INFINITY for empty datasets
 (defn fast-max ^double [^clojure.lang.IFn$OD f ^Iterable data]
   (let [it (.iterator data)]
@@ -385,7 +401,7 @@
               (recur xmax)
               (recur x))))
         xmax))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; return Double/NEGATIVE_INFINITY for empty datasets
 (defn max
   (^double [^clojure.lang.IFn f ^Iterable data]
@@ -412,7 +428,7 @@
                 (recur xmax)
                 (recur x))))
           xmax)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn quantiles
   "Return a vector of the quantiles of the doubles in <code>zs</code>, or the 
    doubles resulting from mapping <code>z</code> over <code>data</code>.
@@ -428,7 +444,7 @@
                     :else (.getPercentile ds (* 100.0 p))))
             ps)))
   ([z data ps] (quantiles (g/map-to-doubles z data) ps)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: Kahan summation; use accumulators?
 (defn sum
   "Compute the sum of the elements of an array, or of the 
@@ -466,14 +482,14 @@
           (if (.hasNext it) 
             (recur (+ sum (double (z (.next it)))))
             (double sum)))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn mean
   "Compute the mean of the elements of an array, or of the 
    values of a function mapped over a data set."
   (^double [^doubles zs] (/ (sum zs) (alength zs)))
   (^double [^clojure.lang.IFn z ^Iterable data]
     (/ (sum z data) (g/count data))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: Kahan summation
 (defn l1-norm 
   "Compute the sum of absolute value of the elements of an array, or of the 
@@ -491,7 +507,7 @@
         (if (.hasNext it) 
           (recur (+ sum (Math/abs (.invokePrim z (.next it)))))
           sum)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: Kahan summation
 (defn l1-distance 
   "Compute the sum of absolute differences between 2 arrays, or between the 
@@ -518,7 +534,7 @@
                               (Math/abs (- (.invokePrim z0 datum)
                                            (.invokePrim z1 datum))))]
       (l1-norm (g/pmap-doubles absolute-residual data)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn mean-absolute-difference
   "Compute the mean absolute difference between the elements of 2 arrays, or 
    between the values of 2 functions mapped over a data set."
@@ -526,7 +542,7 @@
     (/ (l1-distance z0 z1) (alength z0)))
   (^double [^clojure.lang.IFn$OD z0 ^clojure.lang.IFn$OD z1 ^Iterable data]
     (/ (l1-distance z0 z1 data) (g/count data))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: more accurate summation
 (defn l2-norm 
   "Compute the sum of squares of the elements of an array, or of the values
@@ -546,7 +562,7 @@
           (let [zi (.invokePrim z (.next it))]
             (recur (+ sum (* zi zi))))
           sum)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: more accurate summation. g/reduce-double
 (defn l2-distance 
   "Compute the L1 distance between 2 arrays, or between the values of
@@ -569,11 +585,11 @@
                 dz (- (.invokePrim z0 datum) (.invokePrim z1 datum))]
             (recur (+ sum (* dz dz))))
           sum)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn rms-difference
   "Return the square root of the [[l2-distance]]."
   (^double [^doubles z0 ^doubles z1]
     (Math/sqrt (/ (l2-distance z0 z1) (alength z0))))
   (^double [^clojure.lang.IFn$OD z0 ^clojure.lang.IFn$OD z1 ^Iterable data]
     (Math/sqrt (/ (l2-distance z0 z1 data) (g/count data)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------

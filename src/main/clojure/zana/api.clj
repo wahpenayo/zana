@@ -1,11 +1,12 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2017-10-31"
-      :doc "Primary external interface to Zana, providing a subset of the
-            functions found in other <code>zana.xxx</code> namespaces,
-            created using [Potemkin](https://github.com/ztellman/potemkin)." }
-
+      :date "2017-11-02"
+      :doc "Primary external interface to Zana, providing a subset
+            of the functions found in other <code>zana.xxx</code> 
+            namespaces, created using 
+            [Potemkin](https://github.com/ztellman/potemkin)." }
+    
     zana.api
   
   (:refer-clojure 
@@ -294,7 +295,9 @@
 ;;----------------------------------------------------------------
 ;; stats
 ;;----------------------------------------------------------------
-(pn/import-vars stats/bounding-box
+(pn/import-vars stats/approximately==
+                stats/approximatelyEqual
+                stats/bounding-box
                 stats/bounds
                 stats/constantly-0d
                 stats/constantly-1d
@@ -313,10 +316,12 @@
                 stats/sum
                 stats/mean)
 #_(pn/import-vars empirical/quantile
-                empirical/cdf)
+                  empirical/cdf)
 (pn/import-vars measure/average-wepdfs
                 measure/cdf
+                measure/make-wecdf
                 measure/make-wepdf
+                measure/pointmass
                 measure/quantile
                 measure/wecdf-to-wepdf
                 measure/wepdf-to-wecdf)

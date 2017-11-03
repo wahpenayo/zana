@@ -219,11 +219,9 @@ public final class Arrays extends Object {
   //----------------------------------------------------------------------------
   // disabled constructor
   //----------------------------------------------------------------------------
-  private
-  Arrays () {
-    super();
-    throw
-    new UnsupportedOperationException("Can't instantiate " + getClass()); }
+  private Arrays () {
+    throw new UnsupportedOperationException(
+      "Can't instantiate " + getClass()); }
   //----------------------------------------------------------------------------
 } // end class
 //----------------------------------------------------------------------------
