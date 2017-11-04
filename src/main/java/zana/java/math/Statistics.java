@@ -8,7 +8,8 @@ import clojure.lang.IFn;
 /** Summary statistics.
  *
  * @author wahpenayo at gmail dot com
- * @version 2015-08-23
+ * @since 2015-08-23
+ * @version 2017-11-04
  */
 
 public final class Statistics {
@@ -57,9 +58,75 @@ public final class Statistics {
   public static final double kahanSum (final double[] z) {
     return kahanSum(z,0,z.length); }
   //--------------------------------------------------------------
+  /** Replace the elements of <code>w</code>, 
+   * (from <code>start</code> (inclusive) 
+   * up to <code>end</code> (exclusive),
+   * with the normalized cumulative sums, 
+   * using Kahan summation.
+   * 'Normalized' means the partial sums are scaled so that
+   *  <code>w[w.length-1]==1.0</code>.
+   */
+  public static final void normalizeCumulativeSums (final double[] w, 
+                                                    final int start,
+                                                    final int end) {
+    assert 0 <= start;
+    assert start < end;
+    assert end <= w.length;
+    double s = 0.0;
+    double c = 0.0;
+    for (int i=start;i<end;i++) {
+      final double wi = w[i] - c;
+      final double t = s + wi;
+      c = (t - s) - wi;
+      s = t; 
+      w[i] = s; } 
+    for (int i=start;i<end;i++) { w[i] /= s; } }
 
-  public static final boolean approximatelyEqual (
-                                                  final double delta,
+  /** Replace the elements of <code>w</code>, 
+   * using Kahan summation.
+   * 'Normalized' means the partial sums are scaled so that
+   *  <code>w[w.length-1]==1.0</code>.
+   */
+  public static final void normalizeCumulativeSums (final double[] w) {
+    normalizeCumulativeSums(w,0,w.length); }
+  //--------------------------------------------------------------
+  /** Replace the elements of <code>w</code>, 
+   * (from <code>start+1</code> (inclusive) 
+   * up to <code>end</code> (exclusive),
+   * with <code>w[i]-w[i-1]</code>.
+   */
+  public static final void difference (final double[] w,
+                                       final int start,
+                                       final int end) {
+    assert 0 <= start;
+    assert start < end;
+    assert end <= w.length;
+    double w0 = w[start];
+    for (int i=start+1;i<end;i++) {
+      final double w1 = w[i];
+      w[i] = w1 - w0;
+      w0 = w1; } }
+  
+  /** Replace the elements of <code>w</code>, 
+   * with <code>w[i]-w[i-1]</code>, interpreting 
+   * <code>w[-1]</code> as 0.0.
+   */
+  public static final void difference (final double[] w) {
+    difference(w,0,w.length); }
+
+  /** Return a new array containing the differences of the 
+   * elements of <code>w</code>, 
+   * with <code>w[i]-w[i-1]</code>, interpreting 
+   * <code>w[-1]</code> as 0.0.
+   */
+  public static final double[] differences (final double[] w) {
+    final int n = w.length;
+    final double[] ww = Arrays.copyOf(w,n);
+    difference(ww); 
+    return ww; }
+  //--------------------------------------------------------------
+
+  public static final boolean approximatelyEqual (final double delta,
                                                   final double z0,
                                                   final double z1) {
     return Math.abs(z0-z1) <= delta; }
@@ -113,12 +180,17 @@ public final class Statistics {
       if (0 >= w[i]) { return false; } }
     return true; }
   //--------------------------------------------------------------
-  public static final boolean isConvex (final double[] w) {
+  public static final boolean hasConvexElements (final double[] w) {
     for (int i=0;i<w.length;i++) {
       final double wi = w[i];
       if (0.0 > wi) { return false; }
       if (wi > 1.0) { return false; } }
-    return approximatelyEqual(1.0,kahanSum(w)); }
+    return true; }
+  //--------------------------------------------------------------
+  public static final boolean isConvex (final double[] w) {
+    return 
+      hasConvexElements(w) 
+      && approximatelyEqual(1.0,kahanSum(w)); }
   //--------------------------------------------------------------
   public static final double presortedCDF (final double[] x,
                                            final double q) {

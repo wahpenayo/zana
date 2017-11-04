@@ -37,24 +37,14 @@
   (tests))
 (test/use-fixtures :once setup)
 ;;--------------------------------------------------------------
-(test/deftest compact
-  (let [[^doubles z0 ^doubles w0] (#'zpm/quicksort z0 w0)
-        [^doubles z1 ^doubles w1] (#'zpm/quicksort z1 w1)
-        [^doubles z2 ^doubles w2] (#'zpm/compact z0 w0)
-        [^doubles z3 ^doubles w3] (#'zpm/compact z1 w1)]
-    (test/is (Arrays/equals w1 w2))
-    (test/is (Arrays/equals z1 z2))
-    (test/is (Arrays/equals w1 w3))
-    (test/is (Arrays/equals z1 z3))))
-;;--------------------------------------------------------------
 (test/deftest make
-  (test/is (z/approximatelyEqual pdf0 pdf1 pdf2 pdf3 pdf4 pdf5)
-           #_(str "\n0 " pdf0 "\n1 " pdf1 
-                  "\n2 " pdf2 "\n3 " pdf3
-                  "\n4 " pdf4 "\n5 " pdf5
-                  ))
-  (test/is (z/approximatelyEqual cdf0 cdf1 cdf2)
-           #_(str "\n" cdf0 "\n" cdf1 "\n" cdf2)))
+   (test/is (z/approximatelyEqual pdf0 pdf1 pdf2 pdf3 pdf4 pdf5)
+            #_(str "\n0 " pdf0 "\n1 " pdf1 
+                   "\n2 " pdf2 "\n3 " pdf3
+                   "\n4 " pdf4 "\n5 " pdf5
+                   ))
+   (test/is (z/approximatelyEqual cdf0 cdf1 cdf2)
+            #_(str "\n" cdf0 "\n" cdf1 "\n" cdf2)))
 ;;--------------------------------------------------------------
 ;; TODO: better sum algorithm in cdf to get rid of z/approximately==
 (test/deftest quantile
@@ -81,30 +71,30 @@
 ;;--------------------------------------------------------------
 ;; TODO: better sum algorithm in cdf to get rid of z/approximately==
 (test/deftest pointmass
-  (let [n0 (double n0)]
-    (doseq [rpm rpms] 
-      #_(println rpm)
-      (test/is (== 0.0 (z/pointmass rpm -1.0)))
-      (test/is (== 0.0 (z/pointmass rpm 0.0)))
-      (test/is (z/approximately== (/ 3.0 n0) (z/pointmass rpm 1.0)))
-      (test/is (== 0.0 (z/pointmass rpm 1.5)))
-      (test/is (z/approximately== (/ 1.0 n0) (z/pointmass rpm 2.0)))
-      (test/is (z/approximately== (/ 2.0 n0) (z/pointmass rpm 3.0)))
-      (test/is (z/approximately== (/ 1.0 n0) (z/pointmass rpm 4.0)))
-      (test/is (z/approximately== (/ 2.0 n0) (z/pointmass rpm 5.0)))
-      (test/is (== 0.0 (z/pointmass rpm 6.0))))))
+   (let [n0 (double n0)]
+     (doseq [rpm rpms] 
+       #_(println rpm)
+       (test/is (== 0.0 (z/pointmass rpm -1.0)))
+       (test/is (== 0.0 (z/pointmass rpm 0.0)))
+       (test/is (z/approximately== (/ 3.0 n0) (z/pointmass rpm 1.0)))
+       (test/is (== 0.0 (z/pointmass rpm 1.5)))
+       (test/is (z/approximately== (/ 1.0 n0) (z/pointmass rpm 2.0)))
+       (test/is (z/approximately== (/ 2.0 n0) (z/pointmass rpm 3.0)))
+       (test/is (z/approximately== (/ 1.0 n0) (z/pointmass rpm 4.0)))
+       (test/is (z/approximately== (/ 2.0 n0) (z/pointmass rpm 5.0)))
+       (test/is (== 0.0 (z/pointmass rpm 6.0))))))
 ;;--------------------------------------------------------------
 ;; TODO: better sum algorithm in cdf to get rid of z/approximately==
 (test/deftest cdf
-  (let [n0 (double n0)]
-    (doseq [rpm rpms] 
-      (test/is (== 0.0 (z/cdf rpm -1.0)))
-      (test/is (== 0.0 (z/cdf rpm 0.0)))
-      (test/is (z/approximately== (/ 3.0 n0) (z/cdf rpm 1.0)))
-      (test/is (z/approximately== (/ 3.0 n0) (z/cdf rpm 1.5)))
-      (test/is (z/approximately== (/ 4.0 n0) (z/cdf rpm 2.0)))
-      (test/is (z/approximately== (/ 6.0 n0) (z/cdf rpm 3.0)))
-      (test/is (z/approximately== (/ 7.0 n0) (z/cdf rpm 4.0)))
-      (test/is (z/approximately== (/ 9.0 n0) (z/cdf rpm 5.0)))
-      (test/is (z/approximately== (/ 9.0 n0) (z/cdf rpm 6.0))))))
+   (let [n0 (double n0)]
+     (doseq [rpm rpms] 
+       (test/is (== 0.0 (z/cdf rpm -1.0)))
+       (test/is (== 0.0 (z/cdf rpm 0.0)))
+       (test/is (z/approximately== (/ 3.0 n0) (z/cdf rpm 1.0)))
+       (test/is (z/approximately== (/ 3.0 n0) (z/cdf rpm 1.5)))
+       (test/is (z/approximately== (/ 4.0 n0) (z/cdf rpm 2.0)))
+       (test/is (z/approximately== (/ 6.0 n0) (z/cdf rpm 3.0)))
+       (test/is (z/approximately== (/ 7.0 n0) (z/cdf rpm 4.0)))
+       (test/is (z/approximately== (/ 9.0 n0) (z/cdf rpm 5.0)))
+       (test/is (z/approximately== (/ 9.0 n0) (z/cdf rpm 6.0))))))
 ;;--------------------------------------------------------------
