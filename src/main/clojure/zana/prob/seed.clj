@@ -6,7 +6,7 @@
   {:doc "Independent seed generation and seed resource IO."
    :author "wahpenayo at gmail dot com"
    :since "2017-11-01"
-   :date "2017-11-01"}
+   :date "2017-11-05"}
   
   (:refer-clojure :exclude [read write])
   (:require [clojure.edn :as edn]
@@ -57,6 +57,7 @@
 (defn seed ^ints [x]
   (cond (string? x) (recur (io/resource x))
         (instance? java.net.URL x) (recur (read x))
+        (vector? x) (int-array x)
         (int-array? x) x
         :else
         (throw 

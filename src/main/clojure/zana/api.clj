@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2017-11-02"
+      :date "2017-11-06"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -49,6 +49,7 @@
             [zana.stats.statistics :as stats]
             [zana.prob.empirical :as empirical]
             [zana.prob.measure :as measure]
+            [zana.prob.seed :as seed]
             [zana.time.core :as time]))
 ;;----------------------------------------------------------------
 ;; commons
@@ -317,6 +318,7 @@
                 stats/mean)
 #_(pn/import-vars empirical/quantile
                   empirical/cdf)
+(pn/import-vars seed/seed)
 (pn/import-vars measure/average-wepdfs
                 measure/cdf
                 measure/make-wecdf

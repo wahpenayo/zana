@@ -22,7 +22,8 @@ import zana.java.math.Statistics;
  * <p>
  * TODO: could use 
  * org.apache.commons.math3.distribution.EnumeratedRealDistribution,
- * but that converts data to List<Pair<Double,Double>>, which
+ * but that converts data to 
+ * <code>List&lt;Pair&lt;Double,Double&gt;&gt;</code>, which
  * like hurts significantly in space and time.
  * 
  * @author wahpenayo at gmail dot com
@@ -223,19 +224,19 @@ implements ApproximatelyEqual {
    * locations of point masses.
    * 
    * @param rng source of randomness for sampling. May be null.
-   * @param z0 locations of point masses. May have duplicates;
+   * @param z locations of point masses. May have duplicates;
    * need not be sorted.
-   * @param w0 weight of each point mass. Need not be normalized.
+   * @param w weight of each point mass. Need not be normalized.
    */
   public static final WECDF make (final RandomGenerator rng,
-                                  final double[] z0,
-                                  final double[] w0) {
+                                  final double[] z,
+                                  final double[] w) {
     // sort on z
-    final int n = z0.length;
-    assert n == w0.length;
-    assert Statistics.isPositive(w0) : Arrays.toString(w0);
-    final double[] z1 = Arrays.copyOf(z0,n);
-    final double[] w1 = Arrays.copyOf(w0,n);
+    final int n = z.length;
+    assert n == w.length;
+    assert Statistics.isPositive(w) : Arrays.toString(w);
+    final double[] z1 = Arrays.copyOf(z,n);
+    final double[] w1 = Arrays.copyOf(w,n);
     Sorter.quicksort(z1,w1);
     // TODO: better messages with large arrays
     assert MathArrays.isMonotonic(z1, OrderDirection.INCREASING, false) :
@@ -275,9 +276,9 @@ implements ApproximatelyEqual {
   /** Create a weighted cumulative empirical distribution from
    * locations of point masses.
    * 
-   * @param z0 locations of point masses. May have duplicates;
+   * @param z locations of point masses. May have duplicates;
    * need not be sorted.
-   * @param w0 weight of each point mass. Need not be normalized.
+   * @param w weight of each point mass. Need not be normalized.
    */
   public static final WECDF make (final double[] z,
                                   final double[] w) { 
@@ -286,7 +287,7 @@ implements ApproximatelyEqual {
   /** Create a weighted cumulative empirical distribution from
    * locations of point masses. Each point mass gets equal weight.
    * 
-   * @param z0 locations of point masses. May have duplicates;
+   * @param z locations of point masses. May have duplicates;
    * need not be sorted.
    */
   public static final WECDF make (final double[] z) {
