@@ -1,5 +1,5 @@
 (set! *warn-on-reflection* true)
-(set! *unchecked-math* :warn-on-boxed)
+(set! *unchecked-math* false) ;; warnings in cheshire.generate
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2017-10-24"
       :date "2017-11-02"
@@ -8,7 +8,10 @@
     zana.prob.measure
   
   (:refer-clojure :exclude [every?])
-  (:require [zana.commons.core :as zcc]
+  (:require [cheshire.generate]
+            [zana.commons.core :as zcc]
+            [zana.collections.clojurize :as zccl]
+            [zana.io.edn :as zedn]
             [zana.stats.statistics :as zss])
   (:import [java.util Arrays]
            [com.carrotsearch.hppc DoubleArrayList]
@@ -19,6 +22,7 @@
            [zana.java.arrays Sorter]
            [zana.java.math Statistics]
            [zana.java.prob ApproximatelyEqual WECDF WEPDF]))
+(set! *unchecked-math* :warn-on-boxed)
 ;;----------------------------------------------------------------
 ;; TODO: use float arrays but calculate in double to eliminate 
 ;; Math/ulp in comparisons?
@@ -91,4 +95,62 @@
   (.cumulativeProbability rpm z))
 (defn quantile ^double [^RealDistribution rpm ^double p]
   (.inverseCumulativeProbability rpm p))
+;;----------------------------------------------------------------
+;; text serialization
+;;----------------------------------------------------------------
+;; TODO: JSON/END serialization for RandomGenerator classes
+(defn map->WEPDF [m] 
+  (WEPDF/sortedAndNormalized  
+    (:rng m) (double-array (:z m)) (double-array (:w m))))
+(defn map<-WEPDF [^WEPDF d] 
+  {#_:rng #_(.rng d) :z (vec (.getZ d)) :w (vec (.getW d))})
+(defmethod zccl/clojurize WEPDF [this] (map<-WEPDF this))
+(defmethod print-method WEPDF [^WEPDF this ^java.io.Writer w]
+  (if *print-readably*
+    (do
+      (.write w " #zana.java.prob.WEPDF{")
+      #_(.write w ":rng ")
+      #_(.write w (print-str (.rng this)))
+      (.write w " :z ")
+      (.write w (print-str (vec (.getZ this))))
+      (.write w " :w ")
+      (.write w (print-str (vec (.getW this))))
+      (.write w "} "))
+    (.write w (print-str (map<-WEPDF this)))))
+;;----------------------------------------------------------------
+(defn map->WECDF [m] 
+  (WECDF/sortedAndNormalized 
+    (:rng m) (double-array (:z m)) (double-array (:w m))))
+(defn map<-WECDF [^WECDF d] 
+  {#_:rng #_(.rng d) :z (vec (.getZ d)) :w (vec (.getW d))})
+(defmethod zccl/clojurize WECDF [this] (map<-WECDF this))
+(defmethod print-method WECDF [^WECDF this ^java.io.Writer w]
+  (if *print-readably*
+    (do
+      (.write w " #zana.java.prob.WECDF{")
+      #_(.write w ":rng ")
+      #_(.write w (print-str (.rng this)))
+      (.write w " :z ")
+      (.write w (print-str (vec (.getZ this))))
+      (.write w " :w ")
+      (.write w (print-str (vec (.getW this))))
+      (.write w "} "))
+    (.write w (print-str (map<-WECDF this)))))
+;;----------------------------------------------------------------
+;; EDN 
+;;----------------------------------------------------------------
+(zedn/add-edn-readers! 
+  {'zana.java.prob.WEPDF map->WEPDF
+   'zana.java.prob.WECDF map->WECDF})
+;;----------------------------------------------------------------
+;; JSON output (input not supported)
+;;----------------------------------------------------------------
+(defn- WEPDF-encoder [^WEPDF d json-generator]
+  (cheshire.generate/encode-map (map<-WEPDF d) json-generator))
+(cheshire.generate/add-encoder 
+  zana.java.prob.WEPDF WEPDF-encoder)
+(defn- WECDF-encoder [^WECDF d json-generator]
+  (cheshire.generate/encode-map (map<-WECDF d) json-generator))
+(cheshire.generate/add-encoder 
+  zana.java.prob.WECDF WECDF-encoder)
 ;;----------------------------------------------------------------

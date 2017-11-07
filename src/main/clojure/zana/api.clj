@@ -48,8 +48,9 @@
             [zana.stats.ranks :as ranks]
             [zana.stats.statistics :as stats]
             [zana.prob.empirical :as empirical]
-            [zana.prob.measure :as measure]
             [zana.prob.seed :as seed]
+            [zana.prob.prng :as probprng]
+            [zana.prob.measure :as measure]
             [zana.time.core :as time]))
 ;;----------------------------------------------------------------
 ;; commons
@@ -316,9 +317,13 @@
                 stats/singular?
                 stats/sum
                 stats/mean)
+;;----------------------------------------------------------------
+;; prob
+;;----------------------------------------------------------------
 #_(pn/import-vars empirical/quantile
                   empirical/cdf)
 (pn/import-vars seed/seed)
+(pn/import-vars probprng/well44497b)
 (pn/import-vars measure/average-wepdfs
                 measure/cdf
                 measure/make-wecdf

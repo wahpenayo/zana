@@ -1,6 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2017-10-21"
+(ns ^{:author "wahpenayo at gmail dot com" 
+      :date "2017-10-21"
       :doc "Syntatic sugar for categorical 'enum' type definition.
             Note: one per namespace; some names (eg 'singleton') are reserved.
             Best practice is one enum and a small number of related functions
@@ -60,7 +61,9 @@
          Object
          (toString [~this] (name ~label))
          (hashCode [~this]
-           (unchecked-add-int (hash ~label) (unchecked-multiply-int ~rank 37)))
+           (unchecked-add-int (hash ~label) 
+                              (unchecked-multiply-int ~rank 
+                                                      (int 37))))
          (equals [~this ~that]
            (or (identical? ~this ~that)
                (and (instance? ~ename ~that)

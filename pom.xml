@@ -63,6 +63,11 @@
  </build>
  <dependencies>
   <dependency>
+   <groupId>cheshire</groupId>
+   <artifactId>cheshire</artifactId>
+   <version>${cheshire-version}</version>
+  </dependency>
+  <dependency>
    <groupId>criterium</groupId>
    <artifactId>criterium</artifactId>
    <version>${criterium-version}</version>
