@@ -112,9 +112,9 @@
       #_(.write w ":rng ")
       #_(.write w (print-str (.rng this)))
       (.write w " :z ")
-      (.write w (print-str (vec (.getZ this))))
+      (.write w (pr-str (vec (.getZ this))))
       (.write w " :w ")
-      (.write w (print-str (vec (.getW this))))
+      (.write w (pr-str (vec (.getW this))))
       (.write w "} "))
     (.write w (print-str (map<-WEPDF this)))))
 ;;----------------------------------------------------------------
@@ -131,9 +131,9 @@
       #_(.write w ":rng ")
       #_(.write w (print-str (.rng this)))
       (.write w " :z ")
-      (.write w (print-str (vec (.getZ this))))
+      (.write w (pr-str (vec (.getZ this))))
       (.write w " :w ")
-      (.write w (print-str (vec (.getW this))))
+      (.write w (pr-str (vec (.getW this))))
       (.write w "} "))
     (.write w (print-str (map<-WECDF this)))))
 ;;----------------------------------------------------------------
