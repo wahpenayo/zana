@@ -24,6 +24,7 @@
             [zana.io.edn :as edn]
             [zana.io.paths :as paths]
             [zana.io.gz :as gz]
+            [zana.io.tsv :as tsv]
             [zana.collections.clojurize :as clojurize] 
             [zana.collections.generic :as generic]
             [zana.collections.guava :as guava]
@@ -105,6 +106,7 @@
                 edn/add-edn-readers!
                 edn/read-edn
                 edn/write-edn)
+(pn/import-vars tsv/write-tsv-file)
 ;;----------------------------------------------------------------
 ;; collections
 ;;----------------------------------------------------------------
@@ -324,8 +326,7 @@
                   empirical/cdf)
 (pn/import-vars seed/seed)
 (pn/import-vars probprng/well44497b)
-(pn/import-vars measure/average-wepdfs
-                measure/cdf
+(pn/import-vars measure/cdf
                 measure/make-wecdf
                 measure/make-wepdf
                 measure/pointmass

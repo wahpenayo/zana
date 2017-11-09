@@ -12,7 +12,8 @@
             [clojure.test :as test]
             [zana.prob.measure :as zpm]
             [zana.api :as z])
-  (:import [java.util Arrays]))
+  (:import [java.util Arrays]
+           [zana.java.prob WEPDF]))
 ;; mvn -Dtest=zana.test.prob.measure clojure:test
 ;; TODO: randomized data for larger tests
 ;;----------------------------------------------------------------
@@ -26,12 +27,12 @@
   (def w1 (double-array [3.0 1.0 2.0 1.0 2.0]))
   (def pdf0 (z/make-wepdf z0 w0))
   (def pdf1 (z/make-wepdf z0))
-  (def pdf2 (z/average-wepdfs pdf0 pdf1))
-  (def pdf3 (z/average-wepdfs pdf0 pdf1 pdf2))
-  (def pdf4 (z/average-wepdfs 
-              (z/make-wepdf (double-array [1.0 2.0 3.0]))
-              (z/make-wepdf (double-array [1.0 3.0 5.0]))
-              (z/make-wepdf (double-array [4.0 1.0 5.0]))))
+  (def pdf2 (WEPDF/average [pdf0 pdf1]))
+  (def pdf3 (WEPDF/average [pdf0 pdf1 pdf2]))
+  (def pdf4 (WEPDF/average 
+              [(z/make-wepdf (double-array [1.0 2.0 3.0]))
+               (z/make-wepdf (double-array [1.0 3.0 5.0]))
+               (z/make-wepdf (double-array [4.0 1.0 5.0]))]))
   (def cdf5 (z/make-wecdf z0 w0))
   (def cdf6 (z/make-wecdf z0))
   (def cdf7 (z/wepdf-to-wecdf pdf1))
@@ -41,13 +42,13 @@
 (test/use-fixtures :once setup)
 ;;----------------------------------------------------------------
 (test/deftest make
-   (test/is (z/approximatelyEqual pdf0 pdf1 pdf2 pdf3 pdf4 pdf8)
-            #_(str "\n0 " pdf0 "\n1 " pdf1 
-                   "\n2 " pdf2 "\n3 " pdf3
-                   "\n4 " pdf4 "\n5 " pdf8
-                   ))
-   (test/is (z/approximatelyEqual cdf5 cdf6 cdf7)
-            #_(str "\n" cdf5 "\n" cdf6 "\n" cdf7)))
+  (test/is (z/approximatelyEqual pdf0 pdf1 pdf2 pdf3 pdf4 pdf8)
+           #_(str "\n0 " pdf0 "\n1 " pdf1 
+                  "\n2 " pdf2 "\n3 " pdf3
+                  "\n4 " pdf4 "\n5 " pdf8
+                  ))
+  (test/is (z/approximatelyEqual cdf5 cdf6 cdf7)
+           #_(str "\n" cdf5 "\n" cdf6 "\n" cdf7)))
 ;;----------------------------------------------------------------
 (defn- serialization-test [rpm i]
   (let [tokens (s/split nss #"\.")

@@ -1,6 +1,7 @@
 package zana.java.prob;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -35,7 +36,7 @@ implements ApproximatelyEqual {
   private static final long serialVersionUID = 1L;
 
   private final double[] z;
-  /** Locations of point masses.
+  /** Internal locations of point masses.
    */
   public final double[] getZ () { 
     return Arrays.copyOf(z,z.length); }
@@ -323,7 +324,28 @@ implements ApproximatelyEqual {
   sortedAndNormalized (final double[] z,
                        final double[] w) { 
     return sortedAndNormalized((RandomGenerator) null,z,w); }
-
+  
+  /** Return the average distribution (convex sum with equal 
+   * weight for each distribution, not equal weight for each 
+   * datum on each distribution).
+   */
+  public static final WEPDF average (final List wepdfs) {
+    int n=0;
+    for (final Object x : wepdfs) {
+      n += ((WEPDF) x).z.length; }
+    System.out.println("average over " + wepdfs.size() + ", total points: " + n);
+    final double[] zz = new double[n];
+    final double[] ww = new double[n];
+    int i=0;
+    for (final Object x : wepdfs) {
+      final WEPDF wepdf = (WEPDF) x;
+      final double[] zi = wepdf.z;
+      final double[] wi = wepdf.w;
+      final int ni = zi.length;
+      System.arraycopy(zi,0,zz,i,ni);
+      System.arraycopy(wi,0,ww,i,ni);
+      i += ni; }
+    return make(zz,ww); }
   //--------------------------------------------------------------
 } // end class
 //----------------------------------------------------------------

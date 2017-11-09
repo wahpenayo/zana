@@ -29,23 +29,6 @@
 ;; Probably want to move interface and classes to Java in that 
 ;; case...
 ;;----------------------------------------------------------------
-(defn- dmapcat 
-  "Assume f returns <code>double[]</code>. Concatenate the arrays
-   into one big array."
-  ^doubles [f ^Iterable objects]
-  (let [arrays (mapv f objects)
-        m (count arrays)
-        n (int (reduce + 0 (map #(alength ^doubles %) arrays)))
-        out (double-array n)]
-    (loop [i 0
-           arrays arrays] 
-      (if (empty? arrays)
-        out
-        (let [^doubles zi (first arrays)
-              ni (alength zi)]
-          (System/arraycopy zi 0 out i ni)
-          (recur (+ i ni) (rest arrays)))))))
-;;----------------------------------------------------------------
 (defn- to-doubles ^doubles [z]
   (assert (not (nil? z)))
   (cond 
@@ -64,13 +47,6 @@
     (WEPDF/make (to-doubles z) (to-doubles w)))
   (^WEPDF [z]
     (WEPDF/make (to-doubles z))))
-;;----------------------------------------------------------------
-(defn average-wepdfs
-  "Return the mean probability measure."
-  (^WEPDF [& wepdfs]
-    (let [zs (dmapcat #(.getZ ^WEPDF %) wepdfs)
-          ws (dmapcat #(.getW ^WEPDF %) wepdfs)]
-      (make-wepdf zs ws))))
 ;;----------------------------------------------------------------
 (defn make-wecdf 
   "Create an instance of <code>WECDF</code>." 
