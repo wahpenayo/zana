@@ -27,7 +27,8 @@ import zana.java.math.Statistics;
  * like hurts significantly in space and time.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2017-11-06
+ * @version 2017-10-27
+ * @version 2017-11-09
  */
 
 public final class WEPDF extends AbstractRealDistribution 
@@ -301,7 +302,6 @@ implements ApproximatelyEqual {
   public static final WEPDF make (final WECDF d) {
     return make((RandomGenerator) null,d); }
 
-
   /** Create a weighted cumulative empirical distribution from
    * locations of point masses.
    * 
@@ -333,7 +333,6 @@ implements ApproximatelyEqual {
     int n=0;
     for (final Object x : wepdfs) {
       n += ((WEPDF) x).z.length; }
-    System.out.println("average over " + wepdfs.size() + ", total points: " + n);
     final double[] zz = new double[n];
     final double[] ww = new double[n];
     int i=0;
