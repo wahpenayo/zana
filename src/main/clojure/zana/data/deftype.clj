@@ -1,6 +1,8 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-09-06"
+(ns ^{:author "John Alan McDonald" 
+      :since "2016-09-06"
+      :date "2017-11-13"
       :doc "Data definition macro utilities." }
 
     zana.data.deftype
