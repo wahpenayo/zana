@@ -1,6 +1,8 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-09-06"
+(ns ^{:author "wahpenayo at gmail dot com" 
+      :since "2016-09-06"
+      :date "2017-11-13"
       :doc "Text IO." }
     
     zana.data.textout
@@ -11,12 +13,12 @@
             [zana.io.gz :as gz]
             [zana.collections.generic :as g]
             [zana.data.reflect :as r]))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; Text Output
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: output format isn't the same as input format...
 ;; TODO: put public functions in data.api
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- field-header-tokens [field]
   (let [f (str field)
         c (r/type field)
@@ -25,11 +27,11 @@
     (if-not (r/datum-class? c)
       [f]
       (mapv #(str f "-" %) child-tokens))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- emit-header-tokens [fields]
   (let [tokens (mapcat field-header-tokens fields)]
     `(def ~(with-meta 'header-tokens {:no-doc true}) [~@tokens])))
-;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: field to column header mapping
 (defn- emit-header [fields]
   (let [sep (gensym "sep")]
@@ -38,16 +40,16 @@
          (~(with-meta `[~sep] {:tag 'java.lang.String})
            (clojure.string/join ~sep ~'header-tokens))
          ([] (~'header "\t"))))))
-;;;------------------------------------------------------------------------------
+;;;----------------------------------------------------------------
 (defn- field-value-string [field datum sep]
   (let [a `(~(r/accessor field) ~datum)
         c (r/type field)
         child-values (when (r/datum-class? c)
                        (r/qualified-symbol c "values-string"))]
     (if-not (r/datum-class? c)
-      `(str ~a)
+      `(print-str ~a)
       `(~child-values ~a ~sep))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- emit-values-string [classname fields]
   (let [datum (gensym "datum")
         sep (gensym "sep")
@@ -59,7 +61,7 @@
            (clojure.string/join ~sep [~@value-strings]))
          (^String [~(with-meta datum {:tag (r/munge classname)})]
            (~'values-string ~datum "\t"))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn tsv-file-writer [classname fields]
   (let [r (with-meta (gensym "r") {:tag (r/munge classname)})
         rs (with-meta (gensym "rs") {:tag 'Iterable})
@@ -74,7 +76,8 @@
          ~(str "Write the instances of <code>" classname 
                "</code> in <code>^Iterable " rs 
                "</code> to the file <code>" f 
-               "</code>, with the field values separated by <code>" sep
+               "</code>, with the field values separated by <code>" 
+               sep
                "</code> (which defaults to <code>\"\\t\"</code>.<br>"
                "This implements a complicated and restrictive strategy for "
                "dealing with nested datum classes, and should be replaced by "
@@ -90,4 +93,4 @@
                (fn [~r] (.println ~w (~'values-string ~r ~sep)))
                ~rs)))
          ([~rs ~f] (~'write-tsv-file ~rs ~f "\t"))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------

@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2017-11-06"
+      :date "2017-11-13"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -21,6 +21,7 @@
   
   (:require [potemkin.namespaces :as pn]
             [zana.commons.core :as cc]
+            [zana.io.cheshire :as zheshire]
             [zana.io.edn :as edn]
             [zana.io.paths :as paths]
             [zana.io.gz :as gz]

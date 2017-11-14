@@ -2,7 +2,7 @@
 (set! *unchecked-math* false) ;; warnings in cheshire.generate
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2017-10-24"
-      :date "2017-11-02"
+      :date "2017-11-13"
       :doc "Probability measures over <b>R</b>." }
     
     zana.prob.measure
@@ -13,11 +13,12 @@
             [zana.collections.clojurize :as zccl]
             [zana.io.edn :as zedn]
             [zana.stats.statistics :as zss])
-  (:import [java.util Arrays]
+  (:import [java.util Arrays Map]
            [com.carrotsearch.hppc DoubleArrayList]
            [clojure.lang IFn$DO IFn$DDO]
            [org.apache.commons.math3.distribution
-            RealDistribution]
+            NormalDistribution RealDistribution 
+            UniformRealDistribution]
            [org.apache.commons.math3.random RandomGenerator]
            [zana.java.arrays Sorter]
            [zana.java.math Statistics]
@@ -29,6 +30,14 @@
 ;; Probably want to move interface and classes to Java in that 
 ;; case...
 ;;----------------------------------------------------------------
+(defn- to-double ^double [x]
+  (cond (instance? Number x) (.doubleValue ^Number x)
+        (instance? String x) (Double/parseDouble ^String x)
+        :else (throw 
+                (IllegalArgumentException. 
+                  (str "can't convert" (class x) "to double.")))))
+;;----------------------------------------------------------------
+;; TODO: move elsewhere?
 (defn- to-doubles ^doubles [z]
   (assert (not (nil? z)))
   (cond 
@@ -79,7 +88,7 @@
   (WEPDF/sortedAndNormalized  
     (:rng m) (double-array (:z m)) (double-array (:w m))))
 (defn map<-WEPDF [^WEPDF d] 
-  {#_:rng #_(.rng d) :z (vec (.getZ d)) :w (vec (.getW d))})
+  {#_:rng #_(.rng d) :z (.getZ d) :w (.getW d)})
 (defmethod zccl/clojurize WEPDF [this] (map<-WEPDF this))
 (defmethod print-method WEPDF [^WEPDF this ^java.io.Writer w]
   (if *print-readably*
@@ -88,9 +97,9 @@
       #_(.write w ":rng ")
       #_(.write w (print-str (.rng this)))
       (.write w " :z ")
-      (.write w (pr-str (vec (.getZ this))))
+      (.write w (print-str (.getZ this)))
       (.write w " :w ")
-      (.write w (pr-str (vec (.getW this))))
+      (.write w (print-str (.getW this)))
       (.write w "} "))
     (.write w (print-str (map<-WEPDF this)))))
 ;;----------------------------------------------------------------
@@ -98,7 +107,7 @@
   (WECDF/sortedAndNormalized 
     (:rng m) (double-array (:z m)) (double-array (:w m))))
 (defn map<-WECDF [^WECDF d] 
-  {#_:rng #_(.rng d) :z (vec (.getZ d)) :w (vec (.getW d))})
+  {#_:rng #_(.rng d) :z (.getZ d) :w (.getW d)})
 (defmethod zccl/clojurize WECDF [this] (map<-WECDF this))
 (defmethod print-method WECDF [^WECDF this ^java.io.Writer w]
   (if *print-readably*
@@ -107,17 +116,78 @@
       #_(.write w ":rng ")
       #_(.write w (print-str (.rng this)))
       (.write w " :z ")
-      (.write w (pr-str (vec (.getZ this))))
+      (.write w (print-str (.getZ this)))
       (.write w " :w ")
-      (.write w (pr-str (vec (.getW this))))
+      (.write w (print-str (.getW this)))
       (.write w "} "))
     (.write w (print-str (map<-WECDF this)))))
+;;----------------------------------------------------------------
+;; serializing other RealDistributions to Strings that can be used 
+;; in EDN or TSV files.
+;; Not attempting to serialize RandomGenerators.
+;;----------------------------------------------------------------
+(defn map<-NormalDistribution 
+  ^Map [^NormalDistribution d] 
+  {:mean (.getMean d) 
+   :standardDeviation (.getStandardDeviation d)})
+(defn map->NormalDistribution 
+  ^NormalDistribution [^Map m] 
+  (NormalDistribution. 
+    (to-double (:mean m)) 
+    (to-double (:standardDeviation m))))
+(defmethod zccl/clojurize 
+  NormalDistribution 
+  [^NormalDistribution this]
+  (map<-NormalDistribution this))
+(defmethod print-method 
+  NormalDistribution 
+  [^NormalDistribution this ^java.io.Writer w]
+  (.write w " #org.apache.commons.math3.distribution.")
+  (.write w "NormalDistribution{")
+  (.write w ",:mean,")
+  (.write w (Double/toString (.getMean this)))
+  (.write w ",:standardDeviation,")
+  (.write w (Double/toString (.getStandardDeviation this)))
+  (.write w "}"))
+;;----------------------------------------------------------------
+(defn map<-UniformRealDistribution 
+  ^Map [^UniformRealDistribution d] 
+  {:supportLowerBound (.getSupportLowerBound d)
+   :supportUpperBound (.getSupportUpperBound d)})
+(defn map->UniformRealDistribution 
+  ^UniformRealDistribution [^Map m] 
+  (UniformRealDistribution. 
+    (to-double (:supportLowerBound m))
+    (to-double (:supportUpperBound m))))
+(defmethod zccl/clojurize 
+  UniformRealDistribution 
+  [^UniformRealDistribution this]
+  (map<-UniformRealDistribution this))
+(defmethod print-method 
+  UniformRealDistribution 
+  [^UniformRealDistribution this ^java.io.Writer w]
+  (.write w " #org.apache.commons.math3.distribution.")
+  (.write w "UniformRealDistribution{")
+  (.write w ",:supportLowerBound,")
+  (.write w (Double/toString (.getSupportLowerBound this)))
+  (.write w ",:supportUpperBound,")
+  (.write w (Double/toString (.getSupportUpperBound this)))
+  (.write w "}"))
 ;;----------------------------------------------------------------
 ;; EDN 
 ;;----------------------------------------------------------------
 (zedn/add-edn-readers! 
-  {'zana.java.prob.WEPDF map->WEPDF
-   'zana.java.prob.WECDF map->WECDF})
+  {'zana.java.prob.WEPDF 
+   map->WEPDF
+   
+   'zana.java.prob.WECDF 
+   map->WECDF
+   
+   'org.apache.commons.math3.distribution.NormalDistribution
+   map->NormalDistribution
+   
+   'org.apache.commons.math3.distribution.UniformRealDistribution
+   map->UniformRealDistribution})
 ;;----------------------------------------------------------------
 ;; JSON output (input not supported)
 ;;----------------------------------------------------------------
@@ -129,4 +199,18 @@
   (cheshire.generate/encode-map (map<-WECDF d) json-generator))
 (cheshire.generate/add-encoder 
   zana.java.prob.WECDF WECDF-encoder)
+(defn- NormalDistribution-encoder 
+  [^NormalDistribution d json-generator]
+  (cheshire.generate/encode-map 
+    (map<-NormalDistribution d) json-generator))
+(cheshire.generate/add-encoder 
+  org.apache.commons.math3.distribution.NormalDistribution
+  NormalDistribution-encoder)
+(defn- UniformRealDistribution-encoder 
+  [^UniformRealDistribution d json-generator]
+  (cheshire.generate/encode-map 
+    (map<-UniformRealDistribution d) json-generator))
+(cheshire.generate/add-encoder 
+  org.apache.commons.math3.distribution.UniformRealDistribution
+  UniformRealDistribution-encoder)
 ;;----------------------------------------------------------------
