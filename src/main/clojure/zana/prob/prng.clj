@@ -51,8 +51,8 @@
    <p>   
    See Fran&ccedil;ois Panneton,Pierre L'Ecuyer and Makoto Matsumoto
    <a href=\"http://www.iro.umontreal.ca/~lecuyer/myftp/papers/wellrng.pdf\">
-   <i>Improved Long-Period Generators Based on Linear Recurrences Modulo 2</i<></a> 
-   <b>ACM Trans. Math. Software 32</b? (1) 2006, and
+   <i>Improved Long-Period Generators Based on Linear Recurrences Modulo 2</i></a> 
+   <b>ACM Trans. Math. Software 32</b> (1) 2006, and
    <a href=\"http://www.iro.umontreal.ca/~lecuyer/myftp/papers/wellrng-errata.txt\">
    errata</a>.
    <p>

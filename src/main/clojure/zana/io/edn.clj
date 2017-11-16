@@ -2,7 +2,7 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2017-01-13"
-      :date "2017-11-13"
+      :date "2017-11-15"
       :doc "Global reader map for EDN input." }
     
     zana.io.edn
@@ -159,6 +159,7 @@
    [EDN](https://github.com/edn-format/edn) (clojure) syntax." 
   
   [thing file]
+
   (with-open [w (gz/print-writer file)]
     (binding [*print-readably* true
               *out* w] 
@@ -166,11 +167,15 @@
 ;;----------------------------------------------------------------
 (defn read-edn
   
-  "Read a thing serialized to <code>file</code> in  
-   [EDN](https://github.com/edn-format/edn) (clojure) syntax." 
+  "Read a thing serialized to <code>x</code> 
+   (a String or something that be coerced to a reader)
+   in [EDN](https://github.com/edn-format/edn) (clojure) syntax." 
   
-  [file]
-  (with-open [r (clojure.lang.LineNumberingPushbackReader. 
-                  (gz/reader file))]
-    (edn/read {:readers (edn-readers)} r)))
+  [x]
+  
+  (if (instance? String x)
+    (edn/read-string {:readers (edn-readers)} x)
+    (with-open [r (clojure.lang.LineNumberingPushbackReader. 
+                    (gz/reader x))]
+      (edn/read {:readers (edn-readers)} r))))
 ;;----------------------------------------------------------------

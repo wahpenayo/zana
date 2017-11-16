@@ -240,7 +240,8 @@
    </code>
    </pre>
    </li>
-   <li><code>(values-string datum sep)</code> applies <code>str</code> to each 
+   <li><code>(values-string datum sep)</code> applies 
+   <code>print-str</code> to each 
    field value and joins the result with <code>sep</code>.
    </li>
    <li><code>(values-string datum)</code> same as 

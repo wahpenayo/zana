@@ -111,7 +111,9 @@
     (if (r/datum-class? c)
       `(fn ~'parse-datum ~(with-meta `[~arg ~archetype] {:tag c})
          (let [^String ~value (~k ~tuple)]
-           (~(r/qualified-symbol c "parse-tuple") ~value ~archetype)))
+           (when ~value
+             (~(r/qualified-symbol c "parse-tuple") 
+               ~value ~archetype))))
       (case hint
         ;; map empty Strings, "nil", etc, to nil == missing
         ;; TODO: support general codes for missing

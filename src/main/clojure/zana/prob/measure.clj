@@ -2,7 +2,7 @@
 (set! *unchecked-math* false) ;; warnings in cheshire.generate
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2017-10-24"
-      :date "2017-11-13"
+      :date "2017-11-15"
       :doc "Probability measures over <b>R</b>." }
     
     zana.prob.measure
@@ -22,7 +22,8 @@
            [org.apache.commons.math3.random RandomGenerator]
            [zana.java.arrays Sorter]
            [zana.java.math Statistics]
-           [zana.java.prob ApproximatelyEqual WECDF WEPDF]))
+           [zana.java.prob ApproximatelyEqual 
+            TranslatedRealDistribution WECDF WEPDF]))
 (set! *unchecked-math* :warn-on-boxed)
 ;;----------------------------------------------------------------
 ;; TODO: use float arrays but calculate in double to eliminate 
@@ -126,11 +127,11 @@
 ;; in EDN or TSV files.
 ;; Not attempting to serialize RandomGenerators.
 ;;----------------------------------------------------------------
-(defn map<-NormalDistribution 
+(defn- map<-NormalDistribution 
   ^Map [^NormalDistribution d] 
   {:mean (.getMean d) 
    :standardDeviation (.getStandardDeviation d)})
-(defn map->NormalDistribution 
+(defn- map->NormalDistribution 
   ^NormalDistribution [^Map m] 
   (NormalDistribution. 
     (to-double (:mean m)) 
@@ -142,7 +143,7 @@
 (defmethod print-method 
   NormalDistribution 
   [^NormalDistribution this ^java.io.Writer w]
-  (.write w " #org.apache.commons.math3.distribution.")
+  (.write w "#org.apache.commons.math3.distribution.")
   (.write w "NormalDistribution{")
   (.write w ",:mean,")
   (.write w (Double/toString (.getMean this)))
@@ -150,11 +151,11 @@
   (.write w (Double/toString (.getStandardDeviation this)))
   (.write w "}"))
 ;;----------------------------------------------------------------
-(defn map<-UniformRealDistribution 
+(defn- map<-UniformRealDistribution 
   ^Map [^UniformRealDistribution d] 
   {:supportLowerBound (.getSupportLowerBound d)
    :supportUpperBound (.getSupportUpperBound d)})
-(defn map->UniformRealDistribution 
+(defn- map->UniformRealDistribution 
   ^UniformRealDistribution [^Map m] 
   (UniformRealDistribution. 
     (to-double (:supportLowerBound m))
@@ -166,12 +167,38 @@
 (defmethod print-method 
   UniformRealDistribution 
   [^UniformRealDistribution this ^java.io.Writer w]
-  (.write w " #org.apache.commons.math3.distribution.")
+  (.write w "#org.apache.commons.math3.distribution.")
   (.write w "UniformRealDistribution{")
   (.write w ",:supportLowerBound,")
   (.write w (Double/toString (.getSupportLowerBound this)))
   (.write w ",:supportUpperBound,")
   (.write w (Double/toString (.getSupportUpperBound this)))
+  (.write w "}"))
+;;----------------------------------------------------------------
+(defn- map<-TranslatedRealDistribution 
+  ^Map [^TranslatedRealDistribution d] 
+  {:dz (.getDz d) :rd (.getRd d)})
+(defn- map->TranslatedRealDistribution 
+  ^TranslatedRealDistribution [^Map m] 
+  ;; handle case where inner distribution is represented by an EDN 
+  ;; string
+  (let [dz (to-double (:dz m))
+        rd (:rd m)
+        rd (if (string? rd) (zedn/read-edn rd) rd)]
+  (TranslatedRealDistribution/shift rd dz)))
+(defmethod zccl/clojurize 
+  TranslatedRealDistribution 
+  [^TranslatedRealDistribution this]
+  (map<-TranslatedRealDistribution this))
+(defmethod print-method 
+  TranslatedRealDistribution 
+  [^TranslatedRealDistribution this ^java.io.Writer w]
+  (.write w " #zana.java.prob.")
+  (.write w "TranslatedRealDistribution{")
+  (.write w ",:dz,")
+  (.write w (Double/toString (.getDz this)))
+  (.write w ",:rd,")
+  (.write w (print-str (.getRd this)))
   (.write w "}"))
 ;;----------------------------------------------------------------
 ;; EDN 
@@ -187,7 +214,11 @@
    map->NormalDistribution
    
    'org.apache.commons.math3.distribution.UniformRealDistribution
-   map->UniformRealDistribution})
+   map->UniformRealDistribution
+   
+   
+   'zana.java.prob.TranslatedRealDistribution
+   map->TranslatedRealDistribution})
 ;;----------------------------------------------------------------
 ;; JSON output (input not supported)
 ;;----------------------------------------------------------------

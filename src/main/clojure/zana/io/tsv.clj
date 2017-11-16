@@ -2,7 +2,7 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2017-11-08"
-      :date "2017-11-08"
+      :date "2017-11-15"
       :doc "Read and write tab-separated files.
            <p>
            Reading not yet implemented.
@@ -19,7 +19,8 @@
             [zana.io.gz :as gz])
   
   (:import [java.util Map]
-           [java.io File]))
+           [java.io File]
+           [clojure.lang IFn IFn$OD]))
 ;;----------------------------------------------------------------
 (defn write-tsv-file 
   "Write the chosen <code>attributes</cpde>data</code> to the
@@ -32,7 +33,7 @@
        The function is applied to each element of 
        <code>data</code> to get the corresponding column values,
        which are converted to strings by calling 
-       <code>clojure.core/str</code>. 
+       <code>clojure.core/print-str</code>. 
        <i>(TODO: a map of attribute keyword to stringify function 
        as another arg?).</i>
     </dd>
@@ -65,9 +66,18 @@
           line (fn line [datum]
                  (s/join 
                    sep 
-                   (map (fn value-string [k] 
-                          (str ((.get attributes k) datum)))
-                        ks)))]
+                   (map 
+                     (fn to-string ^String [k]
+                       ;; clojure 1.9.0 ## syntax screws up doubles and floats
+                       (let [^IFn x (.get attributes k)]
+                         (if (instance? IFn$OD x)
+                           (Double/toString 
+                             (.invokePrim ^IFn$OD x datum))
+                           (let [xi (x datum)]
+                             (if (instance? Number xi)
+                               (str xi)
+                               (print-str xi))))))
+                     ks)))]
       (with-open [w (gz/print-writer f)]
         (.println w header)
         (zgc/mapc #(.println w (line %)) data))))
