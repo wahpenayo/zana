@@ -28,7 +28,7 @@ import zana.java.math.Statistics;
  * 
  * @author wahpenayo at gmail dot com
  * @version 2017-10-27
- * @version 2017-11-09
+ * @version 2017-11-15
  */
 
 public final class WEPDF extends AbstractRealDistribution 
@@ -253,15 +253,14 @@ implements ApproximatelyEqual {
       else {
         // no tie, increment both counters
         // copy to left counter if needed
-        i++;
-        if (i != j) { 
-          zi = zj; wi = wj; z1[i] = zj; w1[i] = wj; } } }
+        i++; zi = zj; wi = wj; 
+        if (i != j) { z1[i] = zj; w1[i] = wj; } } }
 
     // copy into shorter arrays if needed
     final double[] z2;
     final double[] w2;
     final int nn = i + 1;
-    if (nn ==  n) { 
+    if (nn == n) { 
       z2 = z1; w2 = w1; }
     else { 
       z2 = Arrays.copyOf(z1,nn); w2 = Arrays.copyOf(w1,nn); } 
