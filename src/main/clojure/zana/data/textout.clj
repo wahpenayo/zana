@@ -2,7 +2,7 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
       :since "2016-09-06"
-      :date "2017-11-13"
+      :date "2017-11-15"
       :doc "Text IO." }
     
     zana.data.textout
@@ -40,7 +40,8 @@
          (~(with-meta `[~sep] {:tag 'java.lang.String})
            (clojure.string/join ~sep ~'header-tokens))
          ([] (~'header "\t"))))))
-;;;----------------------------------------------------------------
+;;----------------------------------------------------------------
+;; TODO: handle recursive datums with missing (nil) subobjects
 (defn- field-value-string [field datum sep]
   (let [a `(~(r/accessor field) ~datum)
         c (r/type field)
@@ -56,7 +57,8 @@
         value-strings (mapv #(field-value-string % datum sep) fields)]
     `((require 'clojure.string)
        (defn ~(with-meta 'values-string {:no-doc true}) 
-         (^String [~(with-meta datum {:tag (r/munge classname)})
+         (^String 
+          [~(with-meta datum {:tag (r/munge classname)})
            ~(with-meta sep {:tag 'String})]
            (clojure.string/join ~sep [~@value-strings]))
          (^String [~(with-meta datum {:tag (r/munge classname)})]
