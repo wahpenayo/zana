@@ -327,7 +327,7 @@ public final class Statistics {
     float z0 = z[0];
     for (int i=1;i<z.length;i++) {
       final float z1 = z[i];
-      if (z0 >=-z1) { return false; } 
+      if (z0 >= z1) { return false; } 
       z0 = z1; }
     return true; }
   //--------------------------------------------------------------
@@ -335,7 +335,11 @@ public final class Statistics {
     float z0 = z[0];
     for (int i=1;i<z.length;i++) {
       final float z1 = z[i];
-      if (z0 >-z1) { return false; } 
+      if (z0 > z1) { 
+        System.out.println("Failed at " + i + " : " + z.length 
+          + " : " +  z0 + " > " + z1);
+        System.out.println(Arrays.toString(z));
+        return false; } 
       z0 = z1; }
     return true; }
   //--------------------------------------------------------------

@@ -235,9 +235,11 @@ implements ApproximatelyEqual {
     final float[] z1 = Arrays.copyOf(z,n);
     final float[] w1 = Arrays.copyOf(w,n);
     Sorter.quicksort(z1,w1);
+    
     // TODO: better messages with large arrays
     assert Statistics.notDecreasing(z1) :
         "not non-decreasing:\n" + Arrays.toString(z1);
+    
     // compact ties in z
     int i = 0;
     float zi = z1[i];
