@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.MathArrays;
-import org.apache.commons.math3.util.MathArrays.OrderDirection;
 
 import zana.java.arrays.Sorter;
 import zana.java.math.Statistics;
@@ -27,7 +25,7 @@ import zana.java.math.Statistics;
  * like hurts significantly in space and time.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2017-11-06
+ * @version 2017-12-06
  */
 
 public final class WECDF extends AbstractRealDistribution 
@@ -35,16 +33,16 @@ implements ApproximatelyEqual {
 
   private static final long serialVersionUID = 1L;
 
-  private final double[] z;
+  private final float[] z;
   /** Locations of point masses.
    */
-  public final double[] getZ () { 
+  public final float[] getZ () { 
     return Arrays.copyOf(z,z.length); }
 
-  private final double[] w;
+  private final float[] w;
   /** Cumulative weight: <code>w[i] = \sum_0^i mass[i]</CODE>.
    */
-  public final double[] getW () { 
+  public final float[] getW () { 
     return Arrays.copyOf(w,w.length); }
 
   //--------------------------------------------------------------
@@ -53,14 +51,14 @@ implements ApproximatelyEqual {
 
   @Override
   public final double probability (final double x) {
-    final int i = Arrays.binarySearch(z, x);
+    final int i = Arrays.binarySearch(z, (float) x);
     if (0 > i) { return 0.0; }
     if (0 == i) { return w[0]; }
     return w[i] - w[i-1]; }
 
   @Override
   public final double cumulativeProbability (final double x) {
-    final int i = Arrays.binarySearch(z, x);
+    final int i = Arrays.binarySearch(z, (float) x);
     final int j;
     if (0 <= i) { j = i; }
     else { j = -2 - i; }
@@ -72,12 +70,12 @@ implements ApproximatelyEqual {
     assert ((0.0 <= p) && (p <= 1.0));
     if (0.0 == p) { return Double.NEGATIVE_INFINITY; }
     if (1.0 == p) { return z[z.length-1]; }
-    final int i = Arrays.binarySearch(w,p);
+    final int i = Arrays.binarySearch(w,(float) p);
     if (0 <= i) { return z[i]; }
     final int j = -1 - i; 
     if (0 > j) { return Double.NEGATIVE_INFINITY; }
     if (0 == j) { return z[0]; }
-    if ((p - w[j-1]) < Math.ulp(1.0)) { return z[j-1]; }
+    if ((p - w[j-1]) < Math.ulp(1.0F)) { return z[j-1]; }
     return z[j]; }
 
   @Override
@@ -148,13 +146,18 @@ implements ApproximatelyEqual {
       Statistics.approximatelyEqual(w,((WECDF) that).w); }
 
   @Override
-  public final boolean approximatelyEqual (final double delta,
+  public final boolean approximatelyEqual (final float delta,
                                            final ApproximatelyEqual that) {
     if (! (that instanceof WECDF)) { return false; }
     return 
       Statistics.approximatelyEqual(delta,z,((WECDF) that).z) 
       &&
       Statistics.approximatelyEqual(delta,w,((WECDF) that).w); }
+
+  @Override
+  public final boolean approximatelyEqual (final double delta,
+                                           final ApproximatelyEqual that) {
+    return approximatelyEqual((float) delta,that); }
 
   //--------------------------------------------------------------
   // Object interface
@@ -200,18 +203,16 @@ implements ApproximatelyEqual {
    */
 
   private WECDF (final RandomGenerator rng,
-                 final double[] zz,
-                 final double[] ww) { 
+                 final float[] zz,
+                 final float[] ww) { 
     super(rng); 
     // TODO: better messages with large arrays
     assert zz.length == ww.length :
       "Unequal lengths: zz=" + zz.length + ", ww=" + ww.length;
     assert Statistics.isFinite(zz) : Arrays.toString(zz);
-    assert MathArrays.isMonotonic(
-      zz, OrderDirection.INCREASING, true) :
+    assert Statistics.isIncreasing(zz) :
         "not increasing:\n" + Arrays.toString(zz);
-      assert MathArrays.isMonotonic(
-        ww, OrderDirection.INCREASING, true) :
+      assert Statistics.isIncreasing(ww) :
           "not increasing:\n" + Arrays.toString(ww);
         assert Statistics.hasConvexElements(ww) :
           "not convex: " + Arrays.toString(ww);
@@ -229,27 +230,27 @@ implements ApproximatelyEqual {
    * @param w weight of each point mass. Need not be normalized.
    */
   public static final WECDF make (final RandomGenerator rng,
-                                  final double[] z,
-                                  final double[] w) {
+                                  final float[] z,
+                                  final float[] w) {
     // sort on z
     final int n = z.length;
     assert n == w.length;
     assert Statistics.isPositive(w) : Arrays.toString(w);
-    final double[] z1 = Arrays.copyOf(z,n);
-    final double[] w1 = Arrays.copyOf(w,n);
+    final float[] z1 = Arrays.copyOf(z,n);
+    final float[] w1 = Arrays.copyOf(w,n);
     Sorter.quicksort(z1,w1);
     // TODO: better messages with large arrays
-    assert MathArrays.isMonotonic(z1, OrderDirection.INCREASING, false) :
+    assert Statistics.notDecreasing(z1) :
       "not non-decreasing:\n" + Arrays.toString(z1);
 
     // compact ties in z
     int i = 0;
-    double zi = z1[i];
-    double wi = w1[i];
+    float zi = z1[i];
+    float wi = w1[i];
     for (int j=1;j<n;j++) {
       // check for continuing ties in z
-      final double zj = z1[j];
-      final double wj = w1[j];
+      final float zj = z1[j];
+      final float wj = w1[j];
       if (zi == zj) {
         // tie, increment weight, move right counter
         wi += wj;
@@ -262,8 +263,8 @@ implements ApproximatelyEqual {
           zi = zj; wi = wj; z1[i] = zj; w1[i] = wj; } } }
 
     // copy into shorter arrays if needed
-    final double[] z2;
-    final double[] w2;
+    final float[] z2;
+    final float[] w2;
     final int nn = i + 1;
     if (nn ==  n) { 
       z2 = z1; w2 = w1; }
@@ -280,8 +281,8 @@ implements ApproximatelyEqual {
    * need not be sorted.
    * @param w weight of each point mass. Need not be normalized.
    */
-  public static final WECDF make (final double[] z,
-                                  final double[] w) { 
+  public static final WECDF make (final float[] z,
+                                  final float[] w) { 
     return make((RandomGenerator) null,z,w); }
 
   /** Create a weighted cumulative empirical distribution from
@@ -290,9 +291,9 @@ implements ApproximatelyEqual {
    * @param z locations of point masses. May have duplicates;
    * need not be sorted.
    */
-  public static final WECDF make (final double[] z) {
-    final double[] w = new double[z.length];
-    Arrays.fill(w,1.0);
+  public static final WECDF make (final float[] z) {
+    final float[] w = new float[z.length];
+    Arrays.fill(w,1.0F);
     return make(z,w); }
 
   /** Create a weighted cumulative empirical distribution from
@@ -316,8 +317,8 @@ implements ApproximatelyEqual {
    */
   public static final WECDF 
   sortedAndNormalized (final RandomGenerator rng,
-                       final double[] z,
-                       final double[] w) { 
+                       final float[] z,
+                       final float[] w) { 
     return new WECDF(rng,z,w); }
 
   /** Create a weighted cumulative empirical distribution from
@@ -327,8 +328,8 @@ implements ApproximatelyEqual {
    * @param w normalized cumulative weight of each point mass. 
    */
   public static final WECDF 
-  sortedAndNormalized (final double[] z,
-                       final double[] w) { 
+  sortedAndNormalized (final float[] z,
+                       final float[] w) { 
     return sortedAndNormalized((RandomGenerator) null,z,w); }
 
   //--------------------------------------------------------------

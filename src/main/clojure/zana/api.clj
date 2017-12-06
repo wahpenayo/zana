@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2017-11-13"
+      :date "2017-12-06"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -300,7 +300,8 @@
 ;;----------------------------------------------------------------
 ;; stats
 ;;----------------------------------------------------------------
-(pn/import-vars stats/approximately==
+(pn/import-vars stats/float-approximately==
+                stats/approximately==
                 stats/approximatelyEqual
                 stats/bounding-box
                 stats/bounds

@@ -1,8 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "palisades dot lakes at gmail dot com"
-      :since "2017-10-24"
-      :date "2017-11-06"
+      :date "2017-12-06"
       :doc "Unit tests for zana.prob.measure."}
     
     zana.test.prob.measure
@@ -19,20 +18,20 @@
 ;;----------------------------------------------------------------
 (def nss (str *ns*))
 (defn setup [tests]
-  (def z0 (double-array 
+  (def z0 (float-array 
             [1.0 2.0 3.0 1.0 3.0 5.0 4.0 1.0 5.0]))
-  (def ^double n0 (double (alength ^doubles z0)))
-  (def w0 (double-array n0 1.0))
-  (def z1 (double-array [1.0 2.0 3.0 4.0 5.0]))
-  (def w1 (double-array [3.0 1.0 2.0 1.0 2.0]))
+  (def ^double n0 (double (alength ^floats z0)))
+  (def w0 (float-array n0 1.0))
+  (def z1 (float-array [1.0 2.0 3.0 4.0 5.0]))
+  (def w1 (float-array [3.0 1.0 2.0 1.0 2.0]))
   (def pdf0 (z/make-wepdf z0 w0))
   (def pdf1 (z/make-wepdf z0))
   (def pdf2 (WEPDF/average [pdf0 pdf1]))
   (def pdf3 (WEPDF/average [pdf0 pdf1 pdf2]))
   (def pdf4 (WEPDF/average 
-              [(z/make-wepdf (double-array [1.0 2.0 3.0]))
-               (z/make-wepdf (double-array [1.0 3.0 5.0]))
-               (z/make-wepdf (double-array [4.0 1.0 5.0]))]))
+              [(z/make-wepdf (float-array [1.0 2.0 3.0]))
+               (z/make-wepdf (float-array [1.0 3.0 5.0]))
+               (z/make-wepdf (float-array [4.0 1.0 5.0]))]))
   (def cdf5 (z/make-wecdf z0 w0))
   (def cdf6 (z/make-wecdf z0))
   (def cdf7 (z/wepdf-to-wecdf pdf1))
@@ -73,19 +72,21 @@
                 wi (aget w1 i)
                 pi (z/cdf rpm zi)]
             (println i zi wi pi (z/quantile rpm pi))))
-      (test/is (== Double/NEGATIVE_INFINITY (z/quantile rpm 0.0)))
-      (test/is (== 1.0 (z/quantile rpm (/ 1.0 n0))))
-      (test/is (== 1.0 (z/quantile rpm (/ 2.0 n0))))
-      (test/is (== 1.0 (z/quantile rpm (/ 3.0 n0))))
-      (test/is (== 2.0 (z/quantile rpm (/ 3.5 n0))))
-      (test/is (== 2.0 (z/quantile rpm (/ 4.0 n0))))
-      (test/is (== 3.0 (z/quantile rpm (/ 5.0 n0))))
-      (test/is (== 3.0 (z/quantile rpm (/ 6.0 n0))))
-      (test/is (== 4.0 (z/quantile rpm (/ 6.5 n0))))
-      (test/is (== 4.0 (z/quantile rpm (/ 7.0 n0))))
-      (test/is (== 5.0 (z/quantile rpm (/ 8.0 n0))))
-      (test/is (== 5.0 (z/quantile rpm (/ 9.0 n0))))
-      (test/is (== 5.0 (z/quantile rpm 1.0))))))
+      (test/is (== Double/NEGATIVE_INFINITY 
+                   (z/quantile rpm (float 0.0))))
+      (test/is (== 1.0 (z/quantile rpm (float (/ 1.0 n0)))))
+      (test/is (== 1.0 (z/quantile rpm (float (/ 2.0 n0)))))
+      (test/is (== 1.0 (z/quantile rpm (/ 3.0 n0)))
+               (print-str (/ 3.0 n0) (class rpm) rpm))
+      (test/is (== 2.0 (z/quantile rpm (float (/ 3.5 n0)))))
+      (test/is (== 2.0 (z/quantile rpm (float (/ 4.0 n0)))))
+      (test/is (== 3.0 (z/quantile rpm (float (/ 5.0 n0)))))
+      (test/is (== 3.0 (z/quantile rpm (float (/ 6.0 n0)))))
+      (test/is (== 4.0 (z/quantile rpm (float (/ 6.5 n0)))))
+      (test/is (== 4.0 (z/quantile rpm (float (/ 7.0 n0)))))
+      (test/is (== 5.0 (z/quantile rpm (float (/ 8.0 n0)))))
+      (test/is (== 5.0 (z/quantile rpm (float (/ 9.0 n0)))))
+      (test/is (== 5.0 (z/quantile rpm (float 1.0)))))))
 ;;----------------------------------------------------------------
 ;; TODO: better sum algorithm in cdf to get rid of z/approximately==
 (test/deftest pointmass
@@ -94,12 +95,22 @@
       #_(println rpm)
       (test/is (== 0.0 (z/pointmass rpm -1.0)))
       (test/is (== 0.0 (z/pointmass rpm 0.0)))
-      (test/is (z/approximately== (/ 3.0 n0) (z/pointmass rpm 1.0)))
+      (test/is (z/float-approximately== 
+                 (float (/ 3.0 n0))
+                 (float (z/pointmass rpm 1.0))))
       (test/is (== 0.0 (z/pointmass rpm 1.5)))
-      (test/is (z/approximately== (/ 1.0 n0) (z/pointmass rpm 2.0)))
-      (test/is (z/approximately== (/ 2.0 n0) (z/pointmass rpm 3.0)))
-      (test/is (z/approximately== (/ 1.0 n0) (z/pointmass rpm 4.0)))
-      (test/is (z/approximately== (/ 2.0 n0) (z/pointmass rpm 5.0)))
+      (test/is (z/float-approximately== 
+                 (float (/ 1.0 n0))
+                 (float (z/pointmass rpm 2.0))))
+      (test/is (z/float-approximately== 
+                 (float (/ 2.0 n0))
+                 (float (z/pointmass rpm 3.0))))
+      (test/is (z/float-approximately== 
+                 (float (/ 1.0 n0))
+                 (float (z/pointmass rpm 4.0))))
+      (test/is (z/float-approximately== 
+                 (float (/ 2.0 n0))
+                 (float (z/pointmass rpm 5.0))))
       (test/is (== 0.0 (z/pointmass rpm 6.0))))))
 ;;----------------------------------------------------------------
 ;; TODO: better sum algorithm in cdf to get rid of z/approximately==
@@ -108,11 +119,25 @@
     (doseq [rpm rpms] 
       (test/is (== 0.0 (z/cdf rpm -1.0)))
       (test/is (== 0.0 (z/cdf rpm 0.0)))
-      (test/is (z/approximately== (/ 3.0 n0) (z/cdf rpm 1.0)))
-      (test/is (z/approximately== (/ 3.0 n0) (z/cdf rpm 1.5)))
-      (test/is (z/approximately== (/ 4.0 n0) (z/cdf rpm 2.0)))
-      (test/is (z/approximately== (/ 6.0 n0) (z/cdf rpm 3.0)))
-      (test/is (z/approximately== (/ 7.0 n0) (z/cdf rpm 4.0)))
-      (test/is (z/approximately== (/ 9.0 n0) (z/cdf rpm 5.0)))
-      (test/is (z/approximately== (/ 9.0 n0) (z/cdf rpm 6.0))))))
+      (test/is (z/float-approximately== 
+                 (float (/ 3.0 n0)) 
+                 (float (z/cdf rpm 1.0))))
+      (test/is (z/float-approximately== 
+                 (float (/ 3.0 n0) ) 
+                 (float (z/cdf rpm 1.5))))
+      (test/is (z/float-approximately== 
+                 (float (/ 4.0 n0) ) 
+                 (float (z/cdf rpm 2.0))))
+      (test/is (z/float-approximately== 
+                 (float (/ 6.0 n0) ) 
+                 (float (z/cdf rpm 3.0))))
+      (test/is (z/float-approximately== 
+                 (float (/ 7.0 n0) ) 
+                 (float (z/cdf rpm 4.0))))
+      (test/is (z/float-approximately== 
+                 (float (/ 9.0 n0) ) 
+                 (float (z/cdf rpm 5.0))))
+      (test/is (z/float-approximately== 
+                 (float (/ 9.0 n0) ) 
+                 (float (z/cdf rpm 6.0)))))))
 ;;----------------------------------------------------------------

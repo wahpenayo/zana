@@ -1,8 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* false) ;; warnings in cheshire.generate
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :since "2017-10-24"
-      :date "2017-11-15"
+      :date "2017-12-06"
       :doc "Probability measures over <b>R</b>." }
     
     zana.prob.measure
@@ -14,7 +13,7 @@
             [zana.io.edn :as zedn]
             [zana.stats.statistics :as zss])
   (:import [java.util Arrays Map]
-           [com.carrotsearch.hppc DoubleArrayList]
+           [com.carrotsearch.hppc DoubleArrayList FloatArrayList]
            [clojure.lang IFn$DO IFn$DDO]
            [org.apache.commons.math3.distribution
             NormalDistribution RealDistribution 
@@ -49,23 +48,54 @@
             (IllegalArgumentException.
               (str "can't convert " (class z) " to double[]")))))
 ;;----------------------------------------------------------------
+;; TODO: move elsewhere?
+(defn- doubles-to-floats ^floats [^doubles z]
+  (let [n (alength z)
+        f (float-array n)]
+    (dotimes [i n]
+      (aset-float f i (float (aget z i))))
+    f)) 
+;;----------------------------------------------------------------
+;; TODO: move elsewhere?
+(defn- to-floats ^floats [z]
+  (assert (not (nil? z)))
+  (cond (zcc/float-array? z) 
+        z
+        
+        (zcc/double-array? z) 
+        (doubles-to-floats z)
+        
+        (instance? FloatArrayList z)
+        (.toArray ^FloatArrayList z)
+        
+        (instance? DoubleArrayList z) 
+        (doubles-to-floats (.toArray ^DoubleArrayList z))
+        
+        (vector? z) 
+        (float-array z)
+        
+        :else 
+        (throw 
+          (IllegalArgumentException.
+            (str "can't convert " (class z) " to float[]")))))
+;;----------------------------------------------------------------
 (defn make-wepdf 
   "Create an instance of <code>WEPDF</code>." 
   (^WEPDF [^RandomGenerator prng z w]
-    (WEPDF/make prng (to-doubles z) (to-doubles w)))
+    (WEPDF/make prng (to-floats z) (to-floats w)))
   (^WEPDF [z w]
-    (WEPDF/make (to-doubles z) (to-doubles w)))
+    (WEPDF/make (to-floats z) (to-floats w)))
   (^WEPDF [z]
-    (WEPDF/make (to-doubles z))))
+    (WEPDF/make (to-floats z))))
 ;;----------------------------------------------------------------
 (defn make-wecdf 
   "Create an instance of <code>WECDF</code>." 
   (^WECDF [^RandomGenerator prng z w]
-    (WECDF/make prng (to-doubles z) (to-doubles w)))
+    (WECDF/make prng (to-floats z) (to-floats w)))
   (^WECDF [z w]
-    (WECDF/make (to-doubles z) (to-doubles w)))
+    (WECDF/make (to-floats z) (to-floats w)))
   (^WECDF [z]
-    (WECDF/make (to-doubles z))))
+    (WECDF/make (to-floats z))))
 ;;----------------------------------------------------------------
 (defn wepdf-to-wecdf
   "Convert a point mass density representation to a cumulative one."
@@ -87,7 +117,7 @@
 ;; TODO: JSON/END serialization for RandomGenerator classes
 (defn map->WEPDF [m] 
   (WEPDF/sortedAndNormalized  
-    (:rng m) (double-array (:z m)) (double-array (:w m))))
+    (:rng m) (to-floats (:z m)) (to-floats (:w m))))
 (defn map<-WEPDF [^WEPDF d] 
   {#_:rng #_(.rng d) :z (.getZ d) :w (.getW d)})
 (defmethod zccl/clojurize WEPDF [this] (map<-WEPDF this))
@@ -106,7 +136,7 @@
 ;;----------------------------------------------------------------
 (defn map->WECDF [m] 
   (WECDF/sortedAndNormalized 
-    (:rng m) (double-array (:z m)) (double-array (:w m))))
+    (:rng m) (to-floats (:z m)) (to-floats (:w m))))
 (defn map<-WECDF [^WECDF d] 
   {#_:rng #_(.rng d) :z (.getZ d) :w (.getW d)})
 (defmethod zccl/clojurize WECDF [this] (map<-WECDF this))

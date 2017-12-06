@@ -131,6 +131,12 @@ implements ApproximatelyEqual, RealDistribution {
       &&
       _rd.equals(((TranslatedRealDistribution) that)._rd); }
 
+  @Override
+  public final boolean approximatelyEqual (final float delta,
+                                           final ApproximatelyEqual that) {
+    
+    return approximatelyEqual((double) delta,that); }
+
   //--------------------------------------------------------------
   // Object interface
   //--------------------------------------------------------------

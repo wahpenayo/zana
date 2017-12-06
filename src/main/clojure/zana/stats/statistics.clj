@@ -1,8 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :since "2016-12-21"
-      :date "2017-11-02"
+      :date "2017-12-06"
       :doc "Stats that don't have an obvious home." }
     
     zana.stats.statistics
@@ -17,6 +16,21 @@
            [zana.java.functions IFnODWithMeta]
            [zana.java.math Statistics]
            [zana.java.prob ApproximatelyEqual]))
+;;----------------------------------------------------------------
+;; TODO: move somewhere else?
+(defn float-approximately== 
+  ([^double delta ^double x ^double y]
+    (let [x (float x)
+          y (float y)
+          delta (float delta)]
+      (<= (Math/abs (- x y)) delta)))
+  ([^double x ^double y]
+    (let [x (float x)
+          y (float y)
+          delta (Math/ulp 
+                  (float (* 10.0
+                            (+ (Math/abs x) (Math/abs y)))))]
+      (float-approximately== delta x y))))
 ;;----------------------------------------------------------------
 ;; TODO: move somewhere else?
 (defn approximately== 
