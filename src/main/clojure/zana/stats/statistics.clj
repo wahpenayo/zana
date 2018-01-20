@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2017-12-06"
+      :date "2018-01-19"
       :doc "Stats that don't have an obvious home." }
     
     zana.stats.statistics
@@ -104,6 +104,7 @@
                          zi))
                      Double/NaN)))] 
         ;; if all NaN, then .hasNext is false
+        ;; TODO: should this be a relative difference test?
         (loop []
           (if (.hasNext it)
             (let [d1 (.next it)
