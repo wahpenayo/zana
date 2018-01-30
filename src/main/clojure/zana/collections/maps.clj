@@ -1,12 +1,14 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-11-10"
+(ns ^{:author "wahpenayo at gmail dot com" 
+      :date "2018-01-29"
       :doc "Hashmap utilities." }
     
     zana.collections.maps
   
-  (:refer-clojure :exclude [assoc get frequencies group-by index keys map? merge 
-                            sorted-map vals zipmap])
+  (:refer-clojure :exclude [assoc get frequencies group-by index 
+                            keys map? merge sorted-map vals 
+                            zipmap])
   (:require [zana.collections.generic :as g]
              [zana.functions.generic :as fn])
   (:import [com.google.common.collect ArrayListMultimap ImmutableMap  
@@ -359,5 +361,53 @@
     (when (.hasNext it) (print-item-count (.next it)))
     (g/mapc #(do (.write w ", ") (print-item-count %)) it))
   (.write w "}"))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
+;; TODO: Returns double[] instances. Not safe.
+
+(defn simplex-coordinates-map 
+  "AKA one-hot encoding.
+   
+   Return a function that maps each of <code>n</code> distinct 
+   values of a categorical <code>attribute</code> to the linear 
+   (vector) coordinates of a corresponding corner of the unit 
+   <code>n</code> simplex in <b>R</b><sup>n-1</sup>. 
+   The coordinates are returned as <code>double[n-1]</code>.
+   Only the values present in <code>data</code> are explicitly
+   mapped. The most frequent value is mapped to the origin
+   (a <code>double[n-1]</code> whose elements are all 
+   <code>0.0</code>). The remaining values from <code>data</code>
+   are mapped in order of decreasing frequency. 
+   
+   Any value not occuring in <code>data</code> will be mapped to 
+   the origin, so that predictive models using this encoding will 
+   treat previously unseen values as though they were the most 
+   most common value, a simple form of imputation."
+  
+  (^clojure.lang.IFn [^clojure.lang.IFn attribute 
+                      ^java.util.Collection data]
+  
+  ;; should not be used with numerical attributes
+  ;; TODO: check for too many distinct values?
+  (assert 
+    (not 
+      (or 
+        (instance? clojure.lang.IFn$OD attribute)
+        (instance? clojure.lang.IFn$OL attribute)
+        (instance? java.time.temporal.TemporalAccessor attribute))))
+  (let [f (frequencies attribute data)
+        f (clojure.core/rest (clojure.core/sort-by #(- (val %)) f))
+        n (clojure.core/count f)
+        origin (double-array n)
+        corner (fn corner ^doubles [^long i]
+                 (let [c (double-array n)]
+                   (aset-double c i 1.0)
+                   c))
+        f (clojure.core/into 
+            {} 
+            (clojure.core/map-indexed 
+              (fn [[k v] i] [k (corner i)]) 
+              f))]
+    (fn simplex-coordinates ^doubles [k] 
+      (clojure.core/get f k origin)))))
+;;----------------------------------------------------------------
 
