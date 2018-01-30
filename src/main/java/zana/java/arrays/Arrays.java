@@ -5,22 +5,22 @@ import java.util.RandomAccess;
 import clojure.lang.PersistentVector;
 import clojure.lang.IPersistentVector;
 import clojure.lang.IFn;
-//----------------------------------------------------------------------------
+//----------------------------------------------------------------
 /** Numerical array utilities for use with Clojure code.
  *
  * @author wahpenayo at gmail dot com
- * @version 2017-10-31
+ * @version 2018-01-29
  */
 
 public final class Arrays extends Object {
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final boolean isSingular (final double[] a) {
     if (0 >= a.length) { return true; }
     final int n = a.length;
     final double a0 = a[0];
     for (int i=1;i<n;i++) { if (a0 != a[i]) { return false; } }
     return true; }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   /** Copy x and y values into the arrays, where x and y are not NaN.
    */
 
@@ -48,7 +48,7 @@ public final class Arrays extends Object {
     //java.util.Arrays.fill(y,i1,y.length,Double.NaN);
     
     return PersistentVector.create(Integer.valueOf(i1), x, y); }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final IPersistentVector filterNaNs (final IFn.OD xf,
                                                     final IFn.OD yf,
                                                     final List records) {
@@ -59,7 +59,7 @@ public final class Arrays extends Object {
     assert (n > 0) : "No data!";
     return filterNaNs(xf, yf, records, new double[n], new double[n]); }
   
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final IPersistentVector filterNaNs (final IFn.OL xf,
                                                     final IFn.OD yf,
                                                     final List records,
@@ -84,7 +84,7 @@ public final class Arrays extends Object {
       PersistentVector.create(Integer.valueOf(i), x, y);
     
     return v; }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final IPersistentVector filterNaNs (final IFn.OL xf,
                                                     final IFn.OD yf,
                                                     final List records) {
@@ -95,7 +95,7 @@ public final class Arrays extends Object {
     assert (n > 0) : "No data!";
     return filterNaNs(xf, yf, records, new double[n], new double[n]); }
   
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final IPersistentVector filterNaNs (final IFn.OD xf,
                                                     final IFn.OD yf,
                                                     final IFn.OD wf,
@@ -128,7 +128,7 @@ public final class Arrays extends Object {
       PersistentVector.create(Integer.valueOf(i), x, y, w);
 
     return v; }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final IPersistentVector filterNaNs (final IFn.OD xf,
                                                     final IFn.OD yf,
                                                     final IFn.OD wf,
@@ -142,7 +142,7 @@ public final class Arrays extends Object {
     return filterNaNs(xf, yf, wf, records, 
       new double[n], new double[n], new double[n]); }
   
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final IPersistentVector filterNaNs (final IFn.OL xf,
                                                     final IFn.OD yf,
                                                     final IFn.OD wf,
@@ -173,7 +173,7 @@ public final class Arrays extends Object {
       PersistentVector.create(Integer.valueOf(i), x, y, w);
 
     return v; }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final IPersistentVector filterNaNs (final IFn.OL xf,
                                                     final IFn.OD yf,
                                                     final IFn.OD wf,
@@ -187,7 +187,7 @@ public final class Arrays extends Object {
     return filterNaNs(xf, yf, wf, records, 
       new double[n], new double[n], new double[n]); }
   
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final double[] dMap (final IFn.OD attribute,
                                      final List records) {
     assert (records instanceof RandomAccess);
@@ -198,7 +198,7 @@ public final class Arrays extends Object {
       assert ! Double.isNaN(ai) : records.get(i).toString();
       a[i] = ai; }
     return a; }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final double[] dMap (final IFn attribute,
                                      final List records) {
     assert (records instanceof RandomAccess);
@@ -207,7 +207,7 @@ public final class Arrays extends Object {
     for (int i=0; i<n;i++) { 
       a[i] = ((Number) attribute.invoke(records.get(i))).doubleValue(); }
     return a; }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   public static final double[] dMap (final Object attribute,
                                      final Object records) {
     if (attribute instanceof IFn.OD) {
@@ -216,12 +216,28 @@ public final class Arrays extends Object {
       return dMap((IFn) attribute, (List) records); }
     else {
       throw new IllegalArgumentException("can't handle " + attribute); } }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
+  // primitive arrays as elements of linear spaces
+  //--------------------------------------------------------------
+  // TODO: move these to a BLAS-like library.
+  // TODO: have a generic version, and test performance overhead.
+  // TODO: compensated or exact version?
+  
+  public static final double dot (final double[] v0,
+                                  final double[] v1) {
+    final int n = v0.length;
+    assert n == v1.length;
+    double sum = 0.0;
+    // NOTE: fma requires Java 9
+    for (int i=0;i<n;i++) { sum = Math.fma(v0[i],v1[i],sum); }
+    return sum; }
+  
+  //--------------------------------------------------------------
   // disabled constructor
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
   private Arrays () {
     throw new UnsupportedOperationException(
       "Can't instantiate " + getClass()); }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------
 } // end class
 //----------------------------------------------------------------------------
