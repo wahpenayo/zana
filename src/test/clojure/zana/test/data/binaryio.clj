@@ -1,6 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-05-20"
+(ns ^{:author "wahpenayo at gmail dot com"
+      :date "2018-01-31"
       :doc "Tests for zana.data.datum." }
     
     zana.test.data.binaryio
@@ -18,10 +19,10 @@
            [zana.test.defs.data.primitive Primitive]
            [zana.test.defs.data.typical Typical]
            [zana.test.defs.data.change Change]))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; mvn -Dtest=zana.test.data.binaryio clojure:test
 #_(test/run-tests 'zana.test.data.binaryio)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; edge case
 
 (test/deftest empty-datum
@@ -30,7 +31,7 @@
         _ (empty/write-binary-file [e0 e1 e2] f)
         es (empty/read-binary-file f)]
     (test/is (every? #(instance? Empty %) es))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; no recursion
 
 (test/deftest primitive
@@ -41,8 +42,9 @@
     (test/is (== 5 (count ps0) (count ps1)))
     (test/is (every? #(instance? Primitive %) ps0))
     (test/is (every? #(instance? Primitive %) ps1))
-    (z/mapc (fn [p0 p1] (test/is (setup/equal-primitives? p0 p1))) ps0 ps1)))
-;;------------------------------------------------------------------------------
+    (z/mapc (fn [p0 p1] (test/is (setup/equal-primitives? p0 p1)))
+            ps0 ps1)))
+;;----------------------------------------------------------------
 ;; one level of recursion
 
 (test/deftest typical
@@ -55,8 +57,9 @@
     (test/is (every? #(instance? Typical %) ts1))
     (test/is (== 5.0 (typical/p-d (first ts0)))) 
     (test/is (== 5.5 (typical/p-d (second ts0))))
-    (z/mapc (fn [t0 t1] (test/is (setup/equal-typicals? t0 t1))) ts0 ts1)))
-;;------------------------------------------------------------------------------
+    (z/mapc (fn [t0 t1] (test/is (setup/equal-typicals? t0 t1))) 
+            ts0 ts1)))
+;;----------------------------------------------------------------
 ;; two levels of recursion
 
 (test/deftest change
@@ -64,8 +67,9 @@
         f (io/file "tst" "change.bin.gz")
         _ (change/write-binary-file cs0 f)
         cs1 (change/read-binary-file f)]
-    (test/is (== 6 (count cs0) (count cs1)))
+    (test/is (== 8 (count cs0) (count cs1)))
     (test/is (every? #(instance? Change %) cs0))
     (test/is (every? #(instance? Change %) cs1))
-    (z/mapc (fn [c0 c1] (test/is (setup/equal-changes? c0 c1))) cs0 cs1)))
-;;------------------------------------------------------------------------------
+    (z/mapc (fn [c0 c1] (test/is (setup/equal-changes? c0 c1))) 
+            cs0 cs1)))
+;;----------------------------------------------------------------

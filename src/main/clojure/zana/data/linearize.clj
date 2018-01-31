@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-01-30"
+      :date "2018-01-31"
       :doc
       "Convert records with general attribute values to elements
        of linear spaces (ie vectors in <b>R</b><sup>n</sup>
@@ -11,21 +11,22 @@
     
     zana.data.linearize
   
-  (:require [zana.collections.maps :as maps]
+  (:require [clojure.pprint :as pp]
+            [zana.collections.maps :as maps]
             [zana.collections.sets :as sets])
   
   (:import [java.util Arrays Collection Map]
            [java.time.temporal TemporalAccessor]
            [clojure.lang IFn IFn$OD IFn$OL]))
 ;;----------------------------------------------------------------
-(defn- numerical? [^IFn attribute]
+(defn- numerical? [attribute]
   (or (instance? IFn$OD attribute)
       (instance? IFn$OL attribute)))
 ;;----------------------------------------------------------------
 ;; TODO: replace this hack with something sensible
 ;; TODO: think through dates/times etc that aren't categorical or
 ;; numerical.
-(defn- categorical? [^IFn attribute]
+(defn- categorical? [attribute]
   (not (or (numerical? attribute)
            (instance? TemporalAccessor attribute))))
 ;;----------------------------------------------------------------
@@ -67,12 +68,12 @@
    previously unseen values as though they were the most common 
    value in the training data, a simple form of imputation."
   
-  ^IFn [^IFn attribute ^Collection training-data]
+  ^IFn [attribute training-data]
   
   ;; TODO: check for too many distinct values?
   (assert (categorical? attribute))
   (let [f (maps/frequencies attribute training-data)
-        f (rest (sort-by #(- (val %)) f))
+        f (rest (sort-by #(- (int (val %))) f))
         n (count f)
         _ (assert (== n (attribute-linear-dimension 
                           attribute training-data)))
@@ -81,7 +82,7 @@
             (let [ei (double-array n)]
               (aset-double ei i 1.0)
               ei))
-        f (into {} (map-indexed (fn [[k v] i] [k (e i)]) f))]
+        f  (into {} (map-indexed (fn [i [k _]] [k (e i)]) f))]
     (fn linearize-value ^doubles [record] 
       (get f (attribute record) origin))))
 ;;----------------------------------------------------------------
@@ -105,9 +106,34 @@
   (reduce + (map #(attribute-linear-dimension % training-data)
                  attributes)))
 ;;----------------------------------------------------------------
+(defn- linearize-numerical ^long [linearizer record ^long i d]
+  (aset-double d i (double (linearizer record)))
+  (inc i))
+
+(defn- linearize-categorical ^long [linearizer record ^long i d]
+  (let [^doubles tmp (linearizer record)
+        n (int (alength tmp))]
+   (System/arraycopy tmp 0 d i n)
+   (+ i n)))
+
+(defn- linearize1 ^long [linearizer record ^long i d]
+  (cond 
+    (numerical? linearizer) 
+    (linearize-numerical linearizer record i d)
+    
+    (categorical? linearizer)
+    (linearize-categorical linearizer record i d)
+    
+    :else
+    (throw (IllegalArgumentException.
+             (print-str "can't handle" linearizer)))))
+;;----------------------------------------------------------------
 ;; TODO: in special cases (eg all numberical or enum valued 
-;; attributes) the encoding
-;; could be determined without refering to a training data set.
+;; attributes) the encoding could be determined without refering 
+;; to a training data set.
+;; TODO: linear models will need some way to serialize a 
+;; linearizers, so maybe they should be built from instances of 
+;; explicitly serializable classes, rather than closures.
 
 (defn record-linearizer
   
@@ -123,15 +149,24 @@
    See [attribute-linearizer] for details.
    Dates and times are currently not supported."
   
-  (^IFn [attributes ^Collection training-data]
-    (let [n (record-linear-dimension attributes training-data)
-          linearizers (mapv 
-                        #(attribute-linearizer % training-data)
-                        attributes)]
-      (fn linearize-record ^doubles [record]
-        (let [d (double-array n)]
+  ^IFn [attributes training-data]
+  (let [n (record-linear-dimension attributes training-data)
+        linearizers (mapv 
+                      #(attribute-linearizer % training-data)
+                      attributes)]
+    #_(pp/pprint linearizers)
+    (fn linearize-record ^doubles [record]
+      (let [d (double-array n)]
         (loop [i (int 0)
-               attributes attributes]
-          (get f k origin)))))
+               linearizers linearizers]
+          #_(println i)
+          #_(pp/pprint linearizers)
+          (if-not (< i n)
+            (do
+              (assert (empty? linearizers))
+              d)
+            (let [[linearizer & linearizers] linearizers
+                  i (linearize1 linearizer record i d)]
+              (recur i linearizers))))))))
   ;;----------------------------------------------------------------
   

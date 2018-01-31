@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-01-29"
+      :date "2018-01-31"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -45,6 +45,7 @@
             [zana.data.datum :as datum]
             [zana.data.enum :as enum]
             [zana.data.missing :as missing]
+            [zana.data.linearize :as linearize]
             [zana.html.slides :as slides]
             [zana.stats.prng :as prng]
             [zana.stats.accumulators :as accumulators]
@@ -273,7 +274,8 @@
                 missing/drop-missing
                 missing/finite?
                 #_missing/select-finite
-                missing/select-finite-values)
+                missing/select-finite-values
+                linearize/record-linearizer)
 ;;----------------------------------------------------------------
 ;; prng
 ;;----------------------------------------------------------------

@@ -1,6 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-06-30"
+(ns ^{:author "wahpenayo at gmail dot com"
+      :date "2018-01-31"
       :doc "Tests for zana.data.datum." }
     
     zana.test.defs.data.typical
@@ -9,8 +10,7 @@
             [zana.test.defs.data.primitive :as primitive])
   (:import [java.time LocalDateTime LocalDate]
            [zana.test.defs.data.primitive Primitive]))
-;; mvn clean -Dtest=zana.test.defs.data.typical clojure:test > tests.txt
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn header-key [^String token]
   (let [k (keyword (.replace (.toLowerCase token) "_" "-"))]
     (case k 
@@ -24,7 +24,7 @@
       :pd [:p :d]
       ;; else
       k)))
-;;-----------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (z/define-datum Typical
   [^long n 
    ^double x 
@@ -34,7 +34,7 @@
                      (archetype (LocalDate/parse ^String (:ymd tuple))))]
    ^LocalDateTime [dt (fn [tuple archetype]
                         (LocalDateTime/parse ^String (:dt tuple)))]])
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; macro debugging
 #_(with-open [w (clojure.java.io/writer 
                   "src/test/clojure/zana/test/defs/data/typical1.clj")]

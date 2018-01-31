@@ -86,11 +86,18 @@
              (Primitive. false 1 2 3 4 5 6 \b)
              (LocalDate/parse "1809-02-12")
              (LocalDateTime/parse "1882-04-19T03:14:15"))
+        t2 (Typical.
+             23 (* Math/E Math/PI) "Kepler" 
+             (Primitive. true 0 2 4 8 16 32 \c)
+             (LocalDate/parse "1571-12-27")
+             (LocalDateTime/parse "1630-11-15T13:17:23"))
         c01 (Change. t0 t1)
         c00 (assoc c01 :after t0)
+        c02 (Change. t0 t2)
+        c21 (Change. t2 t1)
         c10 (Change. t1 t0)
-        c11 (assoc c01 :after t0)]
-    [c00 c01 c10 c11
+        c11 (assoc c01 :before t1)]
+    [c00 c01 c10 c11 c02 c21
      (assoc-in c01 [:before :p :i] (get-in c11 [:after :p :i]))
      (assoc-in c00 [:before :p] (get-in c11 [:after :p]))]))
 
