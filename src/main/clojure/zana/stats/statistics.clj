@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-01-19"
+      :date "2018-01-29"
       :doc "Stats that don't have an obvious home." }
     
     zana.stats.statistics

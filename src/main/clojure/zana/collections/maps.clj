@@ -1,12 +1,14 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-11-10"
+(ns ^{:author "wahpenayo at gmail dot com" 
+      :date "2018-01-29"
       :doc "Hashmap utilities." }
     
     zana.collections.maps
   
-  (:refer-clojure :exclude [assoc get frequencies group-by index keys map? merge 
-                            sorted-map vals zipmap])
+  (:refer-clojure :exclude [assoc get frequencies group-by index 
+                            keys map? merge sorted-map vals 
+                            zipmap])
   (:require [zana.collections.generic :as g]
              [zana.functions.generic :as fn])
   (:import [com.google.common.collect ArrayListMultimap ImmutableMap  
@@ -359,5 +361,5 @@
     (when (.hasNext it) (print-item-count (.next it)))
     (g/mapc #(do (.write w ", ") (print-item-count %)) it))
   (.write w "}"))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 
