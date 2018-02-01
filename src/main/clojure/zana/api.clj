@@ -46,6 +46,7 @@
             [zana.data.enum :as enum]
             [zana.data.missing :as missing]
             [zana.data.linearize :as linearize]
+            [zana.data.homogenize :as homogenize]
             [zana.html.slides :as slides]
             [zana.stats.prng :as prng]
             [zana.stats.accumulators :as accumulators]
@@ -275,7 +276,8 @@
                 missing/finite?
                 #_missing/select-finite
                 missing/select-finite-values
-                linearize/record-linearizer)
+                linearize/record-linearizer
+                homogenize/record-homogenizer)
 ;;----------------------------------------------------------------
 ;; prng
 ;;----------------------------------------------------------------
