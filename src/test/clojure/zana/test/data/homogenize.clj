@@ -1,8 +1,8 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-02-01"
-      :doc "Tests for zana.data.homogenize." }
+      :date "2018-02-05"
+      :doc "Tests for zana.data.flatten." }
     
     zana.test.data.homogenize
   
@@ -27,10 +27,10 @@
 
 (test/deftest empty-datum
    (let [empties (setup/empties)
-         homogenize (z/record-homogenizer [] empties)]
+         homogenize (z/record-homogenizer "empty" [] empties)]
      (doseq [e empties]
        (test/is 
-         (Arrays/equals (into-array Double/TYPE [1.0])
+         (Arrays/equals (doubles (into-array Double/TYPE [1.0]))
                         (doubles (homogenize e)))))))
 ;;----------------------------------------------------------------
 ;; no recursion
@@ -38,7 +38,8 @@
 (test/deftest primitive
   ;; note: skips categorical c
   (let [primitives (setup/primitives)
-        homogenize (z/record-homogenizer 
+        homogenize (z/record-homogenizer
+                     "primitive"
                     primitive/numerical-attributes 
                     primitives)]
     (defn- to-doubles ^doubles [^Primitive p]
@@ -65,7 +66,8 @@
                      typical/p-d 
                      typical/p-f]
         typicals (setup/typicals)
-        homogenize (z/record-homogenizer linearizable typicals)
+        homogenize (z/record-homogenizer 
+                     "typical" linearizable typicals)
         to-doubles (fn to-doubles ^doubles [^Typical t]
                      (into-array Double/TYPE 
                                  [(typical/n t) 
@@ -111,7 +113,8 @@
                       change/after-p-b
                       change/after-p-l2-norm2
                       change/after-p-i]
-        homogenize (z/record-homogenizer linearizable changes)
+        homogenize (z/record-homogenizer 
+                     "change" linearizable changes)
         to-doubles (fn to-doubles ^doubles [^Change c]
                      (into-array 
                        Double/TYPE 

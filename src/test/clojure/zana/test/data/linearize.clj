@@ -1,8 +1,8 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-01-31"
-      :doc "Tests for zana.data.linearize." }
+      :date "2018-02-05"
+      :doc "Tests for zana.data.flatten." }
     
     zana.test.data.linearize
   
@@ -26,12 +26,12 @@
 ;; edge case
 
 (test/deftest empty-datum
-   (let [empties (setup/empties)
-         linearize (z/record-linearizer [] empties)]
-     (doseq [e empties]
-       (test/is 
-         (Arrays/equals (double-array 0) 
-                        (doubles (linearize e)))))))
+(let [empties (setup/empties)
+      linearize (z/record-linearizer "empty" [] empties)]
+  (doseq [e empties]
+    (test/is 
+      (Arrays/equals (double-array 0) 
+                     (doubles (linearize e)))))))
 ;;----------------------------------------------------------------
 ;; no recursion
 
@@ -39,14 +39,17 @@
   ;; note: skips categorical c
   (let [primitives (setup/primitives)
         linearize (z/record-linearizer 
+                    "primitive"
                     primitive/numerical-attributes 
                     primitives)]
     (defn- to-doubles ^doubles [^Primitive p]
       (into-array Double/TYPE 
                   (map #(% p) primitive/numerical-attributes)))
     (z/mapc (fn [^Primitive p]
-              (test/is (Arrays/equals (to-doubles p) 
-                                      (doubles (linearize p)))))
+              (let [dp (to-doubles p) 
+                    lp (doubles (linearize p))]
+                (test/is (Arrays/equals dp lp)
+                         (print-str dp lp))))
             primitives)))
 ;;----------------------------------------------------------------
 ;; one level of recursion
@@ -63,7 +66,8 @@
                       typical/p-d 
                       typical/p-f]
         typicals (setup/typicals)
-        linearize (z/record-linearizer linearizable typicals)
+        linearize (z/record-linearizer 
+                    "typical" linearizable typicals)
         to-doubles (fn to-doubles ^doubles [^Typical t]
                      (into-array Double/TYPE 
                                  [(typical/n t) 
@@ -108,7 +112,8 @@
                       change/after-p-b
                       change/after-p-l2-norm2
                       change/after-p-i]
-        linearize (z/record-linearizer linearizable changes)
+        linearize (z/record-linearizer 
+                    "change" linearizable changes)
         to-doubles (fn to-doubles ^doubles [^Change c]
                      (into-array 
                        Double/TYPE 
@@ -138,10 +143,10 @@
     #_(pp/pprint (z/frequencies change/before-string changes))
     #_(pp/pprint (z/frequencies change/after-string changes))
     (z/mapc 
-        #(let [d0 (doubles (to-doubles %))
-               d1 (doubles (linearize %))]
-           (test/is 
-             (Arrays/equals d0 d1)
-             (print-str % "\n" (into [] d0) "\n" (into [] d1))))
-        changes)))
+      #(let [d0 (doubles (to-doubles %))
+             d1 (doubles (linearize %))]
+         (test/is 
+           (Arrays/equals d0 d1)
+           (print-str % "\n" (into [] d0) "\n" (into [] d1))))
+      changes)))
 ;;----------------------------------------------------------------

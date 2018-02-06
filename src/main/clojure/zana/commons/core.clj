@@ -1,8 +1,10 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-10-19"
-      :doc "Things that ought to be in clojure.core, and don't have an
-            obvious place elsewhere in Zana." }
+(ns ^{:author "wahpenayo at gmail dot com"
+      :date "2018-01-31"
+      :doc 
+      "Things that ought to be in clojure.core, and don't have an
+      obvious place elsewhere in Zana." }
     
     zana.commons.core
   
@@ -12,14 +14,15 @@
   (:import [java.util Collection HashMap Iterator List Map]
            [java.time LocalDateTime]
            [java.time.format DateTimeFormatter]
-           [com.google.common.collect Multimap]))
-;;------------------------------------------------------------------------------
+           [com.google.common.collect Multimap]
+           [zana.java.functions Functions]))
+;;----------------------------------------------------------------
 (defn jvm-args 
   "Return the command line arguments passed to java. Useful for logging."
   []
   (.getInputArguments 
     (java.lang.management.ManagementFactory/getRuntimeMXBean)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; Typical use: (binding-var-root [*out* a-print-writer] multi-threaded-stuff)
 (defmacro binding-var-root 
   
@@ -38,18 +41,18 @@
      (let [ret# (do ~@body)]
        (alter-var-root (var ~sym) (fn [v#] old#))
        ret#)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn watchable? [x] (instance? clojure.lang.IRef x))
 (defn watches ^java.util.Map [^clojure.lang.IRef watchable]
   (.getWatches watchable))
 (defn validator [^clojure.lang.IRef watchable]
   (.getValidator watchable))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn agent? "" [x] (instance? clojure.lang.Agent x))
 (defn atom? "" [x] (instance? clojure.lang.Atom x))
 (defn ref? "" [x] (instance? clojure.lang.Ref x))
 ;;(defn var? [x] (instance? clojure.lang.Var x))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn array? "" [x] (and x (.isArray ^Class (class x))))
 (let [char-array-type (type (char-array 0))]
   (defn char-array? "" [x] (instance? char-array-type x)))
@@ -67,10 +70,12 @@
   (defn double-array? "" [x] (instance? double-array-type x)))
 (let [object-array-type (type (object-array 0))]
   (defn object-array? "" [x] (instance? object-array-type x)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn ^:no-doc descendant? [parent child]
-  (and parent child (.isAssignableFrom ^Class parent ^Class child)))
-;;------------------------------------------------------------------------------
+  (and parent 
+       child 
+       (.isAssignableFrom ^Class parent ^Class child)))
+;;----------------------------------------------------------------
 ;; specialized functions for cleaning postcodes
 (defn ^:no-doc digits ^String [^String s]
   (let [n (.length s)
@@ -85,7 +90,7 @@
               (recur (inc i) (inc j)))
             (recur i (inc j))))
         (String. c 0 i)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn ^:no-doc letters-and-digits ^String [^String s]
   (let [n (.length s)
         c (char-array n)]
@@ -99,7 +104,7 @@
               (recur (inc i) (inc j)))
             (recur i (inc j))))
         (String. c 0 i)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn ^:no-doc letters ^String [^String s]
   (let [n (.length s)
         c (char-array n)]
@@ -113,21 +118,22 @@
               (recur (inc i) (inc j)))
             (recur i (inc j))))
         (String. c 0 i)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn skewer 
   "camelCase to lisp-case."
-  ^String [s] (s/lower-case (s/join "-" (s/split s #"(?=[A-Z])"))))
-;;------------------------------------------------------------------------------
+  ^String [s] 
+  (s/lower-case (s/join "-" (s/split s #"(?=[A-Z])"))))
+;;----------------------------------------------------------------
 (defn safe
   "Convert <code>s</code> to something that's safe for, eg, 
-   <code>(symbol s)</code>. Replace the bad characters with <code>c</code>, 
-   which defaults to \"-\"."
+   <code>(symbol s)</code>. Replace the bad characters with 
+   <code>c</code>, which defaults to \"-\"."
   (^String [^String s ^String c] 
     (if (nil? s)
       "nil"
       (s/replace s #"[^A-Za-z0-9\_\+\-\*\!\?]+" c)))
   (^String [^String s] (safe s "-")))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn ^:no-doc gen-keyword 
   "Like <code>gensym</code> but for keywords."
   [s]
@@ -135,24 +141,26 @@
     (if (empty? s)
       (gensym)
       (gensym (safe (str s "-")) ))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; try to find a reasonable name for any object
-;;------------------------------------------------------------------------------
-(defn- fn-name [^clojure.lang.Fn f]
-  (let [strf (str f)]
-    (if (.startsWith ^String strf "clojure.core$constantly$fn")
-      (str "(constantly " (print-str (f nil)) ")")
-      (let [fname (s/replace strf #"^(.+)\$([^@]+)(|@.+)$" "$2")
-            fname (s/replace fname \_ \-)
-            fname (s/replace fname #"--\d+$" "")]
-        fname))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
+(defn- fn-name [^clojure.lang.IFn f]
+  (Functions/name f)
+  #_(let [strf (str f)]
+      (if (.startsWith ^String strf "clojure.core$constantly$fn")
+        (str "(constantly " (print-str (f nil)) ")")
+        (let [fname (s/replace strf #"^(.+)\$([^@]+)(|@.+)$" "$2")
+              fname (s/replace fname \_ \-)
+              fname (s/replace fname #"--\d+$" "")]
+          fname))))
+;;----------------------------------------------------------------
 ;; Search for a Var whose value is equal to v.
 (defn- find-binding [v]
-  (ffirst (filter #(= v (var-get (second %))) (mapcat ns-publics (all-ns)))))
+  (ffirst (filter #(= v (var-get (second %))) 
+                  (mapcat ns-publics (all-ns)))))
 (defn- binding-name [x] 
   (if-let [sym (find-binding x)] (str sym) ""))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defmulti ^String name 
   "Try to find a reasonable name string for <code>x</code>.<br> 
    Try harder than <code>clojure.core/name</code>."
@@ -188,23 +196,28 @@
 (prefer-method name clojure.lang.Named java.util.Collection)
 (prefer-method name clojure.lang.Named clojure.lang.Fn)
 (prefer-method name clojure.lang.Named clojure.lang.IMeta)
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; timing
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; like clojure.core.time, prefixes results with a message
 (defmacro time
-  "Evaluates expr and prints the time it took.  Returns the value of expr."
+  "Evaluates expr and prints the time it took.  
+   Returns the value of expr."
   ([msg expr]
     `(let [start# (System/nanoTime)
            ret# ~expr
            end# (System/nanoTime)
-           msec# (/ (Math/round (/ (double (- end# start#)) 10000.0)) 100.0)]
+           msec# (/ (Math/round (/ (double (- end# start#)) 
+                                   10000.0))
+                    100.0)]
        (println ~msg (float msec#) "ms")
        ret#))
   ([expr] `(time (str (quote ~@expr)) ~expr)))
-;; like clojure.core.time, but reports results rounded to seconds and minutes
+;; like clojure.core.time, but reports results rounded to seconds 
+;; and minutes
 (defmacro seconds
-  "Evaluates expr and prints the time it took.  Returns the value of expr."
+  "Evaluates expr and prints the time it took.
+  Returns the value of expr."
   ([msg & exprs]
     (let [expr `(do ~@exprs)]
       `(let [
@@ -223,19 +236,22 @@
                          (int (Math/round sec#)) "s"))
            ret#))))
   ([exprs] `(seconds "" ~@exprs)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn print-stack-trace
   ([] (.printStackTrace (Throwable.)))
   ([& args]
     (let [^String msg (s/join " " args)]
       (.printStackTrace (Throwable. msg)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defmacro echo 
-  "Print the expressions followed by their values. Useful for quick logging."
+  "Print the expressions followed by their values. 
+   Useful for quick logging."
   [& exps]
   (let [qexprs (mapv str exps)]
-    `(println ~@qexprs ~@(mapv (fn [expr] `(print-str ~expr)) exps))))
-;;------------------------------------------------------------------------------
+    `(println 
+       ~@qexprs 
+       ~@(mapv (fn [expr] `(print-str ~expr)) exps))))
+;;----------------------------------------------------------------
 (defn pprint-str
   "Pretty print <code>x</code> without getting carried away..."
   ([x level depth]
@@ -246,36 +262,46 @@
               pp/*print-suppress-namespaces* true]
       (with-out-str (pp/pprint x))))
   ([x] (pprint-str x 10 8)))
-;;------------------------------------------------------------------------------ 
+;;---------------------------------------------------------------- 
 (defn- abbreviate [v]
-  (cond (instance? List v) (concat 
-                                [(class v) (.size ^List v)] 
-                               (when-not (empty? v)[(.get ^List v 0) "..."]))
-        (instance? Collection v) [(class v) (.size ^Collection v)]
-        (instance? Iterable v) (class v)
+  (cond (instance? List v) 
+        (concat 
+          [(class v) (.size ^List v)] 
+          (when-not (empty? v)[(.get ^List v 0) "..."]))
+        
+        (instance? Collection v) 
+        [(class v) (.size ^Collection v)]
+        
+        (instance? Iterable v)  
+        (class v)
+        
         (keyword? v) v
         (ifn? v) (class v)
         (nil? v) nil
         :else (.toString ^Object v)))
-;;------------------------------------------------------------------------------ 
+;;---------------------------------------------------------------- 
 (defn- abbreviate-keyvalue [[k v]] [k (abbreviate v)])
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn pprint-map-str
   "Convert a map to a readable string, abbreviating large values."
   ^String [m]
   (cond (nil? m) "nil"
         (instance? java.util.List m) 
-        (pprint-str (map abbreviate m) false false)
+        (pprint-str (map abbreviate m) 
+                    false false)
         
         (instance? Map m) 
-        (pprint-str (into (sorted-map) (map abbreviate-keyvalue m)) false false)
+        (pprint-str (into (sorted-map) 
+                          (map abbreviate-keyvalue m)) 
+                    false false)
         
         (instance? Multimap m) 
         (pprint-map-str (.asMap ^Multimap m))
         
         :else
-        (throw (IllegalArgumentException. (print-str "can't handle" (class m)))))) 
-;;------------------------------------------------------------------------------
+        (throw (IllegalArgumentException. 
+                 (print-str "can't handle" (class m)))))) 
+;;----------------------------------------------------------------
 (defn ordered?
   "Test whether Comparable items are ordered non-decreasing."
   ([a & items]
@@ -285,9 +311,10 @@
         (and (<= (compare a b) 0)
              (recur b (next items))))))
   ([] true))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn make-archetyper
-  "Return a closure containing a hashmap used to de-dupe its argument."
+  "Return a closure containing a hashmap used to de-dupe its 
+   argument."
   ([]
     (let [canon (HashMap.)]
       (fn [item]
@@ -302,10 +329,10 @@
           (or (.get ^HashMap canon item)
               (.put ^HashMap canon item item)
               item))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn ^:no-doc make-labeler []
   (let [hm (HashMap.)]
     (fn labeler
       ([k]   (.get hm k))
       ([k v] (.put hm k v)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
