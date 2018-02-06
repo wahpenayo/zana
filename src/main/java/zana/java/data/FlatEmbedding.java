@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 import clojure.lang.IFn;
 import clojure.lang.ISeq;
 
@@ -33,8 +36,8 @@ public abstract class FlatEmbedding implements IFn, Serializable {
   // list of [attribute, linearizer] pairs.
   // TODO: use Pair class rather than inner list?
   // TODO: use immutable lists
-  private final List<List> _attributeLinearizers;
-  public final List<List> attributeLinearizers () {
+  private final ImmutableList _attributeLinearizers;
+  public final ImmutableList attributeLinearizers () {
     return _attributeLinearizers; }
 
   //--------------------------------------------------------------
@@ -56,9 +59,9 @@ public abstract class FlatEmbedding implements IFn, Serializable {
    */
   public final int dimension () {
     int n = 0;
-    for (final List pair : _attributeLinearizers) {
+    for (final Object pair : _attributeLinearizers) {
       final AttributeLinearizer al = 
-        (AttributeLinearizer)  pair.get(1);
+        (AttributeLinearizer)  ((List) pair).get(1);
       n += al.dimension(); }
     return n; }
 
@@ -75,9 +78,10 @@ public abstract class FlatEmbedding implements IFn, Serializable {
   // construction
   //--------------------------------------------------------------
   public FlatEmbedding (final String name,
-                        final List<List> attributeLinearizers) {
+                        final List attributeLinearizers) {
     _name = name;
-    _attributeLinearizers = attributeLinearizers; }
+    _attributeLinearizers = 
+      ImmutableList.copyOf(attributeLinearizers); }
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space 
    * (<b>R</b><sup>n</sup>) for selected attributes and attribute
@@ -95,20 +99,20 @@ public abstract class FlatEmbedding implements IFn, Serializable {
    * the most frequent or in some other sense a reasonable 
    * default.
    */
-  public static final List<List>
-  makeLinearizers (final List<List> attributeValues) {
+  public static final ImmutableList
+  makeLinearizers (final List attributeValues) {
     final int n = attributeValues.size();
-    final List<List> attributeLinearizers = new ArrayList(n);
-    for (final List av : attributeValues) {
-      final IFn a = (IFn) av.get(0);
+    final Builder b = ImmutableList.builder();
+    for (final Object av : attributeValues) {
+      final IFn a = (IFn) ((List) av).get(0);
       final AttributeLinearizer al;
       if (isNumerical(a)) {
         al = NumericalAttributeLinearizer.make(a); }
       else {
         al = CategoricalAttributeLinearizer.make(
-          a,(List) av.get(1)); }
-      attributeLinearizers.add(List.of(a,al)); }
-    return attributeLinearizers; }
+          a,(List) ((List) av).get(1)); }
+      b.add(ImmutableList.of(a,al)); }
+    return b.build(); }
 
   //--------------------------------------------------------------
   // unsupported IFn operations

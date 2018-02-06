@@ -21,7 +21,7 @@ implements AttributeLinearizer {
   //--------------------------------------------------------------
 
   private final String _name;
-  private final String name () { return _name; }
+  public final String name () { return _name; }
 
   @Override
   public final int dimension () { return 1; }

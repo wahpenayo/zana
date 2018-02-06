@@ -2,6 +2,8 @@ package zana.java.data;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import clojure.lang.IFn;
 
 //----------------------------------------------------------------------------
@@ -65,10 +67,10 @@ public final class Linearizer extends FlatEmbedding {
     final int n = dimension();
     final double[] coords = new double[n];
     int start = 0;
-    for (final List pair : attributeLinearizers()) {
-      final IFn x = (IFn) pair.get(0);
+    for (final Object pair : attributeLinearizers()) {
+      final IFn x = (IFn) ((List) pair).get(0);
       final AttributeLinearizer al = 
-        (AttributeLinearizer) pair.get(1);
+        (AttributeLinearizer) ((List) pair).get(1);
       start = 
         al.updateCoordinates(
           x.invoke(record),
@@ -87,8 +89,8 @@ public final class Linearizer extends FlatEmbedding {
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
-  private Linearizer (final String name,
-                      final List<List> attributeLinearizers) {
+  public Linearizer (final String name,
+                      final ImmutableList attributeLinearizers) {
     super(name,attributeLinearizers); }
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space 
@@ -101,7 +103,7 @@ public final class Linearizer extends FlatEmbedding {
    */
   public static final Linearizer
   make (final String name,
-        final List<List> attributeValues) {
+        final List attributeValues) {
     return new Linearizer(name,makeLinearizers(attributeValues)); }
   //--------------------------------------------------------------
 } // end class

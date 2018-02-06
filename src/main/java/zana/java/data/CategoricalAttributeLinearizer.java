@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+
 import clojure.lang.IFn;
 import zana.java.functions.Functions;
 
@@ -38,9 +40,9 @@ implements AttributeLinearizer {
   //--------------------------------------------------------------
 
   private final String _name;
-  private final String name () { return _name; }
+  public final String name () { return _name; }
 
-  private final Map _categoryIndex;
+  private final ImmutableMap _categoryIndex;
 
   /** The dimension of the linear space in which values of this
    * categorical attribute are embedded. <code>n+1</code> are
@@ -58,6 +60,9 @@ implements AttributeLinearizer {
   @Override
   public final int dimension () {
     return _categoryIndex.size(); }
+
+  public final ImmutableMap categoryIndex () {
+    return _categoryIndex; }
 
   private final Integer categoryIndex (final Object category) {
     return (Integer) _categoryIndex.get(category); }
@@ -105,7 +110,7 @@ implements AttributeLinearizer {
   private CategoricalAttributeLinearizer (final String name,
                                           final Map categoryIndex) {
     _name = name;
-    _categoryIndex = categoryIndex; }
+    _categoryIndex = ImmutableMap.copyOf(categoryIndex); }
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space for values of a
    * categorical attribute. <code>n+1</code> categories are
