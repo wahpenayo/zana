@@ -1,8 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :since "2017-01-13"
-      :date "2017-11-15"
+      :date "2018-02-06"
       :doc "Global reader map for EDN input." }
     
     zana.io.edn

@@ -1,26 +1,31 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-05-20"
-      :doc "Tests for zana.data.datum." }
+(ns ^{:author "wahpenayo at gmail dot com"
+      :date "2018-02-06"
+      :doc "Tests for <code>zana.data</code>." }
     
     zana.test.data.setup
   
-  (:require [clojure.test :as test]
+  (:require [clojure.string :as s]
+            [clojure.java.io :as io]
+            [clojure.test :as test]
             [zana.test.defs.data.empty :as empty]
             [zana.test.defs.data.primitive :as primitive]
             [zana.test.defs.data.typical :as typical]
             [zana.test.defs.data.change :as change])
   (:import [java.time LocalDateTime LocalDate]
+           [java.io File]
+           [zana.java.data FlatEmbedding]
            [zana.test.defs.data.empty Empty]
            [zana.test.defs.data.primitive Primitive]
            [zana.test.defs.data.typical Typical]
            [zana.test.defs.data.change Change]))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 
 (defn empties [] 
   [(Empty.) (Empty.) (empty/map->Empty {})])
 
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 
 (defn primitives [] 
   (let [p2 (Primitive. false 1 2 3 4 5 6 \b)]
@@ -42,7 +47,7 @@
        (== (primitive/d p0) (primitive/d p1))
        (= (primitive/c p0) (primitive/c p1))))
        
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 
 (defn galileo-birthdate [] (LocalDate/parse "1564-02-15"))
 
@@ -73,7 +78,7 @@
        (= (typical/ymd t0) (typical/ymd t1)) 
        (= (typical/dt t0) (typical/dt t1)))) 
   
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 
 (defn changes []
   (let [t0 (Typical.
@@ -104,4 +109,16 @@
 (defn equal-changes? [c0 c1]
   (and (equal-typicals? (change/before c0) (change/before c1))
        (equal-typicals? (change/after c0) (change/after c1))))
-;;------------------------------------------------------------------------------
+
+;;----------------------------------------------------------------
+
+(defn embed-file ^File [nss embed]
+  (let [tokens (s/split nss #"\.")
+        folder (apply io/file "tst" tokens)
+        fname (str (.getSimpleName (class embed))
+                   "-" (.name ^FlatEmbedding embed) ".edn")
+        file (io/file folder fname)]
+    (io/make-parents file) 
+    file))
+
+;;----------------------------------------------------------------

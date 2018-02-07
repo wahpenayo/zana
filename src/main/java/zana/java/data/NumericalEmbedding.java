@@ -11,8 +11,8 @@ import zana.java.functions.Functions;
  */
 
 @SuppressWarnings("unchecked")
-public final class NumericalAttributeLinearizer 
-implements AttributeLinearizer {
+public final class NumericalEmbedding 
+implements AttributeEmbedding {
 
   private static final long serialVersionUID = 0L;
 
@@ -51,15 +51,15 @@ implements AttributeLinearizer {
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
-  private NumericalAttributeLinearizer (final String name) {
+  private NumericalEmbedding (final String name) {
     _name = name; }
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space for values of a
    * numerical attribute.
    */
-  public static final NumericalAttributeLinearizer
+  public static final NumericalEmbedding
   make (final IFn attribute) {
-    return new NumericalAttributeLinearizer(
+    return new NumericalEmbedding(
       Functions.name(attribute)); }
   //--------------------------------------------------------------
 } // end class

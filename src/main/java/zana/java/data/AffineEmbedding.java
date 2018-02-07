@@ -2,8 +2,6 @@ package zana.java.data;
 
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
 import clojure.lang.IFn;
 
 //----------------------------------------------------------------------------
@@ -14,16 +12,16 @@ import clojure.lang.IFn;
  * represented by instances of <code>double[n+1]</code>
  * holding homogeneous coordinates.
  * 
- * This is identical to a <code>Linearizer</code>, except that it
+ * This is identical to a <code>LinearEmbedding</code>, except that it
  * adds a constant 1.0 as the least element in the returned
  * arrays, supporting affine models (linear plus constant term).
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-05
+ * @version 2018-02-06
  */
 
 @SuppressWarnings("unchecked")
-public final class Homogenizer extends FlatEmbedding {
+public final class AffineEmbedding extends FlatEmbedding {
   
   private static final long serialVersionUID = 0L;
   
@@ -37,10 +35,10 @@ public final class Homogenizer extends FlatEmbedding {
     final double[] coords = new double[n+1];
     coords[n] = 1.0; // constant term
     int start = 0;
-    for (final Object pair : attributeLinearizers()) {
+    for (final Object pair : attributeEmbeddings()) {
       final IFn x = (IFn) ((List) pair).get(0);
-      final AttributeLinearizer al = 
-        (AttributeLinearizer) ((List) pair).get(1);
+      final AttributeEmbedding al = 
+        (AttributeEmbedding) ((List) pair).get(1);
       start = 
         al.updateCoordinates(
           x.invoke(record),
@@ -59,9 +57,9 @@ public final class Homogenizer extends FlatEmbedding {
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
-  public Homogenizer (final String name,
-                      final List attributeLinearizers) {
-    super(name,attributeLinearizers); }
+  public AffineEmbedding (final String name,
+                          final List attributeEmbeddings) {
+    super(name,attributeEmbeddings); }
   //---------------------------------------------------------------
   /** Construct an embedding in an affine space 
    * (<b>E</b><sup>n</sup>) for selected attributes and attribute
@@ -71,11 +69,13 @@ public final class Homogenizer extends FlatEmbedding {
    * points in <b>E</b><sup>n</sup>, represented by instances
    * of <code>double[n+1]</code> holding homogeneous coordinates.
    */
-  public static final Homogenizer
+  public static final AffineEmbedding
   make (final String name,
         final List attributeValues) {
     return
-      new Homogenizer(name,makeLinearizers(attributeValues)); }
+      new AffineEmbedding(
+        name,
+        makeAttributeEmbeddings(attributeValues)); }
   //--------------------------------------------------------------
 } // end class
 //----------------------------------------------------------------

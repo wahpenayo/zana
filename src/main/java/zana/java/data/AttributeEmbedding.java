@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("unchecked")
-public interface AttributeLinearizer 
+public interface AttributeEmbedding 
 extends Serializable {
 
 

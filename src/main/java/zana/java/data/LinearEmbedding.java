@@ -50,11 +50,11 @@ import clojure.lang.IFn;
  * those categories were mapped to the origin.)
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-05
+ * @version 2018-02-06
  */
 
 @SuppressWarnings("unchecked")
-public final class Linearizer extends FlatEmbedding {
+public final class LinearEmbedding extends FlatEmbedding {
   
   private static final long serialVersionUID = 0L;
   
@@ -67,10 +67,10 @@ public final class Linearizer extends FlatEmbedding {
     final int n = dimension();
     final double[] coords = new double[n];
     int start = 0;
-    for (final Object pair : attributeLinearizers()) {
+    for (final Object pair : attributeEmbeddings()) {
       final IFn x = (IFn) ((List) pair).get(0);
-      final AttributeLinearizer al = 
-        (AttributeLinearizer) ((List) pair).get(1);
+      final AttributeEmbedding al = 
+        (AttributeEmbedding) ((List) pair).get(1);
       start = 
         al.updateCoordinates(
           x.invoke(record),
@@ -89,9 +89,9 @@ public final class Linearizer extends FlatEmbedding {
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
-  public Linearizer (final String name,
-                      final ImmutableList attributeLinearizers) {
-    super(name,attributeLinearizers); }
+  public LinearEmbedding (final String name,
+                          final List attributeEmbeddings) {
+    super(name,ImmutableList.copyOf(attributeEmbeddings)); }
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space 
    * (<b>R</b><sup>n</sup>) for selected attributes and attribute
@@ -101,10 +101,12 @@ public final class Linearizer extends FlatEmbedding {
    * vectors in <b>R</b><sup>n</sup>, represented by instances
    * of <code>double[n]</code>.
    */
-  public static final Linearizer
+  public static final LinearEmbedding
   make (final String name,
         final List attributeValues) {
-    return new Linearizer(name,makeLinearizers(attributeValues)); }
+    return new LinearEmbedding(
+      name,
+      makeAttributeEmbeddings(attributeValues)); }
   //--------------------------------------------------------------
 } // end class
 //----------------------------------------------------------------

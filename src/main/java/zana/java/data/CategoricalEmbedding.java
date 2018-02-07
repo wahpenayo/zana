@@ -30,8 +30,8 @@ import zana.java.functions.Functions;
  */
 
 @SuppressWarnings("unchecked")
-public final class CategoricalAttributeLinearizer 
-implements AttributeLinearizer {
+public final class CategoricalEmbedding 
+implements AttributeEmbedding {
 
   private static final long serialVersionUID = 0L;
 
@@ -107,7 +107,7 @@ implements AttributeLinearizer {
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
-  private CategoricalAttributeLinearizer (final String name,
+  private CategoricalEmbedding (final String name,
                                           final Map categoryIndex) {
     _name = name;
     _categoryIndex = ImmutableMap.copyOf(categoryIndex); }
@@ -129,7 +129,7 @@ implements AttributeLinearizer {
    * the most frequent or in some other sense a reasonable 
    * default.
    */
-  public static final CategoricalAttributeLinearizer
+  public static final CategoricalEmbedding
   make (final IFn attribute,
         final List categories) {
     final Map categoryIndex = new HashMap(categories.size());
@@ -137,7 +137,7 @@ implements AttributeLinearizer {
     for (final Object cat : categories) {
       categoryIndex.put(cat,Integer.valueOf(i));
       i++; }
-    return new CategoricalAttributeLinearizer(
+    return new CategoricalEmbedding(
       Functions.name(attribute),
       categoryIndex); }
   //--------------------------------------------------------------

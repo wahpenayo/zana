@@ -275,8 +275,8 @@
                 missing/finite?
                 #_missing/select-finite
                 missing/select-finite-values
-                flatten/record-linearizer
-                flatten/record-homogenizer)
+                flatten/linear-embedding
+                flatten/affine-embedding)
 ;;----------------------------------------------------------------
 ;; prng
 ;;----------------------------------------------------------------

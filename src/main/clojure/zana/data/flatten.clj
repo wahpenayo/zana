@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-02-05"
+      :date "2018-02-06"
       :doc
       "Convert records with general attribute values to elements
        of linear or affine spaces: 
@@ -27,9 +27,8 @@
            [com.google.common.collect ImmutableMap]
            [clojure.lang IFn IFn$OD IFn$OL]
            [zana.java.data 
-            CategoricalAttributeLinearizer 
-            NumericalAttributeLinearizer 
-            Homogenizer Linearizer]))
+            CategoricalEmbedding NumericalEmbedding 
+            AffineEmbedding LinearEmbedding]))
 ;;----------------------------------------------------------------
 (defn- numerical? [attribute]
   (or (instance? IFn$OD attribute)
@@ -64,7 +63,7 @@
              (print-str "can't handle" attribute)))))
 ;;----------------------------------------------------------------
 
-(defn record-linearizer
+(defn linear-embedding
   
   "AKA one-hot encoding.
 
@@ -79,14 +78,14 @@
    Dates and times are currently not supported."
   
   (^IFn [^String name ^List attributeValues]
-    (Linearizer/make name attributeValues))
+    (LinearEmbedding/make name attributeValues))
   (^IFn [^String name ^List attributes ^List training-data]
     (let [av (mapv #(attribute-values % training-data) attributes)] 
       #_(pp/pprint av)
-      (record-linearizer name av ))))
+      (linear-embedding name av ))))
 ;;----------------------------------------------------------------
 
-(defn record-homogenizer
+(defn affine-embedding
   
   "AKA one-hot encoding.
 
@@ -103,9 +102,9 @@
    Dates and times are currently not supported."
   
   (^IFn [^String name ^List attributeValues]
-    (Homogenizer/make name attributeValues))
+    (AffineEmbedding/make name attributeValues))
   (^IFn [^String name ^List attributes ^List training-data]
-    (record-homogenizer 
+    (affine-embedding 
       name
       (mapv #(attribute-values % training-data) attributes))))
 ;;----------------------------------------------------------------
@@ -113,93 +112,93 @@
 ;;----------------------------------------------------------------
 ;; NOTE: this requires all the categories to have print-methods
 
-(defn map->CategoricalAttributeLinearizer [m] 
-  (CategoricalAttributeLinearizer/make 
+(defn map->CategoricalEmbedding [m] 
+  (CategoricalEmbedding/make 
     ^String (:name m)
     ^Map (:categoryIndex m)))
-(defn map<-CategoricalAttributeLinearizer 
-  [^CategoricalAttributeLinearizer c] 
+(defn map<-CategoricalEmbedding 
+  [^CategoricalEmbedding c] 
   {:name (.name c) 
    :categoryIndex (into {} (.categoryIndex c))})
-(defmethod clojurize/clojurize CategoricalAttributeLinearizer [this]
-  (map<-CategoricalAttributeLinearizer this))
-(defmethod print-method CategoricalAttributeLinearizer
-  [^CategoricalAttributeLinearizer this ^Writer w]
+(defmethod clojurize/clojurize CategoricalEmbedding [this]
+  (map<-CategoricalEmbedding this))
+(defmethod print-method CategoricalEmbedding
+  [^CategoricalEmbedding this ^Writer w]
   (if *print-readably*
     (do
       (.write w 
-        " #zana.java.data.CategoricalAttributeLinearizer {:name ")
-      (.write w (.name this))
+        " #zana.java.data.CategoricalEmbedding {:name ")
+      (.write w (pr-str (.name this)))
       (.write w " :categoryIndex ")
       (.write w (pr-str (into {} (.categoryIndex this))))
       (.write w "} "))
     (.write w 
-      (print-str (map<-CategoricalAttributeLinearizer this)))))
+      (print-str (map<-CategoricalEmbedding this)))))
 ;;----------------------------------------------------------------
-(defn map->NumericalAttributeLinearizer [m] 
-  (NumericalAttributeLinearizer/make ^String (:name m)))
-(defn map<-NumericalAttributeLinearizer 
-  [^NumericalAttributeLinearizer c] 
+(defn map->NumericalEmbedding [m] 
+  (NumericalEmbedding/make ^String (:name m)))
+(defn map<-NumericalEmbedding 
+  [^NumericalEmbedding c] 
   {:name (.name c)})
-(defmethod clojurize/clojurize NumericalAttributeLinearizer [this]
-  (map<-NumericalAttributeLinearizer this))
-(defmethod print-method NumericalAttributeLinearizer
-  [^NumericalAttributeLinearizer this ^Writer w]
+(defmethod clojurize/clojurize NumericalEmbedding [this]
+  (map<-NumericalEmbedding this))
+(defmethod print-method NumericalEmbedding
+  [^NumericalEmbedding this ^Writer w]
   (if *print-readably*
     (do
       (.write w 
-        " #zana.java.data.NumericalAttributeLinearizer {:name ")
-      (.write w (.name this))
+        " #zana.java.data.NumericalEmbedding {:name ")
+      (.write w (pr-str (.name this)))
       (.write w "} "))
     (.write w 
-      (print-str (map<-NumericalAttributeLinearizer this)))))
+      (print-str (map<-NumericalEmbedding this)))))
 ;;----------------------------------------------------------------
-(defn map->Linearizer [m] 
-  (Linearizer/make 
+(defn map->LinearEmbedding [m] 
+  (LinearEmbedding. 
     ^String (:name m)
-    ^List (:attributeLinearizers m)))
-(defn map<-Linearizer [^Linearizer l] 
+    ^List (:attributeEmbeddings m)))
+(defn map<-LinearEmbedding [^LinearEmbedding l] 
   {:name (.name l)
-   :attributeLinearizers (into {} (.attributeLinearizers l))})
-(defmethod clojurize/clojurize Linearizer [this]
-  (map<-Linearizer this))
-(defmethod print-method Linearizer [^Linearizer this ^Writer w]
+   :attributeEmbeddings (into [] (.attributeEmbeddings l))})
+(defmethod clojurize/clojurize LinearEmbedding [this]
+  (map<-LinearEmbedding this))
+(defmethod print-method LinearEmbedding [^LinearEmbedding this ^Writer w]
   (if *print-readably*
     (do
-      (.write w " #zana.java.data.Linearizer {:name ")
-      (.write w (.name this))
-      (.write w " :attributeLinearizers ")
-      (.write w (pr-str (into {} (.attributeLinearizers this))))
+      (.write w " #zana.java.data.LinearEmbedding {:name ")
+      (.write w (pr-str (.name this)))
+      (.write w " :attributeEmbeddings ")
+      (.write w (pr-str (into [] (.attributeEmbeddings this))))
       (.write w "} "))
-    (.write w (print-str (map<-Linearizer this)))))
+    (.write w (print-str (map<-LinearEmbedding this)))))
 ;;----------------------------------------------------------------
-(defn map->Homogenizer [m] 
-  (Homogenizer/make 
+(defn map->AffineEmbedding [m] 
+  (AffineEmbedding.
     ^String (:name m)
-    ^List (:attributeLinearizers m)))
-(defn map<-Homogenizer [^Homogenizer l] 
+    ^List (:attributeEmbeddings m)))
+(defn map<-AffineEmbedding [^AffineEmbedding l] 
   {:name (.name l)
-   :attributeLinearizers (into {} (.attributeLinearizers l))})
-(defmethod clojurize/clojurize Homogenizer [this] 
-  (map<-Homogenizer this))
-(defmethod print-method Homogenizer [^Homogenizer this ^Writer w]
+   :attributeEmbeddings (into [] (.attributeEmbeddings l))})
+(defmethod clojurize/clojurize AffineEmbedding [this] 
+  (map<-AffineEmbedding this))
+(defmethod print-method AffineEmbedding [^AffineEmbedding this ^Writer w]
   (if *print-readably*
     (do
-      (.write w " #zana.java.data.Homogenizer {:name ")
-      (.write w (.name this))
-      (.write w " :attributeLinearizers ")
-      (.write w (pr-str (into {} (.attributeLinearizers this))))
+      (.write w " #zana.java.data.AffineEmbedding {:name ")
+      (.write w (pr-str (.name this)))
+      (.write w " :attributeEmbeddings ")
+      (.write w (pr-str (into [] (.attributeEmbeddings this))))
       (.write w "} "))
-    (.write w (print-str (map<-Homogenizer this)))))
+    (.write w (print-str (map<-AffineEmbedding this)))))
 ;;----------------------------------------------------------------
 ;; EDN input (output just works?)
 ;;----------------------------------------------------------------
 (zedn/add-edn-readers! 
-  {'zana.java.data.CategoricalAttributeLinearizer
-   map->CategoricalAttributeLinearizer
-   'zana.java.data.NumericalAttributeLinearizer
-   map->NumericalAttributeLinearizer
-   'zana.java.data.Linearizer
-   map->Linearizer
-   'zana.java.data.Homogenizer
-   map->Homogenizer})
+  {'zana.java.data.CategoricalEmbedding
+   map->CategoricalEmbedding
+   'zana.java.data.NumericalEmbedding
+   map->NumericalEmbedding
+   'zana.java.data.LinearEmbedding
+   map->LinearEmbedding
+   'zana.java.data.AffineEmbedding
+   map->AffineEmbedding})

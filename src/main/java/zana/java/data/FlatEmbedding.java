@@ -1,7 +1,6 @@
 package zana.java.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -14,11 +13,10 @@ import clojure.lang.ISeq;
 /** AKA 'one-hot encoding'.
  *
  * Common code used in mapping records with general attribute 
- * values to elements of linear (<code>Linearizer</code>) or 
- * affine (<code>Homogenizer</code>) spaces.
+ * values to elements of linear or affine spaces.
  * 
  *  @author wahpenayo at gmail dot com
- * @version 2018-02-05
+ * @version 2018-02-06
  */
 
 @SuppressWarnings("unchecked")
@@ -36,32 +34,29 @@ public abstract class FlatEmbedding implements IFn, Serializable {
   // list of [attribute, linearizer] pairs.
   // TODO: use Pair class rather than inner list?
   // TODO: use immutable lists
-  private final ImmutableList _attributeLinearizers;
-  public final ImmutableList attributeLinearizers () {
-    return _attributeLinearizers; }
+  private final ImmutableList _attributeEmbeddings;
+  public final ImmutableList attributeEmbeddings () {
+    return _attributeEmbeddings; }
 
   //--------------------------------------------------------------
   // methods
   //--------------------------------------------------------------
 
-  /** The dimension of the linear space in which values of this
-   * categorical attribute are embedded. <code>n+1</code> are
-   * embedded as the corners of the unit <code>n</code> simplex
-   * in <b>R</b><sup>n</sup>.
+  /** The dimension of the flat space in which record objects
+   * are embedded.
    * 
-   * The category that maps to the origin is implied, and returns
-   * <code>null</code> from <code>categoryIndex</code>.
-   * New, unexpected categories will also be mapped to the origin,
-   * providing a simple form of imputation for affine/linear
-   * models. Thus it is usually best if the origin category is
-   * the most frequent or in some other sense a reasonable 
-   * default.
+   * Each numerical attribute adds 1 dimension.
+   * 
+   * Categorical attributes with p+1 categories add p dimensions,
+   * the p+1 values being mapped to the corners of the unit 
+   * p-simplex in <b>R</b><sup>p</sup> or <b>E</b><sup>p</sup>.
    */
+  
   public final int dimension () {
     int n = 0;
-    for (final Object pair : _attributeLinearizers) {
-      final AttributeLinearizer al = 
-        (AttributeLinearizer)  ((List) pair).get(1);
+    for (final Object pair : _attributeEmbeddings) {
+      final AttributeEmbedding al = 
+        (AttributeEmbedding)  ((List) pair).get(1);
       n += al.dimension(); }
     return n; }
 
@@ -78,18 +73,20 @@ public abstract class FlatEmbedding implements IFn, Serializable {
   // construction
   //--------------------------------------------------------------
   public FlatEmbedding (final String name,
-                        final List attributeLinearizers) {
+                        final List attributeEmbeddings) {
     _name = name;
-    _attributeLinearizers = 
-      ImmutableList.copyOf(attributeLinearizers); }
+    _attributeEmbeddings = 
+      ImmutableList.copyOf(attributeEmbeddings); }
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space 
    * (<b>R</b><sup>n</sup>) for selected attributes and attribute
    * values.
    * 
    * This method will construct a map from record objects to 
-   * vectors in <b>R</b><sup>n</sup>, represented by instances
-   * of <code>double[n]</code>.
+   * vectors/points in <b>R</b><sup>n</sup>
+   * (or <b>E</b><sup>n</sup>),
+   * represented by instances
+   * of <code>double[n]</code> (or <code>double[n+1]</code>).
    * 
    * The category that maps to the origin is implied and must be
    * left out of the <code>categories</code> list.
@@ -100,16 +97,15 @@ public abstract class FlatEmbedding implements IFn, Serializable {
    * default.
    */
   public static final ImmutableList
-  makeLinearizers (final List attributeValues) {
-    final int n = attributeValues.size();
+  makeAttributeEmbeddings (final List attributeValues) {
     final Builder b = ImmutableList.builder();
     for (final Object av : attributeValues) {
       final IFn a = (IFn) ((List) av).get(0);
-      final AttributeLinearizer al;
+      final AttributeEmbedding al;
       if (isNumerical(a)) {
-        al = NumericalAttributeLinearizer.make(a); }
+        al = NumericalEmbedding.make(a); }
       else {
-        al = CategoricalAttributeLinearizer.make(
+        al = CategoricalEmbedding.make(
           a,(List) ((List) av).get(1)); }
       b.add(ImmutableList.of(a,al)); }
     return b.build(); }
