@@ -197,6 +197,15 @@
 (prefer-method name clojure.lang.Named clojure.lang.Fn)
 (prefer-method name clojure.lang.Named clojure.lang.IMeta)
 ;;----------------------------------------------------------------
+(defn name-keyword
+  "Convert the [name] of 'x' into a 'Keyword'." 
+  [x] 
+  (let [^String n (name x)]
+    (assert (not (empty? n))
+            (pr-str
+              "Can't construct a keyword from the name of" x))
+    (clojure.core/keyword n)))
+;;----------------------------------------------------------------
 ;; timing
 ;;----------------------------------------------------------------
 ;; like clojure.core.time, prefixes results with a message

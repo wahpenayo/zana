@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-05"
+      :date "2018-02-07"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -76,6 +76,7 @@
                 cc/make-archetyper
                 cc/make-labeler
                 cc/name
+                cc/name-keyword
                 cc/object-array?
                 cc/ordered?
                 cc/pprint-map-str
@@ -275,6 +276,7 @@
                 missing/finite?
                 #_missing/select-finite
                 missing/select-finite-values
+                flatten/attribute-bindings
                 flatten/linear-embedding
                 flatten/affine-embedding)
 ;;----------------------------------------------------------------

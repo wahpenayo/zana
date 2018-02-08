@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-02-06"
+      :date "2018-02-07"
       :doc "Tests for zana.data.flatten." }
     
     zana.test.data.affine
@@ -19,25 +19,32 @@
            [zana.test.defs.data.primitive Primitive]
            [zana.test.defs.data.typical Typical]
            [zana.test.defs.data.change Change]))
-;;----------------------------------------------------------------
 ;;  mvn -Dtest=zana.test.data.affine clojure:test
-#_(test/run-tests 'zana.test.data.embed)
+;;----------------------------------------------------------------
 (def nss (str *ns*))
 ;;----------------------------------------------------------------
 ;; edge case
 
 (test/deftest empty-datum
   (let [empties (setup/empties)
+        attributes []
+        bindings {}
         embed0 (z/affine-embedding "empty" [] empties)
         efile (setup/embed-file nss embed0)
         _ (z/write-edn embed0 efile)
         embed1 (z/read-edn efile)]
     (z/mapc (fn [^Empty x]
-              (let [d0 (doubles (embed0 x))
-                    d1 (doubles (embed1 x))
+              (let [d0 (doubles (embed0 bindings x))
+                    d1 (doubles (embed1 bindings x))
                     d2 (doubles (into-array Double/TYPE [1.0]))]
-                (test/is (Arrays/equals d0 d1)) 
-                (test/is (Arrays/equals d0 d2))))
+                (test/is (Arrays/equals d0 d1)
+                         (print-str
+                           (into [] d0)
+                           (into [] d1)))
+                (test/is (Arrays/equals d0 d2)
+                         (print-str
+                           (into [] d0)
+                           (into [] d1)))))
             empties)))
 ;;----------------------------------------------------------------
 ;; no recursion
@@ -45,22 +52,22 @@
 (test/deftest primitive
   ;; note: skips categorical c
   (let [primitives (setup/primitives)
+        attributes primitive/numerical-attributes 
+        bindings (z/attribute-bindings attributes)
         embed0 (z/affine-embedding
-                 "primitive"
-                 primitive/numerical-attributes 
-                 primitives)
+                 "primitive" attributes primitives)
         efile (setup/embed-file nss embed0)
         _ (z/write-edn embed0 efile)
-        embed1 (z/read-edn efile)]
-    (defn- to-doubles ^doubles [^Primitive p]
-      (into-array Double/TYPE 
-                  (conj 
-                    (mapv #(% p) primitive/numerical-attributes)
-                    1.0)))
+        embed1 (z/read-edn efile)
+        to-doubles (fn to-doubles ^doubles [^Primitive p]
+                     (into-array Double/TYPE 
+                                 (conj 
+                                   (mapv #(% p) attributes)
+                                   1.0)))]
     (z/mapc (fn [^Primitive x]
-              (let [d0 (doubles (embed0 x))
-                    d1 (doubles (embed1 x))
-                    d2 (to-doubles x)]
+              (let [d0 (doubles (embed0 bindings x))
+                    d1 (doubles (embed1 bindings x))
+                    d2 (doubles (to-doubles x))]
                 (test/is (Arrays/equals d0 d1)) 
                 (test/is (Arrays/equals d0 d2))))
             primitives)))
@@ -68,19 +75,20 @@
 ;; one level of recursion
 
 (test/deftest typical
-  (let [embeddable [typical/n 
-                      typical/x 
-                      typical/string 
-                      typical/p-sh 
-                      typical/p-i 
-                      typical/p-l2-norm2
-                      typical/p-l 
-                      typical/p-b 
-                      typical/p-d 
-                      typical/p-f]
+  (let [attributes [typical/n 
+                    typical/x 
+                    typical/string 
+                    typical/p-sh 
+                    typical/p-i 
+                    typical/p-l2-norm2
+                    typical/p-l 
+                    typical/p-b 
+                    typical/p-d 
+                    typical/p-f]
+        bindings (z/attribute-bindings attributes)
         typicals (setup/typicals)
         embed0 (z/affine-embedding 
-                 "typical" embeddable typicals)
+                 "typical" attributes typicals)
         efile (setup/embed-file nss embed0)
         _ (z/write-edn embed0 efile)
         embed1 (z/read-edn efile)
@@ -99,8 +107,8 @@
                                   1.0]))]
     (z/mapc 
       (fn [^Typical x]
-        (let [d0 (doubles (embed0 x))
-              d1 (doubles (embed1 x))
+        (let [d0 (doubles (embed0 bindings x))
+              d1 (doubles (embed1 bindings x))
               d2 (doubles (to-doubles x))]
           (test/is (Arrays/equals d0 d1)) 
           (test/is (Arrays/equals d0 d2))))
@@ -110,28 +118,29 @@
 
 (test/deftest change
   (let [changes (setup/changes)
-        embeddable [change/before-x
-                      change/before-p-d
-                      change/before-p-l
-                      change/before-p-f
-                      change/before-p-sh
-                      change/before-n
-                      change/before-string
-                      change/before-p-b
-                      change/before-p-l2-norm2
-                      change/before-p-i
-                      change/after-x
-                      change/after-p-d
-                      change/after-p-l
-                      change/after-p-f
-                      change/after-p-sh
-                      change/after-n
-                      change/after-string
-                      change/after-p-b
-                      change/after-p-l2-norm2
-                      change/after-p-i]
+        attributes [change/before-x
+                    change/before-p-d
+                    change/before-p-l
+                    change/before-p-f
+                    change/before-p-sh
+                    change/before-n
+                    change/before-string
+                    change/before-p-b
+                    change/before-p-l2-norm2
+                    change/before-p-i
+                    change/after-x
+                    change/after-p-d
+                    change/after-p-l
+                    change/after-p-f
+                    change/after-p-sh
+                    change/after-n
+                    change/after-string
+                    change/after-p-b
+                    change/after-p-l2-norm2
+                    change/after-p-i]
+        bindings (z/attribute-bindings attributes)
         embed0 (z/affine-embedding 
-                 "change" embeddable changes)
+                 "change" attributes changes)
         efile (setup/embed-file nss embed0)
         _ (z/write-edn embed0 efile)
         embed1 (z/read-edn efile)
@@ -166,8 +175,8 @@
     #_(pp/pprint (z/frequencies change/after-string changes))
     (z/mapc 
       (fn [^Change x]
-        (let [d0 (doubles (embed0 x))
-              d1 (doubles (embed1 x))
+        (let [d0 (doubles (embed0 bindings x))
+              d1 (doubles (embed1 bindings x))
               d2 (doubles (to-doubles x))]
           (test/is (Arrays/equals d0 d1)) 
           (test/is (Arrays/equals d0 d2))))

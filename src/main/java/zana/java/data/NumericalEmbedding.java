@@ -5,9 +5,11 @@ import zana.java.functions.Functions;
 
 //----------------------------------------------------------------
 /** AKA one-hot encoding. Trivial for numerical attributes.
- *  
+ * 
+ * NOTE: except for the name, could be a singleton...
+ * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-05
+ * @version 2018-02-07
  */
 
 @SuppressWarnings("unchecked")
@@ -23,12 +25,13 @@ implements AttributeEmbedding {
   private final String _name;
   public final String name () { return _name; }
 
+  //--------------------------------------------------------------
+  // AttributeEmbedding methods
+  //--------------------------------------------------------------
+
   @Override
   public final int dimension () { return 1; }
 
-  //--------------------------------------------------------------
-  // methods
-  //--------------------------------------------------------------
   // TODO: primitive value?
   
   @Override
@@ -46,21 +49,24 @@ implements AttributeEmbedding {
 
   @Override
   public final String toString () { 
-    return name() + "-linearizer"; }
+    return getClass().getSimpleName() + "[" + name() + "]"; }
 
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
-  private NumericalEmbedding (final String name) {
+
+  public NumericalEmbedding (final String name) {
     _name = name; }
+  
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space for values of a
    * numerical attribute.
    */
+  
   public static final NumericalEmbedding
-  make (final IFn attribute) {
-    return new NumericalEmbedding(
-      Functions.name(attribute)); }
+  make (final Object key) {
+    return new NumericalEmbedding(key.toString()); }
+  
   //--------------------------------------------------------------
 } // end class
 //----------------------------------------------------------------

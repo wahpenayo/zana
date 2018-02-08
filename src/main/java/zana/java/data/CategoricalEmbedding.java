@@ -10,23 +10,26 @@ import com.google.common.collect.ImmutableMap;
 import clojure.lang.IFn;
 import zana.java.functions.Functions;
 
-//----------------------------------------------------------------------------
+//----------------------------------------------------------------
 /** AKA one-hot encoding.
  *
- *  Maps each of <code>n</code> distinct
- *  values of a categorical <code>attribute</code> to the linear
- *  (vector) coordinates of one of the <code>n+1</code> corners of 
- *  the unit <code>n</code> simplex (in <b>R</b><sup>n</sup>).
- *  The coordinates are returned as <code>double[n]</code>.
+ * Maps each of <code>n</code> distinct
+ * values of a categorical <code>attribute</code> to the linear
+ * (vector) coordinates of one of the <code>n+1</code> corners of
+ * the unit <code>n</code> simplex (in <b>R</b><sup>n</sup>)
+ * The coordinates are returned as <code>double[n]</code>.
  *
- *  Any value not occurring in <code>categoryIndex</code> will be 
- *  mapped  
- *  to the origin. Predictive models using this encoding will treat 
- *  previously unseen values as though they were the most common 
- *  value in the training data, a simple form of imputation.
- *  
+ * Any value not occurring in <code>categoryIndex</code> will be
+ * mapped  
+ * to the origin. Predictive models using this encoding will treat
+ * previously unseen values as though they were the most common
+ * value in the training data, a simple form of imputation.
+ * 
+ * Note: for this to be serializable as EDN, all  the categories 
+ * must have EDN writers.
+ * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-05
+ * @version 2018-02-07
  */
 
 @SuppressWarnings("unchecked")
@@ -57,19 +60,59 @@ implements AttributeEmbedding {
    * the most frequent or in some other sense a reasonable 
    * default.
    */
-  @Override
-  public final int dimension () {
-    return _categoryIndex.size(); }
 
+  /** The dimension of the linear space in which values of this
+   * categorical attribute are embedded. <code>n+1</code> are
+   * embedded as the corners of the unit <code>n</code> simplex
+   * in <b>R</b><sup>n</sup>.
+   * 
+   * The category that maps to the origin is implied, and returns
+   * <code>null</code> from <code>categoryIndex</code>.
+   * New, unexpected categories will also be mapped to the origin,
+   * providing a simple form of imputation for affine/linear
+   * models. Thus it is usually best if the origin category is
+   * the most frequent or in some other sense a reasonable 
+   * default.
+   */
   public final ImmutableMap categoryIndex () {
     return _categoryIndex; }
 
-  private final Integer categoryIndex (final Object category) {
-    return (Integer) _categoryIndex.get(category); }
+  /** The dimension of the linear space in which values of this
+   * categorical attribute are embedded. <code>n+1</code> are
+   * embedded as the corners of the unit <code>n</code> simplex
+   * in <b>R</b><sup>n</sup>.
+   * 
+   * The category that maps to the origin is implied, and returns
+   * <code>null</code> from <code>categoryIndex</code>.
+   * New, unexpected categories will also be mapped to the origin,
+   * providing a simple form of imputation for affine/linear
+   * models. Thus it is usually best if the origin category is
+   * the most frequent or in some other sense a reasonable 
+   * default.
+   */
+  private final Number categoryIndex (final Object category) {
+    return (Number) _categoryIndex.get(category); }
 
   //--------------------------------------------------------------
-  // methods
+  // AttributeEmbedding interface
   //--------------------------------------------------------------
+
+  /** The dimension of the linear space in which values of this
+   * categorical attribute are embedded. <code>n+1</code> are
+   * embedded as the corners of the unit <code>n</code> simplex
+   * in <b>R</b><sup>n</sup>.
+   * 
+   * The category that maps to the origin is implied, and returns
+   * <code>null</code> from <code>categoryIndex</code>.
+   * New, unexpected categories will also be mapped to the origin,
+   * providing a simple form of imputation for affine/linear
+   * models. Thus it is usually best if the origin category is
+   * the most frequent or in some other sense a reasonable 
+   * default.
+   */
+  @Override
+  public final int dimension () {
+    return _categoryIndex.size(); }
 
   @Override
   public final int updateCoordinates (final Object category,
@@ -81,15 +124,15 @@ implements AttributeEmbedding {
       "start: " + start + 
       ", end: " + end + 
       ", coords.length: " + coords.length;
-    
+
     assert end < coords.length :
       "start: " + start + 
       ", end: " + end + 
       ", coords.length: " + coords.length;
-    
-     // might be able to skip this, but hard to do safely
+
+    // might be able to skip this, but hard to do safely
     Arrays.fill(coords,start,end,0.0);
-    final Integer ii = categoryIndex(category);
+    final Number ii = categoryIndex(category);
     if (null != ii) {
       final int i = ii.intValue();
       assert i < p;
@@ -102,15 +145,17 @@ implements AttributeEmbedding {
 
   @Override
   public final String toString () { 
-    return name() + "-linearizer"; }
+    return getClass().getSimpleName() + "[" + name() + "]"; }
 
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
-  private CategoricalEmbedding (final String name,
-                                          final Map categoryIndex) {
+
+  public CategoricalEmbedding (final String name,
+                               final Map categoryIndex) {
     _name = name;
     _categoryIndex = ImmutableMap.copyOf(categoryIndex); }
+
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space for values of a
    * categorical attribute. <code>n+1</code> categories are
@@ -129,8 +174,9 @@ implements AttributeEmbedding {
    * the most frequent or in some other sense a reasonable 
    * default.
    */
+
   public static final CategoricalEmbedding
-  make (final IFn attribute,
+  make (final Object key,
         final List categories) {
     final Map categoryIndex = new HashMap(categories.size());
     int i = 0;
@@ -138,7 +184,7 @@ implements AttributeEmbedding {
       categoryIndex.put(cat,Integer.valueOf(i));
       i++; }
     return new CategoricalEmbedding(
-      Functions.name(attribute),
+      key.toString(),
       categoryIndex); }
   //--------------------------------------------------------------
 } // end class

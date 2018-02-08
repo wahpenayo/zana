@@ -1,10 +1,9 @@
 package zana.java.data;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
-
-import clojure.lang.IFn;
 
 //----------------------------------------------------------------------------
 /** AKA 'one-hot encoding'.
@@ -50,7 +49,7 @@ import clojure.lang.IFn;
  * those categories were mapped to the origin.)
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-06
+ * @version 2018-02-07
  */
 
 @SuppressWarnings("unchecked")
@@ -59,54 +58,51 @@ public final class LinearEmbedding extends FlatEmbedding {
   private static final long serialVersionUID = 0L;
   
   //--------------------------------------------------------------
-  // IFn interface
+  // FlatEmbedding interface
   //--------------------------------------------------------------
   
   @Override
-  public final Object invoke (final Object record) {
+  public final double[] embed (final Map bindings,
+                              final Object record) {
     final int n = dimension();
-    final double[] coords = new double[n];
-    int start = 0;
-    for (final Object pair : attributeEmbeddings()) {
-      final IFn x = (IFn) ((List) pair).get(0);
-      final AttributeEmbedding al = 
-        (AttributeEmbedding) ((List) pair).get(1);
-      start = 
-        al.updateCoordinates(
-          x.invoke(record),
-          coords,
-          start); }
-    return coords; }
+    final double[] c = new double[n];
+    updateCoordinates(bindings,record,c);
+    return c; }
 
-  //--------------------------------------------------------------
-  // Object interface
-  //--------------------------------------------------------------
-
-  @Override
-  public final String toString () { 
-    return name() + "-linearizer"; }
-
-  //--------------------------------------------------------------
+   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
+  
   public LinearEmbedding (final String name,
                           final List attributeEmbeddings) {
     super(name,ImmutableList.copyOf(attributeEmbeddings)); }
+  
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space 
    * (<b>R</b><sup>n</sup>) for selected attributes and attribute
    * values.
    * 
-   * This method will construct a map from record objects to 
+   * This method will construct a function from record objects to 
    * vectors in <b>R</b><sup>n</sup>, represented by instances
    * of <code>double[n]</code>.
+   * 
+   * @param attributeValues A list of pairs. The first element is
+   * an EDN serializable key (because attribute functions are not
+   * directly serializable as EDN)
+   * and the second is either a list of values of the 
+   * corresponding categorical attribute, or the type of the 
+   * attribute's values.
+   * If the type is numerical, then a trivial NumericalEmbedding
+   * is used. Other types throw an exception (for now).
    */
+  
   public static final LinearEmbedding
   make (final String name,
         final List attributeValues) {
     return new LinearEmbedding(
       name,
       makeAttributeEmbeddings(attributeValues)); }
+  
   //--------------------------------------------------------------
 } // end class
 //----------------------------------------------------------------

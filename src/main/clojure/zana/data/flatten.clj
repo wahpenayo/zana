@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-02-06"
+      :date "2018-02-07"
       :doc
       "Convert records with general attribute values to elements
        of linear or affine spaces: 
@@ -16,6 +16,7 @@
     zana.data.flatten
   
   (:require [clojure.pprint :as pp]
+            [zana.commons.core :as commons]
             [zana.collections.maps :as maps]
             [zana.collections.sets :as sets]
             [zana.collections.clojurize :as clojurize]
@@ -44,23 +45,31 @@
 (defn- attribute-values ^List [attribute training-data]
   (cond 
     (numerical? attribute) 
-    [attribute 
-     Double/TYPE]
+    [(commons/name-keyword attribute) Double/TYPE]
     
     (categorical? attribute)
-    [attribute
-     ;; drop the most frequent value, so it maps to the origin
-     (let [freq (mapv
-                  key
-                  (sort-by 
-                    #(- (int (val %)))
-                    (maps/frequencies attribute training-data)))]
-       #_(pp/pprint freq)
-       (rest freq))]
+    (let [values (rest 
+                   (mapv
+                     key
+                     (sort-by 
+                       #(- (int (val %)))
+                       (maps/frequencies 
+                         attribute 
+                         training-data))))] 
+      [(commons/name-keyword  attribute) values])
     
     :else
     (throw (IllegalArgumentException.
              (print-str "can't handle" attribute)))))
+;;----------------------------------------------------------------
+;; TODO: this belongs sxomewhere else.
+(defn attribute-bindings 
+  "Return a map from `Keyword` to attribute `IFn`, where the 
+   keyword is constructed from the name of the attribute."
+  [attributes]
+  (into 
+    {}
+    (map (fn [a] [(commons/name-keyword a) a]) attributes))) 
 ;;----------------------------------------------------------------
 
 (defn linear-embedding
@@ -113,7 +122,7 @@
 ;; NOTE: this requires all the categories to have print-methods
 
 (defn map->CategoricalEmbedding [m] 
-  (CategoricalEmbedding/make 
+  (CategoricalEmbedding. 
     ^String (:name m)
     ^Map (:categoryIndex m)))
 (defn map<-CategoricalEmbedding 
@@ -136,7 +145,7 @@
       (print-str (map<-CategoricalEmbedding this)))))
 ;;----------------------------------------------------------------
 (defn map->NumericalEmbedding [m] 
-  (NumericalEmbedding/make ^String (:name m)))
+  (NumericalEmbedding. ^String (:name m)))
 (defn map<-NumericalEmbedding 
   [^NumericalEmbedding c] 
   {:name (.name c)})

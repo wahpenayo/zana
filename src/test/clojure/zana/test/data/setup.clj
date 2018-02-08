@@ -117,8 +117,9 @@
         folder (apply io/file "tst" tokens)
         fname (str (.getSimpleName (class embed))
                    "-" (.name ^FlatEmbedding embed) ".edn")
-        file (io/file folder fname)]
+        ^File file (io/file folder fname)]
     (io/make-parents file) 
+    #_(println (.getPath file))
     file))
 
 ;;----------------------------------------------------------------
