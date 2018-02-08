@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-07"
+      :date "2018-02-08"
       :doc 
       "Real (double) valued functions on affine/linear spaces." }
     
@@ -69,7 +69,7 @@
   generators for linear and translation components."
   (^IFn$OD [^long dim ^IFn$D gl ^IFn$D gt]
     (affine-functional 
-      (generate-linear-functional gl)
+      (generate-linear-functional dim gl)
       (gt)))
   (^IFn$OD [^long dim ^IFn$D g]
     (generate-affine-functional dim g g)))
