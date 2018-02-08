@@ -29,7 +29,7 @@
            [clojure.lang IFn IFn$OD IFn$OL]
            [zana.java.data 
             CategoricalEmbedding NumericalEmbedding 
-            AffineEmbedding LinearEmbedding]))
+            AffineEmbedding FlatEmbedding LinearEmbedding]))
 ;;----------------------------------------------------------------
 (defn- numerical? [attribute]
   (or (instance? IFn$OD attribute)
@@ -116,6 +116,9 @@
     (affine-embedding 
       name
       (mapv #(attribute-values % training-data) attributes))))
+;;----------------------------------------------------------------
+(defn embedding-dimension ^long [^FlatEmbedding e]
+  (.dimension e))
 ;;----------------------------------------------------------------
 ;; EDN io
 ;;----------------------------------------------------------------

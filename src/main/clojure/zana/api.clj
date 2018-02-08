@@ -277,6 +277,7 @@
                 #_missing/select-finite
                 missing/select-finite-values
                 flatten/attribute-bindings
+                flatten/embedding-dimension
                 flatten/linear-embedding
                 flatten/affine-embedding)
 ;;----------------------------------------------------------------
@@ -284,6 +285,7 @@
 ;;----------------------------------------------------------------
 (pn/import-vars prng/bernoulli-generator
                 prng/continuous-uniform-generator
+                prng/gaussian-generator
                 prng/mersenne-twister-generator
                 prng/mersenne-twister-seed
                 prng/random-element-generator
@@ -299,8 +301,10 @@
 (pn/import-fn r1/interval? real-interval?)
 (pn/import-vars r1/centered-interval
                 r1/cspan
-                gf/linear-functional
                 gf/affine-functional
+                gf/generate-affine-functional
+                gf/generate-linear-functional
+                gf/linear-functional
                 gg/interval-contains?
                 gg/interval-max
                 gg/interval-min
@@ -335,12 +339,15 @@
 #_(pn/import-vars empirical/quantile
                   empirical/cdf)
 (pn/import-vars seed/seed)
-(pn/import-vars probprng/well44497b)
+(pn/import-vars probprng/well44497b
+                probprng/double-generator)
 (pn/import-vars measure/cdf
+                measure/gaussian-distribution
                 measure/make-wecdf
                 measure/make-wepdf
                 measure/pointmass
                 measure/quantile
+                measure/uniform-distribution
                 measure/wecdf-to-wepdf
                 measure/wepdf-to-wecdf)
 ;;----------------------------------------------------------------

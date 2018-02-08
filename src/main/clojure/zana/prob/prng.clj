@@ -1,21 +1,23 @@
 (set! *warn-on-reflection* true) 
 (set! *unchecked-math* :warn-on-boxed)
 ;;----------------------------------------------------------------
-(ns zana.prob.prng
-  
-  {:doc "pseudo-random number generators using apache commons 
-         math3.
-         <p>
-         <i>TODO:</i> merge this with 
-         <code>zana.stat.prng</code> , favoring commons math3
-         commons rng/math4 over uncommons maths."
-   :author "wahpenayo at gmail dot com"
-   :since "2017-11-06"
-   :date "2017-11-06"}
+(ns ^{:author "wahpenayo at gmail dot com"
+      :date "2018-02-07"
+      :doc 
+      "pseudo-random number generators using apache commons math3.
+      <p>
+      <i>TODO:</i> merge this with 
+      <code>zana.stat.prng</code>, favoring commons math3
+      (commons rng and math4) over uncommons maths."}
+    
+    zana.prob.prng
   
   (:require [zana.commons.core :as zcc]
             [zana.prob.seed :as zps])
-  (:import [org.apache.commons.math3.random 
+  (:import [clojure.lang IFn IFn$D IFn$LO] 
+           [org.apache.commons.math3.distribution
+            RealDistribution]
+           [org.apache.commons.math3.random 
             MersenneTwister RandomGenerator Well44497b]))
 ;;----------------------------------------------------------------
 (defn mersenne-tiwster
@@ -32,7 +34,7 @@
    <code>seed</code> is expected to be an <code>int[624]</code>,
    or the name or URL of a resource containing EDN code for 
    a vector of 624 integers."
- 
+  
   ;; TODO: generalize to accept int and long
   ;; seeds, like org.apache.commons.math3.random.Well44497b?
   ;; TODO: does it make a difference to supply a complete
@@ -59,7 +61,7 @@
    <code>seed</code> is expected to be an <code>int[1391]</code>,
    or the name or URL of a resource containing EDN code for 
    a vector of 1391 integers."
- 
+  
   ;; TODO: generalize to accept int and long
   ;; seeds, like org.apache.commons.math3.random.Well44497b?
   ;; TODO: does it make a difference to supply a complete
@@ -71,4 +73,7 @@
     (assert (== 1391 (alength ^ints seed)))
     (Well44497b. seed)))
 ;;----------------------------------------------------------------
-
+;; Return generator functions
+(defn double-generator ^IFn$D [^RealDistribution d]
+  (fn generate (^double [] (.sample d))))
+;;----------------------------------------------------------------

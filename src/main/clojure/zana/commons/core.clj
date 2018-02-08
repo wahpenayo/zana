@@ -198,7 +198,7 @@
 (prefer-method name clojure.lang.Named clojure.lang.IMeta)
 ;;----------------------------------------------------------------
 (defn name-keyword
-  "Convert the [name] of 'x' into a 'Keyword'." 
+  "Convert the [name] of `x` into a `Keyword`." 
   [x] 
   (let [^String n (name x)]
     (assert (not (empty? n))

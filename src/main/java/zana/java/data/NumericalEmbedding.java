@@ -1,8 +1,5 @@
 package zana.java.data;
 
-import clojure.lang.IFn;
-import zana.java.functions.Functions;
-
 //----------------------------------------------------------------
 /** AKA one-hot encoding. Trivial for numerical attributes.
  * 

@@ -157,6 +157,11 @@
 ;; in EDN or TSV files.
 ;; Not attempting to serialize RandomGenerators.
 ;;----------------------------------------------------------------
+(defn gaussian-distribution 
+  ^RealDistribution [^RandomGenerator prng
+                     ^double mean
+                     ^double standard-deviation]
+  (NormalDistribution. prng mean standard-deviation))
 (defn- map<-NormalDistribution 
   ^Map [^NormalDistribution d] 
   {:mean (.getMean d) 
@@ -181,6 +186,11 @@
   (.write w (Double/toString (.getStandardDeviation this)))
   (.write w "}"))
 ;;----------------------------------------------------------------
+(defn uniform-distribution 
+  ^RealDistribution [^RandomGenerator prng
+                     ^double lower
+                     ^double upper]
+  (UniformRealDistribution. prng lower upper))
 (defn- map<-UniformRealDistribution 
   ^Map [^UniformRealDistribution d] 
   {:supportLowerBound (.getSupportLowerBound d)

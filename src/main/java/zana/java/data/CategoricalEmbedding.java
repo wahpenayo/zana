@@ -7,9 +7,6 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import clojure.lang.IFn;
-import zana.java.functions.Functions;
-
 //----------------------------------------------------------------
 /** AKA one-hot encoding.
  *

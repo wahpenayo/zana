@@ -1,9 +1,10 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2016-08-31"
-      :doc "Pseudo-random number generators, constructed from 
-            a resource of truly random seeds." }
+      :date "2018-02-07"
+      :doc 
+      "Pseudo-random number generators, constructed from 
+       a resource of truly random seeds." }
     
     zana.stats.prng
   
@@ -11,13 +12,15 @@
             [clojure.edn :as edn]
             [zana.io.gz :as gz])
   
-  (:import [java.util ArrayList Arrays Collection Collections List Random]
+  (:import [java.util ArrayList Arrays Collection Collections List 
+            Random]
            [org.uncommons.maths.binary BinaryUtils]
-           [org.uncommons.maths.random ContinuousUniformGenerator 
-            DiscreteUniformGenerator MersenneTwisterRNG]))
-;;------------------------------------------------------------------------------
+           [org.uncommons.maths.random 
+            ContinuousUniformGenerator DiscreteUniformGenerator 
+            GaussianGenerator MersenneTwisterRNG]))
+;;----------------------------------------------------------------
 (defn ^:no-doc java-random-generator ^Random [] (Random.))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; Good enough for small collections, but...
 ;; TODO: replace with Waterman/Knuth algorithm.
 (defn- sample-collection [^Random prng
@@ -54,12 +57,12 @@
         :else
         (throw (IllegalArgumentException.
                  (print-str "Don't know how to sample from:" (class data))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; lazy immutable seq version --- too much overhead for large datasets
 (defn ^:no-doc slow-sample-with-replacement [prng data]
   (let [n (count data)]
     (repeatedly n (fn [] (nth data (.nextInt ^Random prng n))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: faster version
 (defn sample-with-replacement 
   "Create a new data set of the same size by sampling from <code>data</code> 
@@ -73,19 +76,19 @@
         a (object-array n)]
     (dotimes [i n] (aset a i (.get data (.nextInt prng n))))
     (Collections/unmodifiableList (Arrays/asList a))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn- read-mersenne-twister-seeds [_]
   (with-open [r (clojure.lang.LineNumberingPushbackReader. 
                   (gz/reader 
                     (io/resource 
                       "zana/stats/mersenne-twister-seeds.edn")))]
     (edn/read r)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; TODO: add seeds for other generator classes
 ;; TODO: fetch new seeds when these run out, and persist all of them.
 
 (def ^{:private true} mersenne-twister-seeds (ref nil))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn reset-mersenne-twister-seeds 
   "Zana maintains a thread-safe finite sequence of truly random 
    mersenne twister seeds, which are read from a resource file.
@@ -93,7 +96,7 @@
    results from algorithms like random forests. See [[mersenne-twister-seed]]."
   []
   (dosync (alter mersenne-twister-seeds read-mersenne-twister-seeds)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn mersenne-twister-seed 
   "Zana maintains a thread-safe finite sequence of truly random 
    mersenne twister seeds. This consumes the next seed in the sequence, 
@@ -108,7 +111,7 @@
     (let [seed (first (deref mersenne-twister-seeds))]
       (alter mersenne-twister-seeds next)
       seed)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn mersenne-twister-generator
   "Return a 
    <a href=\"http://maths.uncommons.org/api/org/uncommons/maths/random/MersenneTwisterRNG.html\">
@@ -122,7 +125,7 @@
         seed
         "Ran out of mersene twister seeds! Change the cache to grow as needed!")
       (mersenne-twister-generator seed))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn continuous-uniform-generator 
   
   "Return a function which, when called, returns uniformly distributed 
@@ -132,7 +135,7 @@
    </dt>
    <dd>If <code>prng</code> is an instance of </code>java.util.Random</code>,
    return a function <code>f</code> such that <code>(f)</code> is uniformly
-   distrubuted between <code>x0</code> and <code>x1</code>.<br>
+   distributed between <code>x0</code> and <code>x1</code>.<br>
    If <code>prng</code> is a <code>String</code>, assume it's a valid seed for
    [[mersenne-twister-generator]], and use the <code>Random</code> returned as
    to create the generating function.
@@ -144,8 +147,8 @@
    </dl>"
   
   (^clojure.lang.IFn$D [^double x0 ^double x1 prng]
-    (cond (instance? java.util.Random prng)
-          (let [cug (ContinuousUniformGenerator. x0 x1 prng)]
+    (cond (instance? Random prng)
+          (let [cug (ContinuousUniformGenerator. x0 x1 ^Random prng)]
             (fn generate-continuous-uniform ^double [] (.nextValue cug)))
           
           (string? prng)
@@ -155,11 +158,49 @@
           (throw (IllegalArgumentException. 
                    (pr-str "can't create a generator from" prng)))))
   (^clojure.lang.IFn$D [prng] (continuous-uniform-generator 0.0 1.0 prng)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
+(defn gaussian-generator 
+  
+  "Return a function which, when called, returns gaussian 
+   pseudo-random <code>double</code> values, based on 
+   <code>prng</code>.
+   <dl>
+   <dt><code>^clojure.lang.IFn$D [^double m ^double s prng]</code>
+   </dt>
+   <dd>If <code>prng</code> is an instance of 
+   </code>java.util.Random</code>,
+   return a function <code>f</code> such that <code>(f)</code> is 
+   from a gaussian distribution with mean <code>m</code> and 
+   and standard deviation <code>s</code>.<br>
+   If <code>prng</code> is a <code>String</code>, assume it's a 
+   valid seed for [[mersenne-twister-generator]], and use the 
+   <code>Random</code> returned to create the generating function.
+   </dd>
+   <dt><code>^clojure.lang.IFn$D [prng]</code>
+   </dt>
+   <dd>Same as <code>(gaussian-generator 0.0 1.0 prng)</code>.
+   </dd>
+   </dl>"
+  
+  (^clojure.lang.IFn$D [^double m ^double s prng]
+    (cond (instance? Random prng)
+          (let [cug (GaussianGenerator. m s ^Random prng)]
+            (fn generate-gaussian ^double [] (.nextValue cug)))
+          
+          (string? prng)
+          (gaussian-generator 
+            m s (mersenne-twister-generator prng))
+          
+          :else 
+          (throw (IllegalArgumentException. 
+                   (pr-str "can't create a generator from" prng)))))
+  (^clojure.lang.IFn$D [prng] 
+    (gaussian-generator 0.0 1.0 prng)))
+;;----------------------------------------------------------------
 (deftype BernoulliGenerator [^double p ^ContinuousUniformGenerator cug]
   org.uncommons.maths.number.NumberGenerator
   (nextValue [this] (if (> (double (.nextValue cug)) p) 0.0 1.0)))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn bernoulli-generator 
   
   "Return a function which returns 0.0 or 1.0, pseudo-randomly, based on
@@ -213,7 +254,7 @@
           :else 
           (throw (IllegalArgumentException. 
                    (pr-str "can't create a generator from" prng))))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 (defn random-element-generator 
   "Return a function of no args that returns a equally likely pseudo-random 
    element of <code>lst</code> every time it's called, based on
@@ -233,7 +274,7 @@
         :else 
         (throw (IllegalArgumentException. 
                  (pr-str "can't create a generator from" prng)))))
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
 ;; Run this to generate the desired number of 'truly' random seeds.
 (comment
   ;; one seed at a time
@@ -276,4 +317,4 @@
               (.generateSeed generator m))))
         (println "]"))))
   )
-;;------------------------------------------------------------------------------
+;;----------------------------------------------------------------
