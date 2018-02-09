@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-01-29"
+      :date "2018-02-08"
       :doc "Stats that don't have an obvious home." }
     
     zana.stats.statistics
@@ -66,14 +66,18 @@
             t))))))
 ;;----------------------------------------------------------------
 ;; TODO: move to function namespace
+
 (defn constantly-0d 
   "An instance of <code>clojure.lang.IFn$OD</code> that returns a primitve
   <code>double</code> 0.0, regardless of input."
-  ^double [arg] 0.0)
+  (^double [] 0.0)
+  (^double [arg] 0.0))
+
 (defn constantly-1d 
   "An instance of <code>clojure.lang.IFn$OD</code> that returns a primitve
   <code>double</code> 1.0, regardless of input."
-  ^double [arg] 1.0)
+  (^double [] 1.0)
+  (^double [arg] 1.0))
 ;;----------------------------------------------------------------
 (defn- singular-longs? [^clojure.lang.IFn$OL z ^Iterable data]
   (let [it (g/iterator data)]
