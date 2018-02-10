@@ -92,6 +92,10 @@ public abstract class FlatEmbedding implements IFn, Serializable {
   public abstract double[] embed (final Map bindings,
                                   final Object record);
 
+  //--------------------------------------------------------------
+  // IFn interface
+  //--------------------------------------------------------------
+
   @Override
   public final Object invoke (final Object bindings,
                               final Object record) {

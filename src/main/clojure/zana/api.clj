@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-07"
+      :date "2018-02-09"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -135,6 +135,7 @@
                 generic/map
                 #_generic/map-indexed
                 generic/map-to-doubles
+                generic/map-to-objects
                 generic/mapc
                 #_generic/mapc-indexed
                 generic/mapcat
@@ -279,6 +280,7 @@
                 flatten/attribute-bindings
                 flatten/embedding-dimension
                 flatten/linear-embedding
+                flatten/linear-part
                 flatten/affine-embedding)
 ;;----------------------------------------------------------------
 ;; prng

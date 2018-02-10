@@ -1,22 +1,22 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :since "2017-09-16"
-      :date "2017-11-16"
-      :doc "Generic versions of clojure functions.
-            Some implemented with defmulti, some with defprotocol, 
-            some by hand.
-            <br>
-            Naming convention: 
-            <dl>
-            <dt>foo</dt>
-            <dd>arg is not modified and value is immutable.</dd>
-            <dt>foo!</dt>
-            <dd>arg is mutable and (may be) modified, return value 
-            may be void/nil.</dd>
-            <dl>!foo</dl>
-            <dd>arg is not modified, return value is mutable.</dd>
-            </dl>" }
+      :date "2018-02-09"
+      :doc 
+      "Generic versions of clojure functions.
+       Some implemented with defmulti, some with defprotocol, 
+       some by hand.
+       <br>
+       Naming convention: 
+       <dl>
+       <dt>foo</dt>
+       <dd>arg is not modified and value is immutable.</dd>
+       <dt>foo!</dt>
+       <dd>arg is mutable and (may be) modified, return value 
+       may be void/nil.</dd>
+       <dl>!foo</dl>
+       <dd>arg is not modified, return value is mutable.</dd>
+       </dl>" }
     
     zana.collections.generic
   
@@ -153,7 +153,7 @@
         (instance? String things)
         (when (< 0 (.length ^String things))
           (.charAt ^String things 0))
-       
+        
         (cc/double-array? things) 
         (when (< 0 (alength ^doubles things))
           (aget ^doubles things 0))
@@ -721,9 +721,17 @@
   (let [n (count things)
         ^objects a (make-array type n)
         it (iterator things)]
-    (dotimes [i n]
+    (assert (.isArray ^Class (class a)))
+    (dotimes [i (int n)]
       (assert (.hasNext it))
-      (aset a i (f (.next it))))
+      (let [ai (f (.next it))] 
+        (try
+          (aset a i ai)
+          (catch Throwable t
+            (println "array class:" (class a))
+            (println "element type:" (.getComponentType (class a)))
+            (println "new value type:" (class ai))
+            (throw t)))))
     a))
 ;;----------------------------------------------------------------
 (defn map-to-doubles 

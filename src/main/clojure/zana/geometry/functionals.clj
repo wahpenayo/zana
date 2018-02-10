@@ -16,7 +16,10 @@
   IFn$OD 
   (invokePrim ^double [_ v] (Arrays/dot dual v))
   IFn 
-  (invoke [this v] (.invokePrim this v)))
+  (invoke [this v] (.invokePrim this v))
+  Object 
+  (toString [this]
+    (str "LinearFunctional" (into [] dual))))
 ;;----------------------------------------------------------------
 (defn linear-functional ^IFn$OD [^doubles dual]
   (LinearFunctional. 
@@ -37,7 +40,11 @@
   (invokePrim ^double [_ v] 
     (+ translation (.invokePrim linear v)))
   IFn 
-  (invoke [this v] (.invokePrim this v)))
+  (invoke [this v] (.invokePrim this v))
+    Object 
+  (toString [this]
+    (str "AffineFunctional[" 
+         linear ", " translation "]")))
 ;;----------------------------------------------------------------
 (defn affine-functional 
   

@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-02-07"
+      :date "2018-02-09"
       :doc
       "Convert records with general attribute values to elements
        of linear or affine spaces: 
@@ -119,6 +119,8 @@
 ;;----------------------------------------------------------------
 (defn embedding-dimension ^long [^FlatEmbedding e]
   (.dimension e))
+(defn linear-part ^LinearEmbedding [^AffineEmbedding a]
+  (.linearPart a))
 ;;----------------------------------------------------------------
 ;; EDN io
 ;;----------------------------------------------------------------
