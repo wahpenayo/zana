@@ -1,12 +1,13 @@
 package zana.java.geometry.r1;
 
 /** An interval on the real line.
- * @author John Alan McDonald
- * @version 2016-09-13
+ * 
+ * @author wahpenayo at gmail dot com
+ * @version 2018-02-12
  */
 
 @SuppressWarnings("unchecked")
-public final class
+public final class 
 Interval
 extends Object
 implements Comparable {//, clojure.lang.Counted, clojure.lang.Indexed {
@@ -49,13 +50,9 @@ implements Comparable {//, clojure.lang.Counted, clojure.lang.Indexed {
       String.format("[%2.4g,%2.4g)", Double.valueOf(_z0),Double.valueOf(_z1)); }
   @Override
   public final int hashCode () {
-    final long l0  = Double.doubleToLongBits(_z0);
-    final int c0 = (int) (l0 ^ (l0 >>> 32));
-    final long l1  = Double.doubleToLongBits(_z1);
-    final int c1 = (int) (l1 ^ (l1 >>> 32));
     int c = 17;
-    c += 37*c0;
-    c += 37*c1;
+    c += 31*Double.hashCode(_z0);
+    c += 31*Double.hashCode(_z1);
     return c; }
   @Override
   public final boolean equals (final Object o) {

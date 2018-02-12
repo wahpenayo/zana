@@ -3,7 +3,7 @@ package zana.java.geometry.z1;
 /** An immutable interval on the integers.
  *
  * @author wahpenayo at gmail dot com
- * @version 2017-10-24
+ * @version 2018-02-12
  */
 
 @SuppressWarnings("unchecked")
@@ -65,8 +65,8 @@ public final class Interval implements Comparable, zana.java.geometry.Interval {
     final int c0 = (int) (_z0 ^ (_z0 >>> 32));
     final int c1 = (int) (_z1 ^ (_z1 >>> 32));
     int c = 17;
-    c += 37*c0;
-    c += 37*c1;
+    c += 31*c0;
+    c += 31*c1;
     return c; }
   @Override
   public final boolean equals (final Object o) {

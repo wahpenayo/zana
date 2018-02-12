@@ -10,7 +10,7 @@ import zana.java.math.Statistics;
  * moving the mass <code>delta</code> to the right.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2017-11-08
+ * @version 2018-02-12
  */
 
 public final class TranslatedRealDistribution  
@@ -144,9 +144,8 @@ implements ApproximatelyEqual, RealDistribution {
   @Override
   public final int hashCode () {
     int h = 17;
-    final long l = Double.doubleToLongBits(_dz);
-    h = (37*h) + ((int) (l ^ (l >>>32)));
-    h = (37*h) + _rd.hashCode();
+    h = (31*h) + Double.hashCode(_dz);
+    h = (31*h) + _rd.hashCode();
     return h; }
 
   @Override
