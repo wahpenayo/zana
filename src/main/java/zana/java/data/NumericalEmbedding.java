@@ -1,12 +1,14 @@
 package zana.java.data;
 
+import java.util.List;
+
 //----------------------------------------------------------------
 /** AKA one-hot encoding. Trivial for numerical attributes.
  * 
  * NOTE: except for the name, could be a singleton...
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-07
+ * @version 2018-02-11
  */
 
 @SuppressWarnings("unchecked")
@@ -44,6 +46,14 @@ implements AttributeEmbedding {
   // Object interface
   //--------------------------------------------------------------
 
+  @Override
+  public final int hashCode () { return _name.hashCode(); }
+
+  @Override
+  public boolean equals (final Object o) {
+    if (! (o instanceof NumericalEmbedding)) { return false; }
+    return _name.equals(((NumericalEmbedding) o)._name); }
+  
   @Override
   public final String toString () { 
     return getClass().getSimpleName() + "[" + name() + "]"; }

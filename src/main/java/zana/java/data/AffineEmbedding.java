@@ -3,6 +3,8 @@ package zana.java.data;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+
 //----------------------------------------------------------------
 /** AKA 'one-hot encoding'.
  *
@@ -17,7 +19,7 @@ import java.util.Map;
  * term).
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-09
+ * @version 2018-02-11
  */
 
 @SuppressWarnings("unchecked")
@@ -48,12 +50,21 @@ public final class AffineEmbedding extends FlatEmbedding {
     return c; }
 
   //--------------------------------------------------------------
+  // Object interface
+  //--------------------------------------------------------------
+  
+  @Override
+  public final boolean equals (final Object o) {
+    if (! (o instanceof AffineEmbedding)) { return false; }
+    return super.equals(o); }
+
+  //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
 
   public AffineEmbedding (final String name,
                           final List attributeEmbeddings) {
-    super(name,attributeEmbeddings); }
+    super(name,ImmutableList.copyOf(attributeEmbeddings)); }
 
   //---------------------------------------------------------------
   /** Construct an embedding in an affine space 

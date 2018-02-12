@@ -17,7 +17,7 @@ import clojure.lang.ISeq;
  * values to elements of linear or affine spaces.
  * 
  *  @author wahpenayo at gmail dot com
- * @version 2018-02-07
+ * @version 2018-02-11
  */
 
 @SuppressWarnings("unchecked")
@@ -106,8 +106,22 @@ public abstract class FlatEmbedding implements IFn, Serializable {
   //--------------------------------------------------------------
 
   @Override
+  public final int hashCode () {
+    int h = 17;
+    h += 31*_name.hashCode();
+    h += 31*_attributeEmbeddings.hashCode();
+    return h; }
+
+  @Override
+  public boolean equals (final Object o) {
+    final FlatEmbedding that = (FlatEmbedding) o;
+    if (! _name.equals(that._name)) { return false; }
+    return 
+      _attributeEmbeddings.equals(that._attributeEmbeddings); }
+  
+  @Override
   public final String toString () { 
-    return name() + "-embedding"; }
+    return getClass().getSimpleName() + "[" + name() + "]"; }
 
   //--------------------------------------------------------------
   // construction
@@ -130,8 +144,12 @@ public abstract class FlatEmbedding implements IFn, Serializable {
   public FlatEmbedding (final String name,
                         final List attributeEmbeddings) {
     _name = name;
-    _attributeEmbeddings = 
-      ImmutableList.copyOf(attributeEmbeddings); }
+    final ImmutableList.Builder b = ImmutableList.builder();
+    for (final Object pair : attributeEmbeddings) {
+      assert pair instanceof List;
+      assert 2 == ((List) pair).size();
+      b.add(ImmutableList.copyOf((List) pair)); }
+    _attributeEmbeddings = b.build(); }
 
   //---------------------------------------------------------------
   // TODO: what about Dates, etc.?

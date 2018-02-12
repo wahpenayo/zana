@@ -1,25 +1,35 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-08"
+      :date "2018-02-11"
       :doc 
       "Real (double) valued functions on affine/linear spaces." }
     
     zana.geometry.functionals
   
-  (:require [zana.commons.core :as commons])
+  (:require [zana.commons.core :as commons]
+            [zana.collections.clojurize :as clojurize]
+            [zana.io.edn :as zedn])
   
-  (:import [clojure.lang IFn IFn$D IFn$OD]
+  (:import [java.util Map]
+           [java.io Serializable Writer]
+           [clojure.lang IFn IFn$D IFn$OD]
            [zana.java.arrays Arrays]))
 ;;----------------------------------------------------------------
 (deftype LinearFunctional [^doubles dual]
+  Serializable
   IFn$OD 
   (invokePrim ^double [_ v] (Arrays/dot dual v))
   IFn 
   (invoke [this v] (.invokePrim this v))
   Object 
-  (toString [this]
-    (str "LinearFunctional" (into [] dual))))
+  (equals [_ that] 
+    (and (instance? LinearFunctional that)
+         (java.util.Arrays/equals 
+           dual 
+           (doubles (.dual ^LinearFunctional that)))))
+  (hashCode [_] (java.util.Arrays/hashCode dual))
+  (toString [_] (str "LinearFunctional" (into [] dual))))
 ;;----------------------------------------------------------------
 (defn linear-functional ^IFn$OD [^doubles dual]
   (LinearFunctional. 
@@ -36,15 +46,27 @@
 ;;----------------------------------------------------------------
 (deftype AffineFunctional [^LinearFunctional linear
                            ^double translation]
+  Serializable
   IFn$OD 
   (invokePrim ^double [_ v] 
     (+ translation (.invokePrim linear v)))
   IFn 
   (invoke [this v] (.invokePrim this v))
-    Object 
-  (toString [this]
-    (str "AffineFunctional[" 
-         linear ", " translation "]")))
+  Object 
+  (equals [_ that] 
+    (and (instance? AffineFunctional that)
+         (let [^AffineFunctional that that]
+           (and (== translation (.translation that))
+                (.equals linear (.linear that))))))
+  (hashCode [_]    
+    (let [h (int 17)
+          h (unchecked-multiply-int h (int 31))
+          h (unchecked-add-int h (.hashCode linear))
+          h (unchecked-multiply-int h (int 31))
+          h (unchecked-add-int h (Double/hashCode translation))]
+      h))
+  (toString [_]
+    (str "AffineFunctional[" linear ", " translation "]")))
 ;;----------------------------------------------------------------
 (defn affine-functional 
   
@@ -80,4 +102,44 @@
       (gt)))
   (^IFn$OD [^long dim ^IFn$D g]
     (generate-affine-functional dim g g)))
+;;----------------------------------------------------------------
+;; EDN io
+;;----------------------------------------------------------------
+(defn map->LinearFunctional ^LinearFunctional [^Map m] 
+  (LinearFunctional. (double-array (:dual m))))
+(defn map<-LinearFunctional ^Map [^LinearFunctional lf] 
+  {:dual (into [] (.dual lf))})
+(defmethod clojurize/clojurize LinearFunctional [this]
+  (map<-LinearFunctional this))
+(defmethod print-method LinearFunctional
+  [^LinearFunctional this ^Writer w]
+  (if *print-readably*
+    (do
+      (.write w " #zana.geometry.functionals.LinearFunctional " )
+      (.write w (pr-str (map<-LinearFunctional this))))
+    (.write w 
+      (print-str (map<-LinearFunctional this)))))
+;;----------------------------------------------------------------
+(defn map->AffineFunctional ^AffineFunctional [^Map m] 
+  (AffineFunctional. (:linear m) (:translation m)))
+(defn map<-AffineFunctional 
+  ^Map [^AffineFunctional af] 
+  {:linear (.linear af) :translation (.translation af)})
+(defmethod clojurize/clojurize AffineFunctional [this]
+  (map<-AffineFunctional this))
+(defmethod print-method AffineFunctional
+  [^AffineFunctional this ^Writer w]
+  (if *print-readably*
+    (do
+      (.write w " #zana.geometry.functionals.AffineFunctional " )
+      (.write w (pr-str (map<-AffineFunctional this))))
+    (.write w (print-str (map<-AffineFunctional this)))))
+;;----------------------------------------------------------------
+;; EDN input (output just works?)
+;;----------------------------------------------------------------
+(zedn/add-edn-readers! 
+  {'zana.geometry.functionals.LinearFunctional
+   map->LinearFunctional 
+   'zana.geometry.functionals.AffineFunctional 
+   map->AffineFunctional})
 ;;----------------------------------------------------------------

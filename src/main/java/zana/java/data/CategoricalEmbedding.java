@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -26,7 +27,7 @@ import com.google.common.collect.ImmutableMap;
  * must have EDN writers.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-07
+ * @version 2018-02-11
  */
 
 @SuppressWarnings("unchecked")
@@ -141,6 +142,23 @@ implements AttributeEmbedding {
   //--------------------------------------------------------------
 
   @Override
+  public final int hashCode () {
+    int h = 17;
+    h += 31*_name.hashCode();
+    h += 31*_categoryIndex.hashCode();
+    return h; }
+
+  @Override
+  public boolean equals (final Object o) {
+    if (! (o instanceof CategoricalEmbedding)) { return false; }
+    
+    final CategoricalEmbedding that = (CategoricalEmbedding) o;
+    
+    if (! _name.equals(that._name)) { return false; }
+    
+     return _categoryIndex.equals(that._categoryIndex); }
+  
+ @Override
   public final String toString () { 
     return getClass().getSimpleName() + "[" + name() + "]"; }
 
@@ -151,7 +169,12 @@ implements AttributeEmbedding {
   public CategoricalEmbedding (final String name,
                                final Map categoryIndex) {
     _name = name;
-    _categoryIndex = ImmutableMap.copyOf(categoryIndex); }
+    // reading from clojure gives Long values
+    final ImmutableMap.Builder b = ImmutableMap.builder();
+    for (final Object k : categoryIndex.keySet()) {
+      final int i = ((Number) categoryIndex.get(k)).intValue();
+      b.put(k,Integer.valueOf(i)); }
+    _categoryIndex = b.build(); }
 
   //---------------------------------------------------------------
   /** Construct an embedding in a linear space for values of a

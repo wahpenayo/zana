@@ -49,7 +49,7 @@ import com.google.common.collect.ImmutableList;
  * those categories were mapped to the origin.)
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-07
+ * @version 2018-02-11
  */
 
 @SuppressWarnings("unchecked")
@@ -68,6 +68,15 @@ public final class LinearEmbedding extends FlatEmbedding {
     final double[] c = new double[n];
     updateCoordinates(bindings,record,c);
     return c; }
+
+  //--------------------------------------------------------------
+  // Object interface
+  //--------------------------------------------------------------
+  
+  @Override
+  public final boolean equals (final Object o) {
+    if (! (o instanceof LinearEmbedding)) { return false; }
+    return super.equals(o); }
 
    //--------------------------------------------------------------
   // construction
