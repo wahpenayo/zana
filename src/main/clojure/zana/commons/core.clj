@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-01-31"
+      :date "2018-02-12"
       :doc 
       "Things that ought to be in clojure.core, and don't have an
       obvious place elsewhere in Zana." }
@@ -263,13 +263,14 @@
 ;;----------------------------------------------------------------
 (defn pprint-str
   "Pretty print <code>x</code> without getting carried away..."
-  ([x level depth]
-    (binding [*print-length* level
+  ([x length depth]
+    (binding [*print-length* length
               *print-level* depth
               pp/*print-right-margin* 160
               pp/*print-miser-width* 128
               pp/*print-suppress-namespaces* true]
       (with-out-str (pp/pprint x))))
+  ([x length] (pprint-str x length 8))
   ([x] (pprint-str x 10 8)))
 ;;---------------------------------------------------------------- 
 (defn- abbreviate [v]

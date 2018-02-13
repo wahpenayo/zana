@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-09"
+      :date "2018-02-12"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -304,9 +304,12 @@
 (pn/import-vars r1/centered-interval
                 r1/cspan
                 gf/affine-functional
+                gf/dual
                 gf/generate-affine-functional
                 gf/generate-linear-functional
+                gf/linear
                 gf/linear-functional
+                gf/translation
                 gg/interval-contains?
                 gg/interval-max
                 gg/interval-min

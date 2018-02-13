@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-11"
+      :date "2018-02-12"
       :doc 
       "Real (double) valued functions on affine/linear spaces." }
     
@@ -30,6 +30,9 @@
            (doubles (.dual ^LinearFunctional that)))))
   (hashCode [_] (java.util.Arrays/hashCode dual))
   (toString [_] (str "LinearFunctional" (into [] dual))))
+;;----------------------------------------------------------------
+(defn dual ^doubles [^LinearFunctional lf]
+  (.dual lf))
 ;;----------------------------------------------------------------
 (defn linear-functional ^IFn$OD [^doubles dual]
   (LinearFunctional. 
@@ -67,6 +70,11 @@
       h))
   (toString [_]
     (str "AffineFunctional[" linear ", " translation "]")))
+;;----------------------------------------------------------------
+(defn linear ^LinearFunctional [^AffineFunctional af]
+  (.linear af))
+(defn translation ^double [^AffineFunctional af]
+  (.translation af))
 ;;----------------------------------------------------------------
 (defn affine-functional 
   
