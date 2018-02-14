@@ -1,14 +1,12 @@
 package zana.java.data;
 
-import java.util.List;
-
 //----------------------------------------------------------------
 /** AKA one-hot encoding. Trivial for numerical attributes.
  * 
  * NOTE: except for the name, could be a singleton...
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-11
+ * @version 2018-02-13
  */
 
 @SuppressWarnings("unchecked")

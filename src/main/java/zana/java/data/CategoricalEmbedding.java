@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -27,7 +26,7 @@ import com.google.common.collect.ImmutableMap;
  * must have EDN writers.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-11
+ * @version 2018-02-13
  */
 
 @SuppressWarnings("unchecked")
