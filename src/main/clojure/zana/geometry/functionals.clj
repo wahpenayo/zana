@@ -39,6 +39,8 @@
     (java.util.Arrays/copyOf
       dual (int (alength dual)))))
 ;;----------------------------------------------------------------
+(defn linear-functional? [f] (instance? LinearFunctional f))
+;;----------------------------------------------------------------
 (defn generate-linear-functional ^IFn$OD [^long dim ^IFn$D g]
   "Generate a linear functional whose coordinates come from
    successive calls to `g`, which is typically a pseudo-random
@@ -99,6 +101,8 @@
         (java.util.Arrays/copyOf homogeneous n)
         (aget homogeneous n)))))
 ;;----------------------------------------------------------------
+(defn affine-functional? [f] (instance? AffineFunctional f))
+;;----------------------------------------------------------------
 (defn generate-affine-functional 
   "Generate a linear functional whose coordinates come from
    successive calls to generator functions, which are typically a 
@@ -110,6 +114,22 @@
       (gt)))
   (^IFn$OD [^long dim ^IFn$D g]
     (generate-affine-functional dim g g)))
+;;----------------------------------------------------------------
+;; generic flat functionals
+;;----------------------------------------------------------------
+(defn flat-functional? [f] 
+  (or (linear-functional? f) (affine-functional? f)))
+;;----------------------------------------------------------------
+(defn domain-dimension ^long [f]
+  (cond (linear-functional? f)
+        (alength (dual f))
+        (affine-functional? f)
+        (domain-dimension (linear f))
+        :else
+        (throw 
+          (IllegalArgumentException.
+            (print-str 
+              "can't determine the domain-dimension of" f)))))
 ;;----------------------------------------------------------------
 ;; EDN io
 ;;----------------------------------------------------------------
