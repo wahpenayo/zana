@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-12"
+      :date "2018-02-16"
       :doc 
       "Real (double) valued functions on affine/linear spaces." }
     
@@ -11,7 +11,7 @@
             [zana.collections.clojurize :as clojurize]
             [zana.io.edn :as zedn])
   
-  (:import [java.util Map]
+  (:import [java.util List Map]
            [java.io Serializable Writer]
            [clojure.lang IFn IFn$D IFn$OD]
            [zana.java.arrays Arrays]))
@@ -34,10 +34,10 @@
 (defn dual ^doubles [^LinearFunctional lf]
   (.dual lf))
 ;;----------------------------------------------------------------
-(defn linear-functional ^IFn$OD [^doubles dual]
-  (LinearFunctional. 
-    (java.util.Arrays/copyOf
-      dual (int (alength dual)))))
+(defn linear-functional ^IFn$OD [dual]
+  ;; double-array copies if it's already a double[]
+  (let [^doubles dual (double-array dual)]
+    (LinearFunctional. dual)))
 ;;----------------------------------------------------------------
 (defn linear-functional? [f] (instance? LinearFunctional f))
 ;;----------------------------------------------------------------
@@ -84,7 +84,8 @@
     (let [^LinearFunctional linear 
           (cond (instance? LinearFunctional linear)
                 linear
-                (commons/double-array? linear)
+                (or (commons/double-array? linear)
+                    (instance? List linear))
                 (linear-functional linear)
                 :else
                 (throw (IllegalArgumentException.
@@ -93,9 +94,10 @@
                            linear translation))))]
       (AffineFunctional. linear translation)))
   
-  (^IFn$OD [^doubles homogeneous]
+  (^IFn$OD [homogeneous]
     ;; p+1 homogeneous coordinates
-    (let [n+1 (int (alength homogeneous))
+    (let [homogeneous (double-array homogeneous)
+          n+1 (int (alength homogeneous))
           n (dec n+1)]
       (affine-functional 
         (java.util.Arrays/copyOf homogeneous n)

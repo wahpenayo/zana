@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-12"
+      :date "2018-02-16"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -47,6 +47,7 @@
             [zana.data.missing :as missing]
             [zana.data.flatten :as flatten]
             [zana.html.slides :as slides]
+            [zana.optimization.math3.lp :as math3lp]
             [zana.stats.prng :as prng]
             [zana.stats.accumulators :as accumulators]
             [zana.stats.ranks :as ranks]
@@ -318,7 +319,9 @@
 ;; stats
 ;;----------------------------------------------------------------
 (pn/import-vars stats/float-approximately==
+                stats/approximately<=
                 stats/approximately==
+                stats/approximately>=
                 stats/approximatelyEqual
                 stats/bounding-box
                 stats/bounds
@@ -393,6 +396,10 @@
 
 (pn/import-fn accumulators/make-calculator make-calculator)
 (pn/import-fn accumulators/make-object-calculator make-object-calculator)
+;;----------------------------------------------------------------
+;; optimization
+;;----------------------------------------------------------------
+(pn/import-fn math3lp/optimize optimize-lp)
 ;;----------------------------------------------------------------
 ;; slide show
 ;;----------------------------------------------------------------

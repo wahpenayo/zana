@@ -33,11 +33,25 @@
       (float-approximately== delta x y))))
 ;;----------------------------------------------------------------
 ;; TODO: move somewhere else?
+(defn approximately<= 
+  ([^double delta ^double x ^double y]
+    (<= (- x y)) delta)
+  ([^double x ^double y]
+    (approximately<= 
+      (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y))))
+      x y)))
 (defn approximately== 
   ([^double delta ^double x ^double y]
     (<= (Math/abs (- x y)) delta))
   ([^double x ^double y]
     (approximately== 
+      (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y))))
+      x y)))
+(defn approximately>= 
+  ([^double delta ^double x ^double y]
+    (<= (- y x)) delta)
+  ([^double x ^double y]
+    (approximately<= 
       (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y))))
       x y)))
 (defn approximatelyEqual 

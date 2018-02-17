@@ -1,18 +1,18 @@
-(ns ^{:author "John Alan McDonald" :date "2016-08-24"}
+#_(ns ^{:author "John Alan McDonald" :date "2016-08-24"}
     
-    zana.scripts.doc.marginalia
+     zana.scripts.doc.marginalia
   
-  (:use marginalia.core 
-        [marginalia.html :only (*resources*)]))
+   #_(:use marginalia.core 
+          [marginalia.html :only (*resources*)]))
 ;;------------------------------------------------------------------------------
-(binding [*resources* ""]
-  (ensure-directory! "target/marginalia")
-  (uberdoc!
-    "target/marginalia/uberdoc.html"
-    (format-sources ["src/main/clojure"])
-    {:dev-dependencies []
-     :name "zana"
-     :description "CLojure utilities."
-     :version "3.0.0"
-     :dependencies [["marginalia/marginalia" "0.9.0"]]}))
+#_(binding [*resources* ""]
+   (ensure-directory! "target/marginalia")
+   (uberdoc!
+     "target/marginalia/uberdoc.html"
+     (format-sources ["src/main/clojure"])
+     {:dev-dependencies []
+      :name "zana"
+      :description "CLojure utilities."
+      :version "3.0.0"
+      :dependencies [["marginalia/marginalia" "0.9.0"]]}))
 ;;------------------------------------------------------------------------------

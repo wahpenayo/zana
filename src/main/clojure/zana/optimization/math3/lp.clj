@@ -1,11 +1,11 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-15"
+      :date "2018-02-16"
       :doc 
       "Pose linear programming problems using 
-       `AffineFunctional`and solve them with the
-       apache commons math3 `SimplexSolver`." }
+       `AffineFunctional` and solve them with the
+       commons math3 `SimplexSolver`." }
     
     zana.optimization.math3.lp
   
@@ -20,7 +20,7 @@
            [org.apache.commons.math3.optim.linear
             LinearConstraint LinearConstraintSet
             LinearObjectiveFunction NonNegativeConstraint 
-            Relationship SimplexSolver]
+            PivotSelectionRule Relationship SimplexSolver]
            [org.apache.commons.math3.optim.nonlinear.scalar
             GoalType]
            [zana.geometry.functionals 
@@ -31,7 +31,7 @@
   {:objective nil ;; An AffineFunctional or LinearFunctional
    :constraints nil ;; Sequence of [functional relation] pairs.
    :bounds nil ;; Sequence of numeric [lower upper] pairs -> SimpleBounds
-   :nonnegative false ;; NonnegativeConstraint
+   :nonnegative? false ;; NonnegativeConstraint
    :minimize? true ;; GoalTYpe
    :start nil ;; InitialGuess
    ;; TODO: check what happens if MaxEval is not set.
@@ -40,8 +40,7 @@
    :convergence-tolerance 1.0e-6
    :==delta (Math/ulp 10.0)
    :pivot-cutoff 1.0e-10
-   :pivot-selection-rule :dantzig
-   })
+   :pivot-selection-rule :dantzig})
 ;;----------------------------------------------------------------
 ;; TODO: accept symbols/keywords regardless of namespace?
 
@@ -54,9 +53,7 @@
    `Relationship/LEQ`, or `Relationship/GEQ`.
 
    The intent here is to accept any unambiguous specification
-   of the numerical (in)equality 
-v
-       ."
+   of the numerical (in)equality."
   
   ^Relationship [r]
   (cond 
@@ -90,7 +87,7 @@ v
 ;; TODO: generic function/multimethod?
 ;; TODOL: accept double[] args as well as functionals?
 
-(defn- affine-constraint 
+(defn- linearConstraint 
   
   "This constructs an instance of 
   `org.apache.commons.math3.optim.linear.LinearConstraint`.
@@ -108,11 +105,18 @@ v
   <code>>=</code>, or something that can be translated 
   unambiguously, like <code>\"==\"</code>.
   </dl>
-  `(affine-constraint f r)` is equivalent to the predicate
+  `(linearConstraint f r)` is equivalent to the predicate
   `(r (f x) 0.0)`, or, in more conventional math notation,
-   `f(x) <r> 0.0`, where <r> is <=, =, or >=."
+  `f(x) <r> 0.0`, where <r> is <=, =, or >=.
+
+  <b>Note:</b> Commons math3 expressing constraints as
+  `(relationship ((linear-functional coefficients) x) value)`, 
+  which here is expressed as 
+  `(relationship ((affine-functional coefficients (- value)) x) 
+    0.0)` Pay attention to the change in the sign of `value`
+   when translating code back and forth."
   
-  ^LinearConstraint [f r]
+  ^LinearConstraint [[f r]]
   
   (cond 
     (instance? AffineFunctional f)
@@ -130,22 +134,23 @@ v
           "Can't construct a LinearConstraint from:" 
           f "and" r)))))
 ;;----------------------------------------------------------------
-(defn- affine-constraint-set ^LinearConstraintSet [constraints]
+(defn- linearConstraintSet ^LinearConstraintSet [constraints]
   (LinearConstraintSet. 
-    ^Collection (mapv affine-constraint constraints)))
+    ^Collection (mapv linearConstraint constraints)))
 ;;----------------------------------------------------------------
 ;; TODO: if we had the dim could return 
 ;; (SimpleBounds/unbounded dim)
 
-(defn- simple-bounds ^SimpleBounds [bounds]
+(defn- simpleBounds ^SimpleBounds [bounds]
   (when bounds
     (let [l (zgc/map-to-doubles #(double (first %)) bounds)
           u (zgc/map-to-doubles #(double (second %)) bounds)]
       (SimpleBounds. l u))))
 ;;----------------------------------------------------------------
 ;; TODO: generic function/multimethod?
+;; TODO: general cond/instance? macro
 
-(defn- affine-objective-function
+(defn- linearObjectiveFunction
   ^LinearObjectiveFunction [f]
   (cond 
     (instance? AffineFunctional f)
@@ -162,6 +167,11 @@ v
         (print-str 
           "can't construct a LinearObjectFunction from:" f)))))
 ;;----------------------------------------------------------------
+(defn- pivotSelectionRule [pivot-selection-rule]
+  (case 
+    :dantzig PivotSelectionRule/Dantzig
+    :bland PivotSelectionRule/BLAND))
+;;----------------------------------------------------------------
 ;; TODO: look into spec
 (defn- check
   "Validate options for [[optimize]], throwing
@@ -174,7 +184,7 @@ v
   (let [dim (zgf/domain-dimension (:objective options))]
     (when-let [constraints (:constraints options)]
       (zgc/mapc 
-        (fn [c] 
+        (fn check-constraint [c] 
           (assert (== 2 (count c))
                   (print-str 
                     "not a valid constraint spec:" c))
@@ -185,8 +195,8 @@ v
             (assert (and (zgf/flat-functional? f)
                          (instance? Relationship (relationship r)))
                     (print-str 
-                      "Not a valid constraint spec:" f r)))
-          constraints)))
+                      "Not a valid constraint spec:" f r))))
+        constraints))
     
     (when-let [bounds (:bounds options)]
       ;; TODO: arrays as an option?
@@ -227,7 +237,9 @@ v
           (print-str
             :pivot-cutoff "must be a positive double:" 
             (double (:pivot-cutoff options))))
-  
+  (assert (boolean? (:nonnegative? options))
+          (print-str "invalid" :nonnegative?
+                     (:nonnegative? options)))
   (assert (#{:dantzig :bland} (:pivot-selection-rule options))
           (print-str  :pivot-selection-rule "invalid" 
                       (:pivot-selection-rule options))))
@@ -248,23 +260,27 @@ v
                  (double (:convergence-tolerance options))
                  (double (:==delta options))
                  (double (:pivot-cutoff options)))
-        objective (affine-objective-function 
-                    (:objective options))
-        constraints (affine-constraint-set (:constraints options))
+        objective (linearObjectiveFunction (:objective options))
+        constraints (linearConstraintSet (:constraints options))
         nonnegative (NonNegativeConstraint. 
-                      (boolean (:nonnegative options)))
+                      (boolean (:nonnegative? options)))
         goaltype (if (:minimize? options)
                    GoalType/MINIMIZE
                    GoalType/MAXIMIZE)
         start (when (:start options) 
                 (InitialGuess. (:start options))) 
-        bounds (simple-bounds (:bounds options))
+        bounds (simpleBounds (:bounds options))
         maxeval (MaxEval. (int (:max-evaluations options)))
         maxiter (MaxIter. (int (:max-iterations options)))
+        pivot-selection-rule (pivotSelectionRule 
+                               (:pivot-selection-rule options))
         ^"[Lorg.apache.commons.math3.optim.OptimizationData;"
         opt (into-array OptimizationData 
                         (keep identity  
-                              [objective constraints nonnegative
+                              [objective 
+                               constraints 
+                               nonnegative
+                               pivot-selection-rule
                                goaltype 
                                start bounds 
                                maxeval maxiter]))
