@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-16"
+      :date "2018-02-22"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -281,7 +281,6 @@
                 flatten/attribute-bindings
                 flatten/embedding-dimension
                 flatten/linear-embedding
-                flatten/linear-part
                 flatten/affine-embedding)
 ;;----------------------------------------------------------------
 ;; prng
@@ -308,7 +307,7 @@
                 gf/dual
                 gf/generate-affine-functional
                 gf/generate-linear-functional
-                gf/linear
+                gf/linear-part
                 gf/linear-functional
                 gf/translation
                 gg/interval-contains?

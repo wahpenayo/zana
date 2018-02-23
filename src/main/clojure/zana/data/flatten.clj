@@ -72,28 +72,6 @@
     (map (fn [a] [(commons/name-keyword a) a]) attributes))) 
 ;;----------------------------------------------------------------
 
-(defn linear-embedding
-  
-  "AKA one-hot encoding.
-
-   Return a function that maps a the supplied attributes of 
-   a record object into an element of a linear space (ie a vector
-   in <b>R</b><sup>n</sup> represented by <code>double[]</code>).
-   Numerical attributes are mapped to single coordinates of the
-   output <code>double[]</code>. Categorical attributes use a 
-   simplex corner (one-hot encoding) mapping based on the values
-   present in <code>training-data</code>. 
-   See [attribute-linearizer] for details.
-   Dates and times are currently not supported."
-  
-  (^IFn [^String name ^List attributeValues]
-    (LinearEmbedding/make name attributeValues))
-  (^IFn [^String name ^List attributes ^List training-data]
-    (let [av (mapv #(attribute-values % training-data) attributes)] 
-      #_(pp/pprint av)
-      (linear-embedding name av ))))
-;;----------------------------------------------------------------
-
 (defn affine-embedding
   
   "AKA one-hot encoding.
@@ -117,10 +95,35 @@
       name
       (mapv #(attribute-values % training-data) attributes))))
 ;;----------------------------------------------------------------
+
+(defn linear-embedding
+  
+  "AKA one-hot encoding.
+
+   Return a function that maps a the supplied attributes of 
+   a record object into an element of a linear space (ie a vector
+   in <b>R</b><sup>n</sup> represented by <code>double[]</code>).
+   Numerical attributes are mapped to single coordinates of the
+   output <code>double[]</code>. Categorical attributes use a 
+   simplex corner (one-hot encoding) mapping based on the values
+   present in <code>training-data</code>. 
+   See [attribute-linearizer] for details.
+   Dates and times are currently not supported."
+  
+  (^IFn [^AffineEmbedding af]
+    ;; coerce affine to linear embedding
+    (LinearEmbedding. (.name af) (.attributeEmbeddings af)))
+  (^IFn [^String name ^List attributeValues]
+    (LinearEmbedding/make name attributeValues))
+  (^IFn [^String name ^List attributes ^List training-data]
+    (let [av (mapv #(attribute-values % training-data) attributes)] 
+      #_(pp/pprint av)
+      (linear-embedding name av ))))
+;;----------------------------------------------------------------
 (defn embedding-dimension ^long [^FlatEmbedding e]
   (.dimension e))
-(defn linear-part ^LinearEmbedding [^AffineEmbedding a]
-  (.linearPart a))
+#_(defn linear-part ^LinearEmbedding [^AffineEmbedding a]
+   (.linearPart a))
 ;;----------------------------------------------------------------
 ;; EDN io
 ;;----------------------------------------------------------------

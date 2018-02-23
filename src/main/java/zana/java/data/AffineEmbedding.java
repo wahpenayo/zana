@@ -28,15 +28,6 @@ public final class AffineEmbedding extends FlatEmbedding {
   private static final long serialVersionUID = 0L;
 
   //--------------------------------------------------------------
-  // methods
-  //--------------------------------------------------------------
-
-  /** Something like a derivative...
-   */
-  public final LinearEmbedding linearPart () {
-    return new LinearEmbedding(name(),attributeEmbeddings()); }
-
-  //--------------------------------------------------------------
   // FlatEmbedding interface
   //--------------------------------------------------------------
 

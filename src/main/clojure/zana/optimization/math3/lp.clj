@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-16"
+      :date "2018-02-22"
       :doc 
       "Pose linear programming problems using 
        `AffineFunctional` and solve them with the
@@ -23,7 +23,7 @@
             PivotSelectionRule Relationship SimplexSolver]
            [org.apache.commons.math3.optim.nonlinear.scalar
             GoalType]
-           [zana.geometry.functionals 
+           [zana.java.geometry
             AffineFunctional LinearFunctional]))
 ;;----------------------------------------------------------------
 (def ^:private defaults
@@ -120,7 +120,7 @@
   
   (cond 
     (instance? AffineFunctional f)
-    (let [lhs (zgf/dual (zgf/linear f))
+    (let [lhs (zgf/dual (zgf/linear-part f))
           rhs (- (zgf/translation f))]
       (LinearConstraint. lhs (relationship r) rhs))
     
@@ -154,7 +154,7 @@
   ^LinearObjectiveFunction [f]
   (cond 
     (instance? AffineFunctional f)
-    (LinearObjectiveFunction. (zgf/dual (zgf/linear f))
+    (LinearObjectiveFunction. (zgf/dual (zgf/linear-part f))
                               (zgf/translation f))
     
     (instance? LinearFunctional f)

@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-16"
+      :date "2018-02-22"
       :doc 
       "Real (double) valued functions on affine/linear spaces." }
     
@@ -14,22 +14,24 @@
   (:import [java.util List Map]
            [java.io Serializable Writer]
            [clojure.lang IFn IFn$D IFn$OD]
-           [zana.java.arrays Arrays]))
+           [zana.java.arrays Arrays]
+           [zana.java.geometry 
+            AffineFunctional LinearFunctional]))
 ;;----------------------------------------------------------------
-(deftype LinearFunctional [^doubles dual]
-  Serializable
-  IFn$OD 
-  (invokePrim ^double [_ v] (Arrays/dot dual v))
-  IFn 
-  (invoke [this v] (.invokePrim this v))
-  Object 
-  (equals [_ that] 
-    (and (instance? LinearFunctional that)
-         (java.util.Arrays/equals 
-           dual 
-           (doubles (.dual ^LinearFunctional that)))))
-  (hashCode [_] (java.util.Arrays/hashCode dual))
-  (toString [_] (str "LinearFunctional" (into [] dual))))
+#_(deftype LinearFunctional [^doubles dual]
+   Serializable
+   IFn$OD 
+   (invokePrim ^double [_ v] (Arrays/dot dual v))
+   IFn 
+   (invoke [this v] (.invokePrim this v))
+   Object 
+   (equals [_ that] 
+     (and (instance? LinearFunctional that)
+          (java.util.Arrays/equals 
+            dual 
+            (doubles (.dual ^LinearFunctional that)))))
+   (hashCode [_] (java.util.Arrays/hashCode dual))
+   (toString [_] (str "LinearFunctional" (into [] dual))))
 ;;----------------------------------------------------------------
 (defn dual ^doubles [^LinearFunctional lf]
   (.dual lf))
@@ -37,7 +39,7 @@
 (defn linear-functional ^IFn$OD [dual]
   ;; double-array copies if it's already a double[]
   (let [^doubles dual (double-array dual)]
-    (LinearFunctional. dual)))
+    (LinearFunctional/make dual)))
 ;;----------------------------------------------------------------
 (defn linear-functional? [f] (instance? LinearFunctional f))
 ;;----------------------------------------------------------------
@@ -45,54 +47,52 @@
   "Generate a linear functional whose coordinates come from
    successive calls to `g`, which is typically a pseudo-random
    numbver generator."
-  (let [d (double-array dim)]
-    (dotimes [i (int dim)] (aset-double d i (.invokePrim g)))
-    (linear-functional d)))
+  (LinearFunctional/generate (int dim) g))
 ;;----------------------------------------------------------------
-(deftype AffineFunctional [^LinearFunctional linear
-                           ^double translation]
-  Serializable
-  IFn$OD 
-  (invokePrim ^double [_ v] 
-    (+ translation (.invokePrim linear v)))
-  IFn 
-  (invoke [this v] (.invokePrim this v))
-  Object 
-  (equals [_ that] 
-    (and (instance? AffineFunctional that)
-         (let [^AffineFunctional that that]
-           (and (== translation (.translation that))
-                (.equals linear (.linear that))))))
-  (hashCode [_]    
-    (let [h (int 17)
-          h (unchecked-multiply-int h (int 31))
-          h (unchecked-add-int h (.hashCode linear))
-          h (unchecked-multiply-int h (int 31))
-          h (unchecked-add-int h (Double/hashCode translation))]
-      h))
-  (toString [_]
-    (str "AffineFunctional[" linear ", " translation "]")))
+#_(deftype AffineFunctional [^LinearFunctional linear-part
+                            ^double translation]
+   Serializable
+   IFn$OD 
+   (invokePrim ^double [_ v] 
+     (+ translation (.invokePrim linear-part v)))
+   IFn 
+   (invoke [this v] (.invokePrim this v))
+   Object 
+   (equals [_ that] 
+     (and (instance? AffineFunctional that)
+          (let [^AffineFunctional that that]
+            (and (== translation (.translation that))
+                 (.equals linear-part (.linearPart that))))))
+   (hashCode [_]    
+     (let [h (int 17)
+           h (unchecked-multiply-int h (int 31))
+           h (unchecked-add-int h (.hashCode linear-part))
+           h (unchecked-multiply-int h (int 31))
+           h (unchecked-add-int h (Double/hashCode translation))]
+       h))
+   (toString [_]
+     (str "AffineFunctional[" linear-part ", " translation "]")))
 ;;----------------------------------------------------------------
-(defn linear ^LinearFunctional [^AffineFunctional af]
-  (.linear af))
+(defn linear-part ^LinearFunctional [^AffineFunctional af]
+  (.linearPart af))
 (defn translation ^double [^AffineFunctional af]
   (.translation af))
 ;;----------------------------------------------------------------
 (defn affine-functional 
   
-  (^IFn$OD [linear ^double translation]
-    (let [^LinearFunctional linear 
-          (cond (instance? LinearFunctional linear)
-                linear
-                (or (commons/double-array? linear)
-                    (instance? List linear))
-                (linear-functional linear)
+  (^IFn$OD [linear-part ^double translation]
+    (let [^LinearFunctional linear-part 
+          (cond (instance? LinearFunctional linear-part)
+                linear-part
+                (or (commons/double-array? linear-part)
+                    (instance? List linear-part))
+                (linear-functional linear-part)
                 :else
                 (throw (IllegalArgumentException.
                          (print-str 
                            "can't construct an affine functional:"
-                           linear translation))))]
-      (AffineFunctional. linear translation)))
+                           linear-part translation))))]
+      (AffineFunctional/make linear-part translation)))
   
   (^IFn$OD [homogeneous]
     ;; p+1 homogeneous coordinates
@@ -106,16 +106,14 @@
 (defn affine-functional? [f] (instance? AffineFunctional f))
 ;;----------------------------------------------------------------
 (defn generate-affine-functional 
-  "Generate a linear functional whose coordinates come from
+  "Generate an affine functional whose coordinates come from
    successive calls to generator functions, which are typically a 
    pseudo-random number generators. Two arities allow different
   generators for linear and translation components."
   (^IFn$OD [^long dim ^IFn$D gl ^IFn$D gt]
-    (affine-functional 
-      (generate-linear-functional dim gl)
-      (gt)))
+    (AffineFunctional/generate dim gl gt))
   (^IFn$OD [^long dim ^IFn$D g]
-    (generate-affine-functional dim g g)))
+    (AffineFunctional/generate dim g)))
 ;;----------------------------------------------------------------
 ;; generic flat functionals
 ;;----------------------------------------------------------------
@@ -126,7 +124,7 @@
   (cond (linear-functional? f)
         (alength (dual f))
         (affine-functional? f)
-        (domain-dimension (linear f))
+        (domain-dimension (linear-part f))
         :else
         (throw 
           (IllegalArgumentException.
@@ -136,7 +134,7 @@
 ;; EDN io
 ;;----------------------------------------------------------------
 (defn map->LinearFunctional ^LinearFunctional [^Map m] 
-  (LinearFunctional. (double-array (:dual m))))
+  (linear-functional (:dual m)))
 (defn map<-LinearFunctional ^Map [^LinearFunctional lf] 
   {:dual (into [] (.dual lf))})
 (defmethod clojurize/clojurize LinearFunctional [this]
@@ -145,31 +143,31 @@
   [^LinearFunctional this ^Writer w]
   (if *print-readably*
     (do
-      (.write w " #zana.geometry.functionals.LinearFunctional " )
+      (.write w " #zana.java.geometry.LinearFunctional " )
       (.write w (pr-str (map<-LinearFunctional this))))
     (.write w 
       (print-str (map<-LinearFunctional this)))))
 ;;----------------------------------------------------------------
 (defn map->AffineFunctional ^AffineFunctional [^Map m] 
-  (AffineFunctional. (:linear m) (:translation m)))
+  (affine-functional (:linear m) (:translation m)))
 (defn map<-AffineFunctional 
   ^Map [^AffineFunctional af] 
-  {:linear (.linear af) :translation (.translation af)})
+  {:linear (.linearPart af) :translation (.translation af)})
 (defmethod clojurize/clojurize AffineFunctional [this]
   (map<-AffineFunctional this))
 (defmethod print-method AffineFunctional
   [^AffineFunctional this ^Writer w]
   (if *print-readably*
     (do
-      (.write w " #zana.geometry.functionals.AffineFunctional " )
+      (.write w " #zana.java.geometry.AffineFunctional " )
       (.write w (pr-str (map<-AffineFunctional this))))
     (.write w (print-str (map<-AffineFunctional this)))))
 ;;----------------------------------------------------------------
 ;; EDN input (output just works?)
 ;;----------------------------------------------------------------
 (zedn/add-edn-readers! 
-  {'zana.geometry.functionals.LinearFunctional
+  {'zana.java.geometry.LinearFunctional
    map->LinearFunctional 
-   'zana.geometry.functionals.AffineFunctional 
+   'zana.java.geometry.AffineFunctional 
    map->AffineFunctional})
 ;;----------------------------------------------------------------
