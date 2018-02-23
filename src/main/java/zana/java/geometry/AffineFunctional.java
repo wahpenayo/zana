@@ -35,6 +35,12 @@ public final class AffineFunctional extends Functional {
     //assert domain().contains(x);
     return _translation + _linearPart.doubleValue(x); }
 
+  @Override
+  public final LinearFunctional derivativeFunctional (final double[] x) {
+    // an affine functional's derivative is its linear part, 
+    // independent of x
+    return _linearPart; }
+
   //--------------------------------------------------------------
   // Object interface
   //--------------------------------------------------------------

@@ -36,6 +36,13 @@ public abstract class Function implements IFn, Serializable {
    */
   public abstract double[] value (final double[] x);
   
+  /** Return the derivative of this function at <code>x</code>.
+   * Recall that the general definition of the derivative 
+   * of a function is the <em>linear</em> function that 
+   * approximates it in the limit as we approach x.
+   */
+  public abstract IFn derivative (final double[] x);
+  
   //--------------------------------------------------------------
   // IFn interface
   //--------------------------------------------------------------

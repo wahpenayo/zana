@@ -10,9 +10,9 @@ import clojure.lang.IFn;
  */
 
 @SuppressWarnings("unchecked")
-public abstract class Functional 
-extends Function 
-implements IFn.OD {
+public abstract class ScalarFunctional 
+extends Functional 
+implements IFn.DD {
 
   private static final long serialVersionUID = 0L;
 
@@ -20,42 +20,42 @@ implements IFn.OD {
   // methods
   //--------------------------------------------------------------
 
-  /** Functionals (real-valued functions) offer a value method
-   * that doesn't require allocating an array.
+  /** Scalar functionals (real-valued functions) offer a value method
+   * that doesn't require allocating an array for input or output.
    */
-  public abstract double doubleValue (final double[] x);
+  public abstract double doubleValue (final double x);
   
-  /** The derivative of a functional at x must be a linear
-   * functional.
+  /** The derivative of a scalar functional at x must be a linear
+   * scalar functional.
    */
-  public abstract LinearFunctional derivativeFunctional (final double[] x);
+  public abstract double dfdx (final double x);
   
   //--------------------------------------------------------------
-  // Function interface
+  // Functional interface
   //--------------------------------------------------------------
   
   @Override
-  public final double[] value (final double[] x) {
-    return new double[] { doubleValue(x) }; }
+  public final double doubleValue (final double[] x) {
+    return doubleValue(x[0]); }
   
   @Override
-  public final IFn derivative (final double[] x) {
-    return derivativeFunctional(x); }
+  public final LinearFunctional derivativeFunctional (final double[] x) {
+    return LinearFunctional.make(new double[] { dfdx(x[0]) }); }
   
   //--------------------------------------------------------------
-  // IFn.OD interface
+  // IFn.DD interface
   //--------------------------------------------------------------
 
   @Override
-  public final double invokePrim (final Object x) {
-    return doubleValue((double[]) x); }
+  public final double invokePrim (final double x) {
+    return doubleValue(x); }
 
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
 
-  public Functional (final Object domain) {
-    super(domain,Dn.get(1)); }
+  public ScalarFunctional () {
+    super(Dn.get(1)); }
 
   //--------------------------------------------------------------
  } // end class

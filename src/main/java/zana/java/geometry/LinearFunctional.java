@@ -33,6 +33,11 @@ public final class LinearFunctional extends Functional {
     //assert domain().contains(x);
     return zana.java.arrays.Arrays.dot(_dual,x); }
   
+  @Override
+  public final LinearFunctional derivativeFunctional (final double[] x) {
+    // a linear functional is its own derivative, independent of x
+    return this; }
+
   //--------------------------------------------------------------
   // Object interface
   //--------------------------------------------------------------
