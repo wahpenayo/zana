@@ -27,9 +27,9 @@ public final class Huber extends ScalarFunctional  {
 
   @Override
   public final double doubleValue (final double x) { 
-    if (x >= _epsilon) { return x; }
-    if (-x >= _epsilon) { return -x; }
-    return (_a*x*x) + _b; }
+    if (x >= _epsilon) { return x - _b; }
+    if (-x >= _epsilon) { return -x - _b; }
+    return _a*x*x; }
   
   @Override
   public final double dfdx (final double x) { 
@@ -38,6 +38,26 @@ public final class Huber extends ScalarFunctional  {
     return 2.0*_a*x; }
  
   //--------------------------------------------------------------
+  // Object methods
+  //--------------------------------------------------------------
+  
+  @Override
+  public final int hashCode () { 
+    return Double.hashCode(_epsilon); }
+  
+  @Override
+  public final boolean equals (final Object o) {
+    return 
+      (o instanceof Huber)
+      &&
+      (_epsilon == ((Huber) o)._epsilon); }
+  
+  @Override
+  public final String toString () {
+    return 
+      getClass().getSimpleName() + "[" + _epsilon + "]"; }
+  
+  //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
 
@@ -45,7 +65,7 @@ public final class Huber extends ScalarFunctional  {
     super(); 
     _epsilon = epsilon;
     _a = 0.5 / epsilon;
-    _b = 0.5 * epsilon; }
+    _b = -0.5 * epsilon; }
   
   public static final Huber get (final double epsilon) { 
     return new Huber(epsilon); }

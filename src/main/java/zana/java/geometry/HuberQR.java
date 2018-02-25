@@ -12,7 +12,7 @@ package zana.java.geometry;
  * This smoothed version agrees
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-22
+ * @version 2018-02-24
  */
 
 @SuppressWarnings("unchecked")
@@ -24,12 +24,8 @@ public final class HuberQR extends ScalarFunctional  {
   // fields
   //--------------------------------------------------------------
 
+  private final double _epsilon;
   private final double _p;
-  private final double _q; // p-1
-  private final double _lower;
-  private final double _upper;
-  private final double _a;
-  private final double _b;
 
   //--------------------------------------------------------------
   // ScalarFunctional methods
@@ -37,32 +33,65 @@ public final class HuberQR extends ScalarFunctional  {
 
   @Override
   public final double doubleValue (final double x) { 
-    if (x <= _lower) { return _q*x; }
-    if (_upper <= x) { return _p*x; }
-    return (_a*x*x) + _b; }
-  
+    if (x <= -_p*_epsilon) { 
+      return ((_p-1)*x) + (-0.5*_p*(1.0-_p)*_epsilon); }
+    if (x <= 0.0) { 
+      return ((0.5*(1.0-_p)) / (_p*_epsilon))*x*x; }
+    if (x <= (1.0-_p)*_epsilon) { 
+      return ((0.5*_p) / ((1.0-_p)*_epsilon))*x*x; }
+    return (_p*x) + (-0.5*_p*(1.0-_p)*_epsilon); }
+
   @Override
   public final double dfdx (final double x) { 
-    if (x <= _lower) { return _q; }
-    if (_upper <= x) { return _p; }
-    return 2.0*_a*x; }
- 
+    if (x <= -_p*_epsilon) { 
+      return (_p-1.0); }
+    if (x <= 0.0) { 
+      return ((1.0-_p) / (_p*_epsilon))*x; }
+    if (x <= (1.0-_p)*_epsilon) { 
+      return (_p / ((1.0-_p)*_epsilon))*x; }
+    return _p; }
+
+  //--------------------------------------------------------------
+  // Object methods
+  //--------------------------------------------------------------
+  
+  @Override
+  public final int hashCode () { 
+    int h = 17;
+    h += 31*Double.hashCode(_epsilon);
+    h += 31*Double.hashCode(_p);
+    return h; }
+  
+  @Override
+  public final boolean equals (final Object o) {
+    return 
+      (o instanceof HuberQR)
+      &&
+      (_epsilon == ((HuberQR) o)._epsilon)
+      &&
+      (_p == ((HuberQR) o)._p); }
+  
+  @Override
+  public final String toString () {
+    return 
+      getClass().getSimpleName() 
+      + "[" + _epsilon + ", " + _p + "]"; }
+  
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
 
-  private HuberQR (final double p,
-                   final double epsilon) { 
+  private HuberQR (final double epsilon,
+                   final double p) { 
     super(); 
+    assert (0.0 < p) && (p < 1.0);
+    assert (0.0 < epsilon);
+    _epsilon = epsilon;
     _p = p;
-    _q = p - 1.0;
-    _lower = (1.0 - p) * epsilon;
-    _upper = p*epsilon;
-    _a = p / epsilon;
-    _b = p * epsilon; }
+    }
   
-  public static final HuberQR get (final double p,
-                                   final double epsilon) { 
+  public static final HuberQR get (final double epsilon,
+                                   final double p) { 
     return new HuberQR(p,epsilon); }
 
   //--------------------------------------------------------------
