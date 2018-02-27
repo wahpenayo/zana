@@ -5,11 +5,11 @@ package zana.java.geometry;
  * value.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-22
+ * @version 2018-02-26
  */
 
 @SuppressWarnings("unchecked")
-public final class Huber extends ScalarFunctional  {
+public final class Huber extends Function  {
 
   private static final long serialVersionUID = 0L;
   
@@ -32,7 +32,7 @@ public final class Huber extends ScalarFunctional  {
     return _a*x*x; }
   
   @Override
-  public final double dfdx (final double x) { 
+  public final double slopeAt (final double x) { 
     if (x >= _epsilon) { return 1.0; }
     if (-x >= _epsilon) { return -1.0; }
     return 2.0*_a*x; }
@@ -43,7 +43,9 @@ public final class Huber extends ScalarFunctional  {
   
   @Override
   public final int hashCode () { 
-    return Double.hashCode(_epsilon); }
+    int h = super.hashCode();
+    h += 31*Double.hashCode(_epsilon);
+    return h; }
   
   @Override
   public final boolean equals (final Object o) {
@@ -62,7 +64,7 @@ public final class Huber extends ScalarFunctional  {
   //--------------------------------------------------------------
 
   private Huber (final double epsilon) { 
-    super(); 
+    super(Dn.get(1),Dn.get(1)); 
     _epsilon = epsilon;
     _a = 0.5 / epsilon;
     _b = -0.5 * epsilon; }

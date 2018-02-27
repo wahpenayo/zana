@@ -1,37 +1,41 @@
 package zana.java.geometry;
 
 //----------------------------------------------------------------
-/** Squares its double arg.
+/** Constant double.
  * 
  * @author wahpenayo at gmail dot com
  * @version 2018-02-26
  */
 
 @SuppressWarnings("unchecked")
-public final class Square extends Function  {
+public final class DoubleConstantFunction extends Function  {
 
   private static final long serialVersionUID = 0L;
 
   //--------------------------------------------------------------
-  // ScalarFunctional methods
+  // fields
+  //--------------------------------------------------------------
+
+  private final double _a;
+  
+  //--------------------------------------------------------------
+  // methods
   //--------------------------------------------------------------
 
   @Override
   public final double doubleValue (final double x) { 
-    return x*x; }
-  
-  @Override
-  public final double slopeAt (final double x) { return 2*x; }
+    return _a; }
   
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
 
-  private Square () { super(Dn.get(1),Dn.get(1)); }
+  private DoubleConstantFunction (final double a) {
+    super(Dn.get(1),Dn.get(1)); 
+    _a = a; }
   
-  private static final Square SINGLETON = new Square();
-  
-  public static final Square get () { return SINGLETON; }
+  public static final DoubleConstantFunction make (final double a) {
+    return new DoubleConstantFunction(a); }
 
   //--------------------------------------------------------------
  } // end class

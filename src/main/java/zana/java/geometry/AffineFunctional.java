@@ -7,11 +7,11 @@ import clojure.lang.IFn;
  * (Affine spaces in the future?)
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-22
+ * @version 2018-02-26
  */
 
 @SuppressWarnings("unchecked")
-public final class AffineFunctional extends Functional {
+public final class AffineFunctional extends Function {
 
   private static final long serialVersionUID = 0L;
 
@@ -36,7 +36,7 @@ public final class AffineFunctional extends Functional {
     return _translation + _linearPart.doubleValue(x); }
 
   @Override
-  public final LinearFunctional derivativeFunctional (final double[] x) {
+  public final IFn derivativeAt (final double[] x) {
     // an affine functional's derivative is its linear part, 
     // independent of x
     return _linearPart; }
@@ -74,7 +74,7 @@ public final class AffineFunctional extends Functional {
 
   private AffineFunctional (final LinearFunctional linearPart,
                             final double translation) {
-     super(linearPart.domain());
+     super(linearPart.domain(),Dn.get(1));
      _linearPart = linearPart;
      _translation = translation; }
 

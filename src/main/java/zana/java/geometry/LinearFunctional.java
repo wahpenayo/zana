@@ -12,7 +12,7 @@ import clojure.lang.IFn;
  */
 
 @SuppressWarnings("unchecked")
-public final class LinearFunctional extends Functional {
+public final class LinearFunctional extends Function {
 
   private static final long serialVersionUID = 0L;
 
@@ -34,7 +34,7 @@ public final class LinearFunctional extends Functional {
     return zana.java.arrays.Arrays.dot(_dual,x); }
   
   @Override
-  public final LinearFunctional derivativeFunctional (final double[] x) {
+  public final IFn derivativeAt (final double[] x) {
     // a linear functional is its own derivative, independent of x
     return this; }
 
@@ -66,7 +66,7 @@ public final class LinearFunctional extends Functional {
   //--------------------------------------------------------------
 
   private LinearFunctional (final double[] dual) {
-    super(Dn.get(dual.length));
+    super(Dn.get(dual.length),Dn.get(1));
     _dual = Arrays.copyOf(dual,dual.length);}
 
   public static final LinearFunctional make (final double[] dual) {

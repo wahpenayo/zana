@@ -9,47 +9,127 @@ import clojure.lang.ISeq;
 /** Base class for functions from and to geometric spaces.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-22
+ * @version 2018-02-26
  */
 
 @SuppressWarnings("unchecked")
-public abstract class Function implements IFn, Serializable {
+public abstract class Function 
+implements IFn, IFn.DD, IFn.OD, Serializable {
 
   private static final long serialVersionUID = 0L;
 
   //--------------------------------------------------------------
   // fields
   //--------------------------------------------------------------
-  
+
   private final Object _domain;
   public final Object domain () { return _domain; }
 
   private final Object _codomain;
   public final Object codomain () { return _codomain; }
-  
+
   //--------------------------------------------------------------
   // methods
   //--------------------------------------------------------------
 
   /** Only supporting domains and codomains whose elements can be
-   * implemented as <code>double[]</code>.
+   * implemented as <code>double[]</code> or <code>double</code>.
+   * <br> Optional operation.
    */
-  public abstract double[] value (final double[] x);
-  
+  @SuppressWarnings("unused")
+  public double doubleValue (final double[] x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  /** Only supporting domains and codomains whose elements can be
+   * implemented as <code>double[]</code> or <code>double</code>.
+   * <br> Optional operation.
+   */
+  @SuppressWarnings("unused")
+  public double doubleValue (final double x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  //--------------------------------------------------------------
+  /** Only supporting domains and codomains whose elements can be
+   * implemented as <code>double[]</code>.
+   * <br> Optional operation.
+   */
+  @SuppressWarnings("unused")
+  public double[] value (final double[] x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  /** Only supporting domains and codomains whose elements can be
+   * implemented as <code>double[]</code> or <code>double</code>.
+   * <br> Optional operation.
+   */
+  @SuppressWarnings("unused")
+  public double[] value (final double x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  //--------------------------------------------------------------
   /** Return the derivative of this function at <code>x</code>.
    * Recall that the general definition of the derivative 
    * of a function is the <em>linear</em> function that 
    * approximates it in the limit as we approach x.
+   * <br> Optional operation.
    */
-  public abstract IFn derivative (final double[] x);
-  
+  @SuppressWarnings("unused")
+  public IFn derivativeAt (final double x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  /** Return the derivative of this function at <code>x</code>.
+   * Recall that the general definition of the derivative 
+   * of a function is the <em>linear</em> function that 
+   * approximates it in the limit as we approach x.
+   * <br> Optional operation.
+   */
+  @SuppressWarnings("unused")
+  public IFn derivativeAt (final double[] x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
   //--------------------------------------------------------------
-  // IFn interface
+  /** Return the derivative of this function at <code>x</code>.
+   * Recall that the general definition of the derivative 
+   * of a function is the <em>linear</em> function that 
+   * approximates it in the limit as we approach x.
+   * <br> Optional operation.
+   */
+  @SuppressWarnings("unused")
+  public double slopeAt (final double x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  /** Return the derivative of this function at <code>x</code>.
+   * Recall that the general definition of the derivative 
+   * of a function is the <em>linear</em> function that 
+   * approximates it in the limit as we approach x.
+   * <br> Optional operation.
+   */
+  @SuppressWarnings("unused")
+  public double slopeAt (final double[] x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  //--------------------------------------------------------------
+  // IFn interfaces
   //--------------------------------------------------------------
 
   @Override
   public final Object invoke (final Object x) {
     return value((double[]) x); }
+
+  @Override
+  public final double invokePrim (final Object x) {
+    return doubleValue((double[]) x); }
+
+  @Override
+  public final double invokePrim (final double x) {
+    return doubleValue(x); }
 
   //--------------------------------------------------------------
   // Object interface
@@ -72,11 +152,11 @@ public abstract class Function implements IFn, Serializable {
       _domain.equals(((Function) o)._domain)
       &&
       _codomain.equals(((Function) o)._codomain); }
-  
-//  @Override
-//  public String toString () { 
-//    return getClass().getSimpleName() + "[" + name() + "]"; }
-  
+
+  //  @Override
+  //  public String toString () { 
+  //    return getClass().getSimpleName() + "[" + name() + "]"; }
+
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------

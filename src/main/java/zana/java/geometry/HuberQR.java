@@ -12,11 +12,11 @@ package zana.java.geometry;
  * This smoothed version agrees
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-24
+ * @version 2018-02-26
  */
 
 @SuppressWarnings("unchecked")
-public final class HuberQR extends ScalarFunctional  {
+public final class HuberQR extends Function  {
 
   private static final long serialVersionUID = 0L;
   
@@ -42,7 +42,7 @@ public final class HuberQR extends ScalarFunctional  {
     return (_p*x) + (-0.5*_p*(1.0-_p)*_epsilon); }
 
   @Override
-  public final double dfdx (final double x) { 
+  public final double slopeAt (final double x) { 
     if (x <= -_p*_epsilon) { 
       return (_p-1.0); }
     if (x <= 0.0) { 
@@ -57,7 +57,7 @@ public final class HuberQR extends ScalarFunctional  {
   
   @Override
   public final int hashCode () { 
-    int h = 17;
+    int h = super.hashCode();
     h += 31*Double.hashCode(_epsilon);
     h += 31*Double.hashCode(_p);
     return h; }
@@ -83,7 +83,7 @@ public final class HuberQR extends ScalarFunctional  {
 
   private HuberQR (final double epsilon,
                    final double p) { 
-    super(); 
+    super(Dn.get(1),Dn.get(1));  
     assert (0.0 < p) && (p < 1.0);
     assert (0.0 < epsilon);
     _epsilon = epsilon;
