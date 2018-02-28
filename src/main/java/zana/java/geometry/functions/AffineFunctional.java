@@ -1,13 +1,14 @@
-package zana.java.geometry;
+package zana.java.geometry.functions;
 
 import clojure.lang.IFn;
+import zana.java.geometry.Dn;
 
 //----------------------------------------------------------------
 /** Affine functional on linear spaces.
  * (Affine spaces in the future?)
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-26
+ * @version 2018-02-27
  */
 
 @SuppressWarnings("unchecked")
@@ -36,7 +37,7 @@ public final class AffineFunctional extends Function {
     return _translation + _linearPart.doubleValue(x); }
 
   @Override
-  public final IFn derivativeAt (final double[] x) {
+  public final Function derivativeAt (final double[] x) {
     // an affine functional's derivative is its linear part, 
     // independent of x
     return _linearPart; }

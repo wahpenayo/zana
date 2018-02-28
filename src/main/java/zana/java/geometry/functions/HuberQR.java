@@ -1,4 +1,6 @@
-package zana.java.geometry;
+package zana.java.geometry.functions;
+
+import zana.java.geometry.Dn;
 
 //----------------------------------------------------------------
 /** A continuously differentiable function approximating quantile
@@ -12,7 +14,7 @@ package zana.java.geometry;
  * This smoothed version agrees
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-26
+ * @version 2018-02-27
  */
 
 @SuppressWarnings("unchecked")

@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-22"
+      :date "2018-02-27"
       :doc 
       "Pose linear programming problems using 
        `AffineFunctional` and solve them with the
@@ -23,7 +23,7 @@
             PivotSelectionRule Relationship SimplexSolver]
            [org.apache.commons.math3.optim.nonlinear.scalar
             GoalType]
-           [zana.java.geometry
+           [zana.java.geometry.functions
             AffineFunctional LinearFunctional]))
 ;;----------------------------------------------------------------
 (def ^:private defaults

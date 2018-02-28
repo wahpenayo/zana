@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-22"
+      :date "2018-02-27"
       :doc 
       "Real (double) valued functions on affine/linear spaces." }
     
@@ -15,7 +15,7 @@
            [java.io Serializable Writer]
            [clojure.lang IFn IFn$D IFn$OD]
            [zana.java.arrays Arrays]
-           [zana.java.geometry 
+           [zana.java.geometry.functions 
             AffineFunctional LinearFunctional]))
 ;;----------------------------------------------------------------
 #_(deftype LinearFunctional [^doubles dual]
@@ -143,7 +143,7 @@
   [^LinearFunctional this ^Writer w]
   (if *print-readably*
     (do
-      (.write w " #zana.java.geometry.LinearFunctional " )
+      (.write w " #zana.java.geometry.functions.LinearFunctional " )
       (.write w (pr-str (map<-LinearFunctional this))))
     (.write w 
       (print-str (map<-LinearFunctional this)))))
@@ -159,15 +159,15 @@
   [^AffineFunctional this ^Writer w]
   (if *print-readably*
     (do
-      (.write w " #zana.java.geometry.AffineFunctional " )
+      (.write w " #zana.java.geometry.functions.AffineFunctional " )
       (.write w (pr-str (map<-AffineFunctional this))))
     (.write w (print-str (map<-AffineFunctional this)))))
 ;;----------------------------------------------------------------
 ;; EDN input (output just works?)
 ;;----------------------------------------------------------------
 (zedn/add-edn-readers! 
-  {'zana.java.geometry.LinearFunctional
+  {'zana.java.geometry.functions.LinearFunctional
    map->LinearFunctional 
-   'zana.java.geometry.AffineFunctional 
+   'zana.java.geometry.functions.AffineFunctional 
    map->AffineFunctional})
 ;;----------------------------------------------------------------

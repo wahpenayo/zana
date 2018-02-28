@@ -256,7 +256,8 @@
           (bounds-fast f data min0 max0)
           (bounds-slow f data min0 max0)))))
   
-  (^zana.java.geometry.r1.Interval [^clojure.lang.IFn f ^Iterable data]
+  (^zana.java.geometry.r1.Interval [^clojure.lang.IFn f 
+                                    ^Iterable data]
     (bounds f data Double/POSITIVE_INFINITY Double/NEGATIVE_INFINITY)))
 ;;----------------------------------------------------------------
 (defn- bounding-box-slow 

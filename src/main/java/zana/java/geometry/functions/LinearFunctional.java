@@ -1,14 +1,15 @@
-package zana.java.geometry;
+package zana.java.geometry.functions;
 
 import java.util.Arrays;
 
 import clojure.lang.IFn;
+import zana.java.geometry.Dn;
 
 //----------------------------------------------------------------
 /** Linear functionals (dual vectors) on linear spaces.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-22
+ * @version 2018-02-27
  */
 
 @SuppressWarnings("unchecked")
@@ -34,7 +35,7 @@ public final class LinearFunctional extends Function {
     return zana.java.arrays.Arrays.dot(_dual,x); }
   
   @Override
-  public final IFn derivativeAt (final double[] x) {
+  public final Function derivativeAt (final double[] x) {
     // a linear functional is its own derivative, independent of x
     return this; }
 

@@ -1,15 +1,15 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-24"
+      :date "2018-02-27"
       :doc 
-      "Tests for zana.java.geometry.Huber and HuberQR." }
+      "Tests for zana.java.geometry.functions.Huber and HuberQR." }
      
-    zana.test.geometry.huber
+    zana.test.geometry.functions.huber
 
   (:require [clojure.test :as test])
   
-  (:import [zana.java.geometry Huber HuberQR]))
+  (:import [zana.java.geometry.functions Huber HuberQR]))
 ;;------------------------------------------------------------------------------
 #_(test/deftest Huber
      (let [i (z1/interval 0 1)

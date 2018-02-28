@@ -1,4 +1,4 @@
-package zana.java.geometry;
+package zana.java.geometry.functions;
 
 import java.io.Serializable;
 
@@ -31,6 +31,10 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
   //--------------------------------------------------------------
   // methods
   //--------------------------------------------------------------
+  @SuppressWarnings("unused")
+  public double doubleValue (final Object x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
 
   /** Only supporting domains and codomains whose elements can be
    * implemented as <code>double[]</code> or <code>double</code>.
@@ -51,6 +55,14 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       getClass().getName()); }
 
   //--------------------------------------------------------------
+  /** Map from function space to <b>R</b><sup>n</sup>.
+   * <br> Optional operation.
+   */
+  @SuppressWarnings("unused")
+  public double[] value (final Function f) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
   /** Only supporting domains and codomains whose elements can be
    * implemented as <code>double[]</code>.
    * <br> Optional operation.
@@ -77,7 +89,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
    * <br> Optional operation.
    */
   @SuppressWarnings("unused")
-  public IFn derivativeAt (final double x) {
+  public Function derivativeAt (final double x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
@@ -88,7 +100,12 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
    * <br> Optional operation.
    */
   @SuppressWarnings("unused")
-  public IFn derivativeAt (final double[] x) {
+  public Function derivativeAt (final double[] x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  @SuppressWarnings("unused")
+  public Function derivativeAt (final Function x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 

@@ -2,16 +2,18 @@ package zana.java.geometry;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
+
 //----------------------------------------------------------------
 /** 'Linear' spaces whose elements are instances of 
  * <code>double[n]</code>.
  * 
+ * TODO: extend/implement 'Space' ?
+ *
  * @author wahpenayo at gmail dot com
- * @version 2018-02-22
+ * @version 2018-02-27
  */
-import java.util.Map;
 
-// TODO: extend/implement 'Space' ?
 
 @SuppressWarnings("unchecked")
 public final class Dn implements Serializable {
@@ -28,6 +30,10 @@ public final class Dn implements Serializable {
   //--------------------------------------------------------------
   // methods
   //--------------------------------------------------------------
+  
+//  public final double[] makeElement () { 
+//    return new double[_dimension]; }
+  
   //--------------------------------------------------------------
   // Object interface
   //--------------------------------------------------------------

@@ -1,10 +1,12 @@
-package zana.java.geometry;
+package zana.java.geometry.functions;
+
+import zana.java.geometry.Dn;
 
 //----------------------------------------------------------------
 /** Constant double.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-26
+ * @version 2018-02-27
  */
 
 @SuppressWarnings("unchecked")
