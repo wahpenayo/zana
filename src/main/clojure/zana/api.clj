@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-22"
+      :date "2018-03-01"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -47,6 +47,7 @@
             [zana.data.missing :as missing]
             [zana.data.flatten :as flatten]
             [zana.html.slides :as slides]
+            [zana.optimization.math3.cg :as math3cg]
             [zana.optimization.math3.lp :as math3lp]
             [zana.stats.prng :as prng]
             [zana.stats.accumulators :as accumulators]
@@ -399,6 +400,7 @@
 ;; optimization
 ;;----------------------------------------------------------------
 (pn/import-fn math3lp/optimize optimize-lp)
+(pn/import-fn math3cg/optimize optimize-cg)
 ;;----------------------------------------------------------------
 ;; slide show
 ;;----------------------------------------------------------------
