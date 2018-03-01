@@ -9,7 +9,7 @@ import clojure.lang.ISeq;
 /** Base class for functions from and to geometric spaces.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-26
+ * @version 2018-02-28
  */
 
 @SuppressWarnings("unchecked")
@@ -33,6 +33,11 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
   //--------------------------------------------------------------
   @SuppressWarnings("unused")
   public double doubleValue (final Object x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  @SuppressWarnings("unused")
+  public double doubleValue (final Function x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
