@@ -34,6 +34,8 @@ public final class Dn implements Serializable {
 //  public final double[] makeElement () { 
 //    return new double[_dimension]; }
   
+  
+  
   //--------------------------------------------------------------
   // Object interface
   //--------------------------------------------------------------

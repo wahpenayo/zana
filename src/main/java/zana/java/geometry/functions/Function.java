@@ -7,13 +7,13 @@ import clojure.lang.ISeq;
 
 //----------------------------------------------------------------
 /** Base class for functions from and to geometric spaces.
- * 
+ *
  * @author wahpenayo at gmail dot com
- * @version 2018-02-28
+ * @version 2018-03-14
  */
 
 @SuppressWarnings("unchecked")
-public abstract class Function 
+public abstract class Function
 implements IFn, IFn.DD, IFn.OD, Serializable {
 
   private static final long serialVersionUID = 0L;
@@ -31,28 +31,43 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
   //--------------------------------------------------------------
   // methods
   //--------------------------------------------------------------
+
+  /** If the {@link #codomain() codomain} of this function is
+   * 1-dimensional, return the value as a <code>double</code>.
+   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+   */
   @SuppressWarnings("unused")
   public double doubleValue (final Object x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
+  /** If the {@link #codomain() codomain} of this function is
+   * 1-dimensional, and the {@link #domain() domain} contains
+   * {@link Function functions}
+   * return the value as a <code>double</code>.
+   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+   */
   @SuppressWarnings("unused")
   public double doubleValue (final Function x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  /** Only supporting domains and codomains whose elements can be
-   * implemented as <code>double[]</code> or <code>double</code>.
-   * <br> Optional operation.
+  /** If the {@link #codomain() codomain} of this function is
+   * 1-dimensional, and the {@link #domain() domain} contains
+   * <code>double[]</code> arrays,
+   * return the value as a <code>double</code>.
+   * <br>Otherwise throw an {@link UnsupportedOperationException}.
    */
   @SuppressWarnings("unused")
   public double doubleValue (final double[] x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  /** Only supporting domains and codomains whose elements can be
-   * implemented as <code>double[]</code> or <code>double</code>.
-   * <br> Optional operation.
+  /** If the {@link #codomain() codomain} and
+   * {@link #codomain() codomain} of this function are
+   * 1-dimensional, take a <code>double</code> argument return the
+   * value as a <code>double</code>.
+   * <br>Otherwise throw an {@link UnsupportedOperationException}.
    */
   @SuppressWarnings("unused")
   public double doubleValue (final double x) {
@@ -60,26 +75,46 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       getClass().getName()); }
 
   //--------------------------------------------------------------
-  /** Map from function space to <b>R</b><sup>n</sup>.
-   * <br> Optional operation.
+  /** If the elements of the {@link #codomain() codomains} can be
+   * represented by <code>double[]</code>,
+   * return the value as a <code>double[]</code>.
+   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+   */
+  @SuppressWarnings("unused")
+  public double[] value (final Object f) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
+  /** If the elements of the {@link #codomain() codomains} can be
+   * represented by <code>double[]</code>
+   * can, and the {@link #domain() domain} contains
+   * {@link Function functions},
+   * return the value as a <code>double[]</code>.
+   * <br>Otherwise throw an {@link UnsupportedOperationException}.
    */
   @SuppressWarnings("unused")
   public double[] value (final Function f) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  /** Only supporting domains and codomains whose elements can be
-   * implemented as <code>double[]</code>.
-   * <br> Optional operation.
+  /** If the elements of the {@link #codomain() codomain} can be
+   * represented by <code>double[]</code>
+   * can, and {@link #domain() domain} contains elements that can
+   * be represented by <code>double[]</code>,
+   * return the value as a <code>double[]</code>.
+   * <br>Otherwise throw an {@link UnsupportedOperationException}.
    */
   @SuppressWarnings("unused")
   public double[] value (final double[] x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  /** Only supporting domains and codomains whose elements can be
-   * implemented as <code>double[]</code> or <code>double</code>.
-   * <br> Optional operation.
+  /** If the elements of the {@link #codomain() codomain} can be
+   * represented by <code>double[]</code>
+   * can, and {@link #domain() domain} is 1-dimensional,
+   * take a <code>double</code> as the arg and
+   * return the value as a <code>double[]</code>.
+   * <br>Otherwise throw an {@link UnsupportedOperationException}.
    */
   @SuppressWarnings("unused")
   public double[] value (final double x) {
@@ -88,8 +123,8 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
 
   //--------------------------------------------------------------
   /** Return the derivative of this function at <code>x</code>.
-   * Recall that the general definition of the derivative 
-   * of a function is the <em>linear</em> function that 
+   * Recall that the general definition of the derivative
+   * of a function is the <em>linear</em> function that
    * approximates it in the limit as we approach x.
    * <br> Optional operation.
    */
@@ -99,8 +134,8 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       getClass().getName()); }
 
   /** Return the derivative of this function at <code>x</code>.
-   * Recall that the general definition of the derivative 
-   * of a function is the <em>linear</em> function that 
+   * Recall that the general definition of the derivative
+   * of a function is the <em>linear</em> function that
    * approximates it in the limit as we approach x.
    * <br> Optional operation.
    */
@@ -114,10 +149,15 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
+  @SuppressWarnings("unused")
+  public Function derivativeAt (final Object x) {
+    throw new UnsupportedOperationException(
+      getClass().getName()); }
+
   //--------------------------------------------------------------
   /** Return the derivative of this function at <code>x</code>.
-   * Recall that the general definition of the derivative 
-   * of a function is the <em>linear</em> function that 
+   * Recall that the general definition of the derivative
+   * of a function is the <em>linear</em> function that
    * approximates it in the limit as we approach x.
    * <br> Optional operation.
    */
@@ -127,8 +167,8 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       getClass().getName()); }
 
   /** Return the derivative of this function at <code>x</code>.
-   * Recall that the general definition of the derivative 
-   * of a function is the <em>linear</em> function that 
+   * Recall that the general definition of the derivative
+   * of a function is the <em>linear</em> function that
    * approximates it in the limit as we approach x.
    * <br> Optional operation.
    */
@@ -168,7 +208,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
   public boolean equals (final Object o) {
     // necessary but not sufficient
     // TODO: should this be left to subclasses?
-    return 
+    return
       (o instanceof Function)
       &&
       _domain.equals(((Function) o)._domain)
@@ -176,7 +216,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       _codomain.equals(((Function) o)._codomain); }
 
   //  @Override
-  //  public String toString () { 
+  //  public String toString () {
   //    return getClass().getSimpleName() + "[" + name() + "]"; }
 
   //--------------------------------------------------------------
@@ -194,111 +234,225 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
   // unsupported IFn operations
   //--------------------------------------------------------------
   @Override
-  public Object call () throws Exception {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object call ()
+    throws Exception {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
   public void run () {
-    throw new UnsupportedOperationException(getClass().getName()); }
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object applyTo (ISeq x0) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object applyTo (final ISeq x0) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
   public Object invoke () {
-    throw new UnsupportedOperationException(getClass().getName()); }
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0, final Object x1) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0, Object x1, Object x2) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0, Object x1, Object x2, Object x3) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12,Object x13) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12, final Object x13) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12,Object x13,Object x14) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12, final Object x13,
+                        final Object x14) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12,Object x13,Object x14,
-                        Object x15) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12, final Object x13,
+                        final Object x14, final Object x15) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12,Object x13,Object x14,
-                        Object x15,Object x16) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12, final Object x13,
+                        final Object x14, final Object x15,
+                        final Object x16) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12,Object x13,Object x14,
-                        Object x15,Object x16,Object x17) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12, final Object x13,
+                        final Object x14, final Object x15,
+                        final Object x16, final Object x17) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12,Object x13,Object x14,
-                        Object x15,Object x16,Object x17,Object x18) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12, final Object x13,
+                        final Object x14, final Object x15,
+                        final Object x16, final Object x17,
+                        final Object x18) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12,Object x13,Object x14,
-                        Object x15,Object x16,Object x17,Object x18,Object x19) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12, final Object x13,
+                        final Object x14, final Object x15,
+                        final Object x16, final Object x17,
+                        final Object x18, final Object x19) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
+
   @Override
-  public Object invoke (Object x0,Object x1,Object x2,Object x3,Object x4,
-                        Object x5,Object x6,Object x7,Object x8,Object x9,
-                        Object x10,Object x11,Object x12,Object x13,Object x14,
-                        Object x15,Object x16,Object x17,Object x18,Object x19,
-                        Object... x20) {
-    throw new UnsupportedOperationException(getClass().getName()); }
+  public Object invoke (final Object x0, final Object x1,
+                        final Object x2, final Object x3,
+                        final Object x4, final Object x5,
+                        final Object x6, final Object x7,
+                        final Object x8, final Object x9,
+                        final Object x10, final Object x11,
+                        final Object x12, final Object x13,
+                        final Object x14, final Object x15,
+                        final Object x16, final Object x17,
+                        final Object x18, final Object x19,
+                        final Object... x20) {
+    throw new UnsupportedOperationException(getClass().getName());
+  }
   //--------------------------------------------------------------
 } // end class
 //----------------------------------------------------------------
