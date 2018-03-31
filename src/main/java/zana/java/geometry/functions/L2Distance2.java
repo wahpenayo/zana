@@ -1,6 +1,7 @@
 package zana.java.geometry.functions;
 
 import java.util.Arrays;
+import java.util.List;
 
 import clojure.lang.IFn;
 import zana.java.geometry.Dn;
@@ -50,7 +51,7 @@ public final class L2Distance2 extends Function {
     assert n == x.length;
     final double[] dx = new double[n];
     for (int i=0;i<n;i++) { dx[i] = 2.0*(x[i] - _target[i]); } 
-    return new L2Distance2(dx); }
+    return LinearFunctional.make(dx); }
 
   //--------------------------------------------------------------
   // Object methods
@@ -85,8 +86,20 @@ public final class L2Distance2 extends Function {
     super(Dn.get(target.length),Dn.get(1)); 
     _target = target; }
 
-  public static final L2Distance2 get (final double[] target) {
-    return new L2Distance2(target); }
+  public static final L2Distance2 make (final double[] target) {
+    return new L2Distance2(Arrays.copyOf(target,target.length)); }
+
+  public static final L2Distance2 make (final Object target) {
+    if (target instanceof double[]) {
+    return new L2Distance2((double[]) target); }
+    if (target instanceof List) {
+      final int n = ((List) target).size();
+      final double[] t = new double[n];
+      for (int i=0;i<n;i++) {
+        t[i] = ((Number) ((List) target).get(i)).doubleValue(); } 
+      return make(t); }
+    throw new IllegalArgumentException(
+      "Not a double[] or list of Number:" + target); }
 
   public static final L2Distance2 generate (final int dimension,
                                             final IFn.D g) {

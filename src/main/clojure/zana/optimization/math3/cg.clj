@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-03-01"
+      :date "2018-03-31"
       :doc 
       "Pose unconstrained differentiable optimization problems 
        using `Function` and solve them with the
@@ -97,9 +97,13 @@
 (deftype GradientWrapper [^Function f]
   MultivariateVectorFunction
   (value [_ p] 
-    (.dual ^LinearFunctional (.derivativeAt f p))))
+    (let [df (.derivativeAt f p)]
+      (assert (instance? LinearFunctional df)
+              (print-str f "\n" df))
+      (.dual ^LinearFunctional df))))
 (defn- objective-function-gradient
   ^ObjectiveFunctionGradient [^Function f]
+ 
   (ObjectiveFunctionGradient. (GradientWrapper. f)))
 ;;----------------------------------------------------------------
 ;; TODO: look into spec
@@ -160,11 +164,11 @@
                    (:initial-bracket-range options)))
         objective (objective-function (:objective options))
         gradient (objective-function-gradient (:objective options))
-        goaltype (if (:minimize? options)
+        goaltype (if (:minimize? options true)
                    GoalType/MINIMIZE
                    GoalType/MAXIMIZE)
         start (when (:start options) 
-                (InitialGuess. (:start options))) 
+                (InitialGuess. (double-array (:start options)))) 
         maxeval (MaxEval. (int (:max-evaluations options)))
         maxiter (MaxIter. (int (:max-iterations options)))
         ^"[Lorg.apache.commons.math3.optim.OptimizationData;"

@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-03-01"
+      :date "2018-03-31"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -37,6 +37,7 @@
             [zana.collections.table :as table]
             [zana.geometry.r1 :as r1]
             [zana.geometry.z1 :as z1]
+            [zana.geometry.compose :as compose]
             [zana.geometry.functionals :as gf]
             [zana.geometry.generic :as gg]
             [zana.functions.generic :as fgeneric]
@@ -303,6 +304,7 @@
 (pn/import-fn z1/interval? integer-interval?)
 (pn/import-fn r1/interval? real-interval?)
 (pn/import-vars r1/centered-interval
+                compose/compose
                 r1/cspan
                 gf/affine-functional
                 gf/dual

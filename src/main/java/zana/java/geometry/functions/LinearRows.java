@@ -1,6 +1,7 @@
 package zana.java.geometry.functions;
 
 import java.util.Arrays;
+import java.util.List;
 
 import clojure.lang.IFn;
 import zana.java.geometry.Dn;
@@ -24,6 +25,9 @@ public final class LinearRows extends Function {
   // TODO: list of linear functionals?
   
   private final double[][] _rows;
+  
+  public final double coordinate (final int i, final int j) {
+    return _rows[i][j]; }
 
   //--------------------------------------------------------------
   // Functional methods
@@ -32,6 +36,8 @@ public final class LinearRows extends Function {
   @Override
   public final double[] value (final double[] x) {
     //assert domain().contains(x);
+    assert ((Dn) domain()).dimension() == x.length :
+      this.toString() + "\n" + x;
     final double[] y = new double[((Dn) codomain()).dimension()];
     int i = 0;
     for (final double[] row : _rows) {
@@ -76,6 +82,17 @@ public final class LinearRows extends Function {
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
+  
+  private static final double[][] doubleArray2d (final List rows) {
+    final int m = rows.size();
+    final int n = ((List) rows.get(0)).size();
+    final double[][] a = new double[m][n];
+    for (int i=0;i<m;i++) {
+      final List row = (List) rows.get(i);
+      for (int j=0;j<n;j++) {
+        a[i][j] = ((Number) row.get(j)).doubleValue(); } }
+    return a; }
+  //--------------------------------------------------------------
 
   private LinearRows (final double[][] rows) {
     super(Dn.get(rows[0].length),Dn.get(rows.length));
@@ -90,14 +107,21 @@ public final class LinearRows extends Function {
   public static final LinearRows make (final double[][] rows) {
     return new LinearRows(rows); }
 
+  public static final LinearRows make (final Object rows) {
+    if (rows instanceof double[][]) {
+      return new LinearRows((double[][]) rows); }
+    if (rows instanceof List) {
+      return make(doubleArray2d((List) rows)); }
+    throw new IllegalArgumentException(
+      "Not a double[][] or list of lists:" + rows); }
+
   public static final LinearRows generate (final int m,
                                            final int n,
                                            final IFn.D g) {
     final double[][] rows = new double[m][n];
     for (int i=0;i<m;i++) { 
       for (int j=0;j<n;j++) {
-        rows[i][j] = g.invokePrim(); }
-      }
+        rows[i][j] = g.invokePrim(); } }
     return new LinearRows(rows); }
 
   //--------------------------------------------------------------
