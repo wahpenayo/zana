@@ -10,9 +10,8 @@
   (:require [clojure.test :as test]
             [zana.api :as z])
   (:import [clojure.lang IFn IFn$OD]
-           [org.apache.commons.math3.optim.linear
-            NoFeasibleSolutionException]))
-;; mvn -Dtest=zana.test.optimization.math3.lp clojure:test
+           ))
+;; mvn -Dtest=zana.test.optimization.math3.cg clojure:test
 ;;----------------------------------------------------------------
 ;; Tests borrowed from 
 ;; org.apache.commons.math3.optim.nonlinear.scalar.gradient
@@ -24,50 +23,26 @@
      [^doubles x1 ^double y1]]
    (and (z/approximately== x0 x1)
        (z/approximately== y0 y1))))
+(defn- double-array-2d ^"[[D" [rows]
+  (let [m (count rows)
+        n (reduce max (map count rows))
+        arr (make-array Double/TYPE m n)]
+    (doseq [i (range m)
+            j (range n)]
+      (aset arr i j (double (get-in rows [i j]))))
+    arr))
 ;;----------------------------------------------------------------
-#_(test/deftest trivial
-   (let [objective (z/affine-functional 
-                     [10.0 -57.0 -9.0 -24.0] 0.0)
-         constraints [[(z/affine-functional 
-                         [0.5 -5.5 -2.5 9.0] 0.0)
-                       <=]
-                      [(z/affine-functional 
-                         [0.5 -1.5 -0.5 1.0] 0.0)
-                       <=]
-                      [(z/affine-functional 
-                         [1.0 0.0 0.0 0.0] -1.0)
-                       <=]]
-         options {:minimize? false
-                  :nonnegative? true
-                  :pivot-selection-rule :bland
-                  :objective objective
-                  :constraints constraints}
-         [^doubles x ^double y] (z/optimize-lp options)
-         epsilon (double 1.0e-6)]
-     (println (into [] x) y)
-     (test/is (z/approximately== epsilon 1.0 y))
-     (doseq [constraint constraints]
-       (test/is (approximatelySatisfies epsilon constraint x)))))
+(test/deftest trivial
+  (let [lr (LinearRows. (double-array-2d [[2.0]]))
+        l2d2 (L2Distance2. (double-array [3.0]))
+        objective (compose l2d2 lr)                   
+        [^doubles x ^double y] (z/optimize-cg options)
+        epsilon (double 1.0e-6)]
+    (println (into [] x) y)
+    (test/is (z/approximately== epsilon 1.0 y))
+    (doseq [constraint constraints]
+      (test/is (approximatelySatisfies epsilon constraint x)))))
 ;;----------------------------------------------------------------
-;package org.apache.commons.math3.optim.nonlinear.scalar.gradient;
-;
-;import org.apache.commons.math3.analysis.MultivariateFunction;
-;import org.apache.commons.math3.analysis.MultivariateVectorFunction;
-;import org.apache.commons.math3.exception.MathUnsupportedOperationException;
-;import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-;import org.apache.commons.math3.linear.BlockRealMatrix;
-;import org.apache.commons.math3.linear.RealMatrix;
-;import org.apache.commons.math3.optim.PointValuePair;
-;import org.apache.commons.math3.optim.SimpleValueChecker;
-;import org.apache.commons.math3.optim.InitialGuess;
-;import org.apache.commons.math3.optim.MaxEval;
-;import org.apache.commons.math3.optim.SimpleBounds;
-;import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
-;import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
-;import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunctionGradient;
-;import org.junit.Assert;
-;import org.junit.Test;
-;
 ;    @Test
 ;    public void testTrivial() {
 ;        LinearProblem problem

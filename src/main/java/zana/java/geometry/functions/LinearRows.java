@@ -10,7 +10,7 @@ import zana.java.geometry.Dn;
  * (that is, matrix rows).
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-03-21
+ * @version 2018-03-30
  */
 
 @SuppressWarnings("unchecked")
@@ -21,7 +21,8 @@ public final class LinearRows extends Function {
   //--------------------------------------------------------------
   // fields
   //--------------------------------------------------------------
-
+  // TODO: list of linear functionals?
+  
   private final double[][] _rows;
 
   //--------------------------------------------------------------
@@ -97,7 +98,7 @@ public final class LinearRows extends Function {
       for (int j=0;j<n;j++) {
         rows[i][j] = g.invokePrim(); }
       }
-    return make(rows); }
+    return new LinearRows(rows); }
 
   //--------------------------------------------------------------
  } // end class

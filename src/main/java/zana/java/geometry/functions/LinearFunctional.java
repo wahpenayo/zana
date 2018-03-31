@@ -9,7 +9,7 @@ import zana.java.geometry.Dn;
 /** Linear functionals (dual vectors) on linear spaces.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-27
+ * @version 2018-03-30
  */
 
 @SuppressWarnings("unchecked")
@@ -68,16 +68,16 @@ public final class LinearFunctional extends Function {
 
   private LinearFunctional (final double[] dual) {
     super(Dn.get(dual.length),Dn.get(1));
-    _dual = Arrays.copyOf(dual,dual.length);}
+    _dual = dual; }
 
   public static final LinearFunctional make (final double[] dual) {
-    return new LinearFunctional(dual); }
+    return new LinearFunctional(Arrays.copyOf(dual,dual.length)); }
 
   public static final LinearFunctional generate (final int dimension,
                                                  final IFn.D g) {
     final double[] dual = new double[dimension];
     for (int i=0;i<dimension;i++) { dual[i] = g.invokePrim(); }
-    return make(dual); }
+    return new LinearFunctional(dual); }
 
   //--------------------------------------------------------------
  } // end class
