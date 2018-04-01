@@ -82,6 +82,7 @@ public final class LinearRows extends Function {
   //--------------------------------------------------------------
   // construction
   //--------------------------------------------------------------
+  // TODO: move somewhere else
   
   private static final double[][] doubleArray2d (final List rows) {
     final int m = rows.size();
@@ -92,24 +93,26 @@ public final class LinearRows extends Function {
       for (int j=0;j<n;j++) {
         a[i][j] = ((Number) row.get(j)).doubleValue(); } }
     return a; }
+
+  private static final double[][] copy (final double[][] rows) {
+    final int m = rows.length;
+    final double[][] a = new double[m][];
+    for (int i=0;i<m;i++) {
+      a[i] = Arrays.copyOf(rows[i],rows[i].length); }
+    return a; }
+
   //--------------------------------------------------------------
 
   private LinearRows (final double[][] rows) {
     super(Dn.get(rows[0].length),Dn.get(rows.length));
-    final int m = rows.length;
-    final int n = rows[0].length;
-    final double[][] r = new double[rows.length][];
-    for (int i=0;i<m;i++) {
-      assert n == rows[i].length;
-      r[i] = Arrays.copyOf(rows[i],n); }
-    _rows = r;}
+    _rows = rows;}
 
   public static final LinearRows make (final double[][] rows) {
-    return new LinearRows(rows); }
+    return new LinearRows(copy(rows)); }
 
   public static final LinearRows make (final Object rows) {
     if (rows instanceof double[][]) {
-      return new LinearRows((double[][]) rows); }
+      return new LinearRows(copy((double[][]) rows)); }
     if (rows instanceof List) {
       return make(doubleArray2d((List) rows)); }
     throw new IllegalArgumentException(

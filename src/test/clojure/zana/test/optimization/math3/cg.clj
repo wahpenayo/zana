@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-03-31"
+      :date "2018-04-01"
       :doc 
       "Tests for [[zana.optimization.math3.cg]]." }
     
@@ -12,7 +12,9 @@
   (:import [clojure.lang IFn IFn$OD]
            [zana.java.geometry.functions 
             Composition2 L2Distance2 LinearFunctional LinearRows 
-            Function]))
+            Function]
+           [zana.test.java.geometry.functions
+            L2DistanceVariance]))
 ;; mvn -Dtest=zana.test.optimization.math3.cg clojure:test
 ;;----------------------------------------------------------------
 ;; Tests borrowed from 
@@ -21,39 +23,39 @@
 ;; which is derived from Fortran minpack tests
 ;;----------------------------------------------------------------
 (test/deftest trivial
-   (let [lr (LinearRows/make [[2.0]])
-         l2d2 (L2Distance2/make [3.0])
-         objective (z/compose l2d2 lr) 
-         options {:objective objective
-                  :max-iterations 100
-                  :start [0.0]}
-         [^doubles x ^double y] (z/optimize-cg options)
-         epsilon (double 1.0e-10)]
-     (println (into [] x) y)
-     (test/is (z/approximately== epsilon 0.0 y))
-     (test/is (z/approximately== epsilon 1.5 (aget x 0)))))
+  (let [lr (LinearRows/make [[2.0]])
+        l2d2 (L2Distance2/make [3.0])
+        objective (z/compose l2d2 lr) 
+        options {:objective objective
+                 :max-iterations 100
+                 :start [0.0]}
+        [^doubles x ^double y] (z/optimize-cg options)
+        epsilon (double 1.0e-10)]
+    (println "trivial" (into [] x) y)
+    (test/is (z/approximately== epsilon 0.0 y))
+    (test/is (z/approximately== epsilon 1.5 (aget x 0)))))
 ;;----------------------------------------------------------------
 (test/deftest column-permutation
-   (let [lr (LinearRows/make 
-              [[1.0 -1.0] 
-               [0.0  2.0] 
-               [1.0 -2.0]])
-         l2d2 (L2Distance2/make [4.0 6.0 1.0])
-         objective (z/compose l2d2 lr) 
-         options {:objective objective
-                  :max-iterations 100
-                  :start [0.0 0.0]
-                  :relative-tolerance 1.0e-6
-                  :absolute-tolerance 1.0e-6
-                  :line-search-relative-tolerance 1.0e-3
-                  :line-search-absolute-tolerance 1.0e-3
+  (let [lr (LinearRows/make 
+             [[1.0 -1.0] 
+              [0.0  2.0] 
+              [1.0 -2.0]])
+        l2d2 (L2Distance2/make [4.0 6.0 1.0])
+        objective (z/compose l2d2 lr) 
+        options {:objective objective
+                 :max-iterations 100
+                 :start [0.0 0.0]
+                 :relative-tolerance 1.0e-6
+                 :absolute-tolerance 1.0e-6
+                 :line-search-relative-tolerance 1.0e-3
+                 :line-search-absolute-tolerance 1.0e-3
                  :initial-bracket-range 1.0}
-         [^doubles x ^double y] (z/optimize-cg options)
-         epsilon (double 1.0e-10)]
-     (println (into [] x) y)
-     (test/is (z/approximately== epsilon 0.0 y))
-     (test/is (z/approximately== epsilon 7.0 (aget x 0)))
-     (test/is (z/approximately== epsilon 3.0 (aget x 1)))))
+        [^doubles x ^double y] (z/optimize-cg options)
+        epsilon (double 1.0e-10)]
+    (println "column-permutation" (into [] x) y)
+    (test/is (z/approximately== epsilon 0.0 y))
+    (test/is (z/approximately== epsilon 7.0 (aget x 0)))
+    (test/is (z/approximately== epsilon 3.0 (aget x 1)))))
 ;;----------------------------------------------------------------
 (test/deftest no-dependency
   (let [lr (LinearRows/make 
@@ -75,7 +77,7 @@
                  :initial-bracket-range 1.0}
         [^doubles x ^double y] (z/optimize-cg options)
         epsilon (double 1.0e-10)]
-    (println (into [] x) y)
+    (println "no-dependency" (into [] x) y)
     (test/is (z/approximately== epsilon 0.0 y))
     (dotimes [i 6]
       (test/is (z/approximately== epsilon (* i 0.55) (aget x i))))))
@@ -97,11 +99,11 @@
                  :initial-bracket-range 1.0}
         [^doubles x ^double y] (z/optimize-cg options)
         epsilon (double 1.0e-10)]
-    (println (into [] x) y)
+    (println "one-set" (into [] x) y)
     (test/is (z/approximately== epsilon 0.0 y))
     (test/is (z/approximately== epsilon 1.0 (aget x 0)))
-     (test/is (z/approximately== epsilon 2.0 (aget x 1)))
-     (test/is (z/approximately== epsilon 3.0 (aget x 2)))))
+    (test/is (z/approximately== epsilon 2.0 (aget x 1)))
+    (test/is (z/approximately== epsilon 3.0 (aget x 2)))))
 ;;----------------------------------------------------------------
 ;    @Test
 ;    public void testTwoSets() {
@@ -171,7 +173,7 @@
                  :initial-bracket-range 1.0}
         [^doubles x ^double y] (z/optimize-cg options)
         epsilon (double 1.0e-10)]
-    (println (into [] x) y)
+    (println "not-invertiable" (into [] x) y)
     (test/is (< 0.5 y))
     #_(test/is (z/approximately== epsilon 1.0 (aget x 0)))
     #_(test/is (z/approximately== epsilon 2.0 (aget x 1)))
@@ -195,7 +197,7 @@
                  :initial-bracket-range 1.0}
         [^doubles x ^double y] (z/optimize-cg options)
         epsilon (double 1.0e-10)]
-    (println (into [] x) y)
+    (println "ill-conditioned-0" (into [] x) y)
     #_(test/is (< 0.5 y))
     (test/is (z/approximately== 1.0e-4 1.0 (aget x 0)))
     (test/is (z/approximately== 1.0e-3 1.0 (aget x 1)))
@@ -220,58 +222,38 @@
                  :initial-bracket-range 1.0}
         [^doubles x ^double y] (z/optimize-cg options)
         epsilon (double 1.0e-10)]
-    (println (into [] x) y)
+    (println "ill-conditioned-1" (into [] x) y)
     #_(test/is (< 0.5 y))
     (test/is (z/approximately== 2 -81 (aget x 0)))
     (test/is (z/approximately== 4 137 (aget x 1)))
     (test/is (z/approximately== 1 -34 (aget x 2)))
     (test/is (z/approximately== 1  22 (aget x 3)))))
-;
-;    @Test
-;    public void testIllConditioned() {
-;        LinearProblem problem1 = new LinearProblem(new double[][] {
-;                { 10.0, 7.0,  8.0,  7.0 },
-;                {  7.0, 5.0,  6.0,  5.0 },
-;                {  8.0, 6.0, 10.0,  9.0 },
-;                {  7.0, 5.0,  9.0, 10.0 }
-;        }, new double[] { 32, 23, 33, 31 });
-;        NonLinearConjugateGradientOptimizer optimizer
-;            = new NonLinearConjugateGradientOptimizer(NonLinearConjugateGradientOptimizer.Formula.POLAK_RIBIERE,
-;                                                      new SimpleValueChecker(1e-13, 1e-13),
-;                                                      1e-15, 1e-15, 1);
-;        PointValuePair optimum1
-;            = optimizer.optimize(new MaxEval(200),
-;                                 problem1.getObjectiveFunction(),
-;                                 problem1.getObjectiveFunctionGradient(),
-;                                 GoalType.MINIMIZE,
-;                                 new InitialGuess(new double[] { 0, 1, 2, 3 }));
-;        Assert.assertEquals(1.0, optimum1.getPoint()[0], 1.0e-4);
-;        Assert.assertEquals(1.0, optimum1.getPoint()[1], 1.0e-3);
-;        Assert.assertEquals(1.0, optimum1.getPoint()[2], 1.0e-4);
-;        Assert.assertEquals(1.0, optimum1.getPoint()[3], 1.0e-4);
-;
-;        LinearProblem problem2 = new LinearProblem(new double[][] {
-;                { 10.00, 7.00, 8.10, 7.20 },
-;                {  7.08, 5.04, 6.00, 5.00 },
-;                {  8.00, 5.98, 9.89, 9.00 },
-;                {  6.99, 4.99, 9.00, 9.98 }
-;        }, new double[] { 32, 23, 33, 31 });
-;        PointValuePair optimum2
-;            = optimizer.optimize(new MaxEval(200),
-;                                 problem2.getObjectiveFunction(),
-;                                 problem2.getObjectiveFunctionGradient(),
-;                                 GoalType.MINIMIZE,
-;                                 new InitialGuess(new double[] { 0, 1, 2, 3 }));
-;
-;        final double[] result2 = optimum2.getPoint();
-;        final double[] expected2 = {-81, 137, -34, 22};
-;
-;        Assert.assertEquals(expected2[0], result2[0], 2);
-;        Assert.assertEquals(expected2[1], result2[1], 4);
-;        Assert.assertEquals(expected2[2], result2[2], 1);
-;        Assert.assertEquals(expected2[3], result2[3], 1);
-;    }
-;
+;;----------------------------------------------------------------
+(test/deftest circle-fitting
+  (let [^L2DistanceVariance objective (L2DistanceVariance/make 
+                                        [[ 30  68]
+                                         [ 50  -6]
+                                         [110 -20]
+                                         [ 35  15]
+                                         [ 45  97]])
+        options {:objective objective
+                 :max-iterations 100
+                 :start [98.680 47.345]
+                 :relative-tolerance 1.0e-30
+                 :absolute-tolerance 1.0e-30
+                 :line-search-relative-tolerance 1.0e-15
+                 :line-search-absolute-tolerance 1.0e-13
+                 :initial-bracket-range 1.0}
+        [^doubles x ^double y] (z/optimize-cg options)
+        epsilon (double 1.0e-10)]
+    (println "circle-fitting" (into [] x) y)
+    (test/is (z/approximately== 
+               1.0e-8 69.960161753 (.meanL2Distance objective x)))
+    (test/is (z/approximately== 
+               1.0e-7 96.075902096 (aget x 0)))
+    (test/is (z/approximately== 
+               1.0e-6 48.135167894 (aget x 1)))))
+;;----------------------------------------------------------------
 ;    @Test
 ;    public void testMoreEstimatedParametersSimple() {
 ;        LinearProblem problem = new LinearProblem(new double[][] {
