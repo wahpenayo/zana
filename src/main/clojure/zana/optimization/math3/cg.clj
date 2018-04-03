@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-03-31"
+      :date "2018-04-02"
       :doc 
       "Pose unconstrained differentiable optimization problems 
        using `Function` and solve them with the
@@ -12,7 +12,7 @@
   (:require [zana.commons.core :as zcc]
             [zana.collections.generic :as zgc])
   
-  (:import [java.util Collection]
+  (:import [java.util Arrays Collection]
            [clojure.lang IFn]
            [org.apache.commons.math3.analysis
             MultivariateFunction MultivariateVectorFunction]
@@ -27,6 +27,8 @@
             NonLinearConjugateGradientOptimizer 
             NonLinearConjugateGradientOptimizer$Formula
             Preconditioner]
+           [zana.java.geometry
+            Dn]
            [zana.java.geometry.functions
             Function LinearFunctional]))
 ;;----------------------------------------------------------------
@@ -103,38 +105,38 @@
       (.dual ^LinearFunctional df))))
 (defn- objective-function-gradient
   ^ObjectiveFunctionGradient [^Function f]
- 
+  
   (ObjectiveFunctionGradient. (GradientWrapper. f)))
 ;;----------------------------------------------------------------
 ;; TODO: look into spec
 #_(defn- check
-   "Validate options for [[optimize]], throwing
+    "Validate options for [[optimize]], throwing
   some exception when one is invalid."
-   [options]
-   (assert (instance? Function (:objective options))
-           (print-str "Not a valid :objective" 
-                      (:objective options)))
-  
-   (let [dim (zgf/domain-dimension (:objective options))]
-     (when-let [start (:start options)]
-       (assert (and (zcc/double-array? start)
-                   
-                    (== dim (alength (doubles start))))
-               (print-str 
-                 "Not an element of the objective domain:" start))))
-   (assert (< 0 (int (:max-evaluations options)))
-           (print-str 
-             :max-evaluations "must be a positive integer:" 
-             (:max-evaluations options)))
-   (assert (< 0 (int (:max-iterations options)))
-           (print-str 
-             :max-iterations "must be a positive integer:" 
-             (int (:max-iterations options))))
-   (assert (< 0.0 (double (:convergence-tolerance options)))
-           (print-str
-             :convergence-tolerance "must be a positive dSouble:" 
-             (double (:convergence-tolerance options))))
-   )
+    [options]
+    (assert (instance? Function (:objective options))
+            (print-str "Not a valid :objective" 
+                       (:objective options)))
+    
+    (let [dim (zgf/domain-dimension (:objective options))]
+      (when-let [start (:start options)]
+        (assert (and (zcc/double-array? start)
+                     
+                     (== dim (alength (doubles start))))
+                (print-str 
+                  "Not an element of the objective domain:" start))))
+    (assert (< 0 (int (:max-evaluations options)))
+            (print-str 
+              :max-evaluations "must be a positive integer:" 
+              (:max-evaluations options)))
+    (assert (< 0 (int (:max-iterations options)))
+            (print-str 
+              :max-iterations "must be a positive integer:" 
+              (int (:max-iterations options))))
+    (assert (< 0.0 (double (:convergence-tolerance options)))
+            (print-str
+              :convergence-tolerance "must be a positive dSouble:" 
+              (double (:convergence-tolerance options))))
+    )
 ;;----------------------------------------------------------------
 ;; TODO: generic function/multimethod?
 
@@ -162,22 +164,21 @@
                    (:line-search-absolute-tolerance options))
                  (double 
                    (:initial-bracket-range options)))
-        objective (objective-function (:objective options))
-        gradient (objective-function-gradient (:objective options))
-        goaltype (if (:minimize? options true)
-                   GoalType/MINIMIZE
-                   GoalType/MAXIMIZE)
-        start (when (:start options) 
-                (InitialGuess. (double-array (:start options)))) 
+        objective (:objective options)
+        _(assert (:start options)
+                 "No :start point in options.")
+        start (double-array (:start options))
         maxeval (MaxEval. (int (:max-evaluations options)))
         maxiter (MaxIter. (int (:max-iterations options)))
         ^"[Lorg.apache.commons.math3.optim.OptimizationData;"
         opt (into-array OptimizationData 
                         (keep identity  
-                              [objective 
-                               gradient
-                               goaltype 
-                               start 
+                              [(objective-function objective)
+                               (objective-function-gradient objective)
+                               (if (:minimize? options true)
+                                 GoalType/MINIMIZE
+                                 GoalType/MAXIMIZE) 
+                               (InitialGuess. start) 
                                maxeval
                                maxiter]))
         point-value (.optimize solver opt)]

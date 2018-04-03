@@ -41,27 +41,27 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  /** If the {@link #codomain() codomain} of this function is
-   * 1-dimensional, and the {@link #domain() domain} contains
-   * {@link Function functions}
-   * return the value as a <code>double</code>.
-   * <br>Otherwise throw an {@link UnsupportedOperationException}.
-   */
-  @SuppressWarnings("unused")
-  public double doubleValue (final Function x) {
-    throw new UnsupportedOperationException(
-      getClass().getName()); }
+//  /** If the {@link #codomain() codomain} of this function is
+//   * 1-dimensional, and the {@link #domain() domain} contains
+//   * {@link Function functions}
+//   * return the value as a <code>double</code>.
+//   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+//   */
+//  @SuppressWarnings("unused")
+//  public double doubleValue (final Function x) {
+//    throw new UnsupportedOperationException(
+//      getClass().getName()); }
 
-  /** If the {@link #codomain() codomain} of this function is
-   * 1-dimensional, and the {@link #domain() domain} contains
-   * <code>double[]</code> arrays,
-   * return the value as a <code>double</code>.
-   * <br>Otherwise throw an {@link UnsupportedOperationException}.
-   */
-  @SuppressWarnings("unused")
-  public double doubleValue (final double[] x) {
-    throw new UnsupportedOperationException(
-      getClass().getName()); }
+//  /** If the {@link #codomain() codomain} of this function is
+//   * 1-dimensional, and the {@link #domain() domain} contains
+//   * <code>double[]</code> arrays,
+//   * return the value as a <code>double</code>.
+//   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+//   */
+//  @SuppressWarnings("unused")
+//  public double doubleValue (final double[] x) {
+//    throw new UnsupportedOperationException(
+//      getClass().getName()); }
 
   /** If the {@link #codomain() codomain} and
    * {@link #codomain() codomain} of this function are
@@ -81,33 +81,33 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
    * <br>Otherwise throw an {@link UnsupportedOperationException}.
    */
   @SuppressWarnings("unused")
-  public double[] value (final Object f) {
+  public Object value (final Object x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  /** If the elements of the {@link #codomain() codomains} can be
-   * represented by <code>double[]</code>
-   * can, and the {@link #domain() domain} contains
-   * {@link Function functions},
-   * return the value as a <code>double[]</code>.
-   * <br>Otherwise throw an {@link UnsupportedOperationException}.
-   */
-  @SuppressWarnings("unused")
-  public double[] value (final Function f) {
-    throw new UnsupportedOperationException(
-      getClass().getName()); }
+//  /** If the elements of the {@link #codomain() codomains} can be
+//   * represented by <code>double[]</code>
+//   * can, and the {@link #domain() domain} contains
+//   * {@link Function functions},
+//   * return the value as a <code>double[]</code>.
+//   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+//   */
+//  @SuppressWarnings("unused")
+//  public Object value (final Function f) {
+//    throw new UnsupportedOperationException(
+//      getClass().getName()); }
 
-  /** If the elements of the {@link #codomain() codomain} can be
-   * represented by <code>double[]</code>
-   * can, and {@link #domain() domain} contains elements that can
-   * be represented by <code>double[]</code>,
-   * return the value as a <code>double[]</code>.
-   * <br>Otherwise throw an {@link UnsupportedOperationException}.
-   */
-  @SuppressWarnings("unused")
-  public double[] value (final double[] x) {
-    throw new UnsupportedOperationException(
-      getClass().getName()); }
+//  /** If the elements of the {@link #codomain() codomain} can be
+//   * represented by <code>double[]</code>
+//   * can, and {@link #domain() domain} contains elements that can
+//   * be represented by <code>double[]</code>,
+//   * return the value as a <code>double[]</code>.
+//   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+//   */
+//  @SuppressWarnings("unused")
+//  public Object value (final double[] x) {
+//    throw new UnsupportedOperationException(
+//      getClass().getName()); }
 
   /** If the elements of the {@link #codomain() codomain} can be
    * represented by <code>double[]</code>
@@ -117,7 +117,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
    * <br>Otherwise throw an {@link UnsupportedOperationException}.
    */
   @SuppressWarnings("unused")
-  public double[] value (final double x) {
+  public Object value (final double x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
@@ -133,61 +133,43 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  /** Return the derivative of this function at <code>x</code>.
-   * Recall that the general definition of the derivative
-   * of a function is the <em>linear</em> function that
-   * approximates it in the limit as we approach x.
-   * <br> Optional operation.
-   */
-  @SuppressWarnings("unused")
-  public Function derivativeAt (final double[] x) {
-    throw new UnsupportedOperationException(
-      getClass().getName()); }
-
-  @SuppressWarnings("unused")
-  public Function derivativeAt (final Function x) {
-    throw new UnsupportedOperationException(
-      getClass().getName()); }
+//  /** Return the derivative of this function at <code>x</code>.
+//   * Recall that the general definition of the derivative
+//   * of a function is the <em>linear</em> function that
+//   * approximates it in the limit as we approach x.
+//   * <br> Optional operation.
+//   */
+//  @SuppressWarnings("unused")
+//  public Function derivativeAt (final double[] x) {
+//    throw new UnsupportedOperationException(
+//      getClass().getName()); }
+//
+//  @SuppressWarnings("unused")
+//  public Function derivativeAt (final Function x) {
+//    throw new UnsupportedOperationException(
+//      getClass().getName()); }
 
   @SuppressWarnings("unused")
   public Function derivativeAt (final Object x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  //--------------------------------------------------------------
-  /** Return the derivative of this function at <code>x</code>.
-   * Recall that the general definition of the derivative
-   * of a function is the <em>linear</em> function that
-   * approximates it in the limit as we approach x.
-   * <br> Optional operation.
-   */
   @SuppressWarnings("unused")
   public double slopeAt (final double x) {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-  /** Return the derivative of this function at <code>x</code>.
-   * Recall that the general definition of the derivative
-   * of a function is the <em>linear</em> function that
-   * approximates it in the limit as we approach x.
-   * <br> Optional operation.
-   */
-  @SuppressWarnings("unused")
-  public double slopeAt (final double[] x) {
-    throw new UnsupportedOperationException(
-      getClass().getName()); }
-
-  //--------------------------------------------------------------
+ //--------------------------------------------------------------
   // IFn interfaces
   //--------------------------------------------------------------
 
   @Override
   public final Object invoke (final Object x) {
-    return value((double[]) x); }
+    return value(x); }
 
   @Override
   public final double invokePrim (final Object x) {
-    return doubleValue((double[]) x); }
+    return doubleValue(x); }
 
   @Override
   public final double invokePrim (final double x) {

@@ -11,7 +11,7 @@
   
   (:require [zana.commons.core :as zcc]
             [zana.collections.generic :as zgc]
-            [zana.geometry.functionals :as zgf])
+            [zana.geometry.functions :as zgf])
   
   (:import [java.util Collection]
            [org.apache.commons.math3.optim

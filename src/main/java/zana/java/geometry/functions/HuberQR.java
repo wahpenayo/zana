@@ -14,7 +14,7 @@ import zana.java.geometry.Dn;
  * This smoothed version agrees
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-27
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")

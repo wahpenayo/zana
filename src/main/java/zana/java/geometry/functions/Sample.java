@@ -19,7 +19,7 @@ import zana.java.geometry.Dn;
  * argument, so it is its own derivative.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-27
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -33,15 +33,25 @@ public final class Sample extends Function  {
   // methods
   //--------------------------------------------------------------
   
+  @SuppressWarnings("unused")
+  public final LinearRows compose (final AffineDual ad) {
+    // TODO: check domains match
+    return LinearRows.make(_data); }
+  
+  //--------------------------------------------------------------
+  // Function methods
+  //--------------------------------------------------------------
+  
   @Override
-  public final double[] value (final Function f) { 
+  public final Object value (final Object f) { 
+    final Function ff = (Function) f;
     final double[] y = new double[_data.size()];
     int i=0;
-    for (final Object x : _data) { y[i++] = f.doubleValue(x); }
+    for (final Object x : _data) { y[i++] = ff.doubleValue(x); }
     return y; }
   
   @Override
-  public final Function derivativeAt (final Function f) { 
+  public final Function derivativeAt (final Object f) { 
     return this; }
   
   //--------------------------------------------------------------

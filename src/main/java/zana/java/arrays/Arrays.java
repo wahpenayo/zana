@@ -226,9 +226,12 @@ public final class Arrays extends Object {
   public static final double dot (final double[] v0,
                                   final double[] v1) {
     final int n = v0.length;
-    assert n == v1.length;
+    assert n == v1.length :
+      "dims differ:\n" +
+      java.util.Arrays.toString(v0) + "\n" +
+      java.util.Arrays.toString(v1);
     double sum = 0.0;
-    // NOTE: fma requires Java 9
+    // NOTE: fused-multiply-add requires Java 9
     for (int i=0;i<n;i++) { sum = Math.fma(v0[i],v1[i],sum); }
     return sum; }
   

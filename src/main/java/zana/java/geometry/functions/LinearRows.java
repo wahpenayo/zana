@@ -11,7 +11,7 @@ import zana.java.geometry.Dn;
  * (that is, matrix rows).
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-03-30
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -34,19 +34,20 @@ public final class LinearRows extends Function {
   //--------------------------------------------------------------
   
   @Override
-  public final double[] value (final double[] x) {
-    //assert domain().contains(x);
-    assert ((Dn) domain()).dimension() == x.length :
-      this.toString() + "\n" + x;
-    final double[] y = new double[((Dn) codomain()).dimension()];
+  public final double[] value (final Object x) {
+    final double[] xx = (double[]) x;
+    final int n = xx.length;
+    assert ((Dn) domain()).dimension() == n :
+      domain().toString() + "\n" + Arrays.toString(xx);
+     final double[] y = new double[((Dn) codomain()).dimension()];
     int i = 0;
     for (final double[] row : _rows) {
-      y[i] = zana.java.arrays.Arrays.dot(row,x); 
+      y[i] = zana.java.arrays.Arrays.dot(row,xx); 
       i++; }
     return y; }
   
   @Override
-  public final Function derivativeAt (final double[] x) {
+  public final Function derivativeAt (final Object x) {
     // a linear function is its own derivative, independent of x
     return this; }
 
@@ -84,21 +85,32 @@ public final class LinearRows extends Function {
   //--------------------------------------------------------------
   // TODO: move somewhere else
   
-  private static final double[][] doubleArray2d (final List rows) {
-    final int m = rows.size();
-    final int n = ((List) rows.get(0)).size();
-    final double[][] a = new double[m][n];
-    for (int i=0;i<m;i++) {
-      final List row = (List) rows.get(i);
-      for (int j=0;j<n;j++) {
-        a[i][j] = ((Number) row.get(j)).doubleValue(); } }
-    return a; }
+  private static final double[] doubleArray (final Object row) {
+    if (row instanceof double[]) {
+      final double[] r = (double[]) row;
+      return Arrays.copyOf(r,r.length); }
+    if (row instanceof List) {
+      final List r = (List) row;
+      final int n = r.size();
+      final double[] rr = new double[n];
+      for (int i=0;i<n;i++) {
+        rr[i] = ((Number) r.get(i)).doubleValue(); }
+    return rr; }
+    throw new IllegalArgumentException(
+      "can't coerce " + row + " to a double[]."); }
 
   private static final double[][] copy (final double[][] rows) {
     final int m = rows.length;
     final double[][] a = new double[m][];
     for (int i=0;i<m;i++) {
       a[i] = Arrays.copyOf(rows[i],rows[i].length); }
+    return a; }
+
+  private static final double[][] doubleArray2d (final List rows) {
+    final int m = rows.size();
+    final double[][] a = new double[m][];
+    for (int i=0;i<m;i++) {
+        a[i] = doubleArray(rows.get(i)); } 
     return a; }
 
   //--------------------------------------------------------------

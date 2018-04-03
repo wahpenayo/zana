@@ -14,12 +14,12 @@ import com.google.common.collect.ImmutableList;
  * holding homogeneous coordinates.
  * 
  * This is identical to a <code>LinearEmbedding</code>, except 
- * that it adds a constant 1.0 as the least element in the
+ * that it adds a constant 1.0 as the last element in the
  * returned arrays, supporting affine models (linear plus constant 
  * term).
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-11
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")

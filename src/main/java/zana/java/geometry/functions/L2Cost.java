@@ -32,7 +32,7 @@ import zana.java.geometry.Dn;
  * TODO: should this be in taiga instead?
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-03-01
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -54,13 +54,14 @@ public final class L2Cost extends Function {
   // TODO: replace Kahan sum with fully accurate?
 
   @Override
-  public final double doubleValue (final Function f) { 
+  public final double doubleValue (final Object f) { 
+    final Function ff = (Function) f;
     double s = 0.0;
     double c = 0.0;
     for (final Object xi : _data) {
       // TODO: precompute y_i?
       final double yi = _groundTruth.invokePrim(xi);
-      final double ei = f.doubleValue(xi) - yi;
+      final double ei = ff.doubleValue(xi) - yi;
       final double zi =  ei*ei - c;
       final double t = s + zi;
       c = (t - s) - zi;
@@ -73,7 +74,8 @@ public final class L2Cost extends Function {
     private static final long serialVersionUID = 0L;
     private final Function _f0;
     @Override
-    public final double doubleValue (final Function f) { 
+    public final double doubleValue (final Object f) { 
+      final Function ff = (Function) f;
       double s = 0.0;
       double c = 0.0;
       for (final Object xi : _data) {
@@ -83,7 +85,7 @@ public final class L2Cost extends Function {
         final double zi = 
           (2 
             * (_f0.doubleValue(xi) - yi) 
-            * f.doubleValue(xi))
+            * ff.doubleValue(xi))
           - c;
         final double t = s + zi;
         c = (t - s) - zi;
@@ -98,8 +100,8 @@ public final class L2Cost extends Function {
   }
 
   @Override
-  public final Function derivativeAt (final Function f) { 
-    return new DerivativeAt(f); }
+  public final Function derivativeAt (final Object f) { 
+    return new DerivativeAt((Function) f); }
 
   //--------------------------------------------------------------
   // Object methods

@@ -9,7 +9,8 @@
   
   #_(:require )
   (:import [zana.java.geometry.functions 
-            Composition2 LinearFunctional LinearRows Function]))
+            AffineDual AffineFunctional Composition2 Function 
+            LinearFunctional LinearRows Sample]))
 ;;----------------------------------------------------------------
 ;; TODO: https://github.com/palisades-lakes/faster-multimethods
 
@@ -32,6 +33,11 @@
 (defmethod compose 
   [LinearFunctional LinearRows] 
   [^LinearFunctional f0 ^LinearRows f1]
+  (.compose f0 f1))
+
+(defmethod compose 
+  [Sample AffineDual] 
+  [^Sample f0 ^AffineDual f1]
   (.compose f0 f1))
 ;;----------------------------------------------------------------
   

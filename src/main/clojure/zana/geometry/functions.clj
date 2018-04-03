@@ -1,11 +1,11 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-27"
+      :date "2018-04-02"
       :doc 
-      "Real (double) valued functions on affine/linear spaces." }
+      "Functions between affine/linear spaces." }
     
-    zana.geometry.functionals
+    zana.geometry.functions
   
   (:require [zana.commons.core :as commons]
             [zana.collections.clojurize :as clojurize]
@@ -16,7 +16,8 @@
            [clojure.lang IFn IFn$D IFn$OD]
            [zana.java.arrays Arrays]
            [zana.java.geometry.functions 
-            AffineFunctional LinearFunctional]))
+            AffineDual AffineFunctional L2Distance2 
+            LinearFunctional Sample]))
 ;;----------------------------------------------------------------
 #_(deftype LinearFunctional [^doubles dual]
    Serializable
@@ -130,6 +131,25 @@
           (IllegalArgumentException.
             (print-str 
               "can't determine the domain-dimension of" f)))))
+;;----------------------------------------------------------------
+(defn l2distance2-from 
+  "Return a real-valued function that measures the squared l2 
+  distance from the supplied point."
+  ^L2Distance2 [p]
+  (L2Distance2/make p))
+;;----------------------------------------------------------------
+(defn sampler 
+  "Return a function that maps a real-valued function to a vector 
+   (<code>double[]</code>) where each output coordinate is the
+   value of the function at each datum in a data list."
+  ^Sample [data]
+  (Sample/make data))
+;;----------------------------------------------------------------
+(defn affine-dual 
+  "Return a function that maps a homogenenous coordinate vector
+   to an AffineFunctional."
+  ^AffineDual [domain]
+  (AffineDual/make domain))
 ;;----------------------------------------------------------------
 ;; EDN io
 ;;----------------------------------------------------------------

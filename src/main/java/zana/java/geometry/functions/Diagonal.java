@@ -9,7 +9,7 @@ import zana.java.geometry.Dn;
  * coordinate.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-27
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -24,23 +24,27 @@ public final class Diagonal extends Function  {
   //--------------------------------------------------------------
 
   @Override
-  public final double[] value (final double[] x) { 
-    // assert domain().contains(x);
-    final int n = _coordinateTransforms.length;
-    assert x.length == n;
+  public final Object value (final Object x) { 
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
+   final int n = _coordinateTransforms.length;
+    assert xx.length == n;
     final double[] y = new double[n];
     for (int i=0;i<n;i++) {
-      y[i] = _coordinateTransforms[i].doubleValue(x[i]); }
+      y[i] = _coordinateTransforms[i].doubleValue(xx[i]); }
     return y; }
 
   @Override
-  public final Function derivativeAt (final double[] x) { 
-    // assert domain().contains(x);
+  public final Function derivativeAt (final Object x) {
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
     final int n = _coordinateTransforms.length;
-    assert x.length == n;
+    assert xx.length == n;
     final Function[] df = new Function[n];
     for (int i=0;i<n;i++) {
-      df[i] = _coordinateTransforms[i].derivativeAt(x[i]); }
+      df[i] = _coordinateTransforms[i].derivativeAt(xx[i]); }
     return Diagonal.make(df); }
 
   //--------------------------------------------------------------

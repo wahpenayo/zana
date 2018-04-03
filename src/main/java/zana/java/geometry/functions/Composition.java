@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
  * function implementation is used where.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-03-31
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -33,54 +33,33 @@ public final class Composition extends Function {
   // methods
   //--------------------------------------------------------------
   @Override
-  public double[] value (final Object x) {
-    double[] y = _reversedTerms[0].value(x);
+  public Object value (final Object x) {
+    Object y = _reversedTerms[0].value(x);
     for (int i=1;i<_reversedTerms.length;i++) {
       y = _reversedTerms[i].value(y); }
     return y; }
 
   @Override
-  public double[] value (final double[] x) {
-    double[] y = _reversedTerms[0].value(x);
-    for (int i=1;i<_reversedTerms.length;i++) {
-      y = _reversedTerms[i].value(y); }
-    return y; }
-
-  @Override
-  public double[] value (final double x) {
-    double[] y = _reversedTerms[0].value(x);
+  public Object value (final double x) {
+    Object y = _reversedTerms[0].value(x);
     for (int i=1;i<_reversedTerms.length;i++) {
       y = _reversedTerms[i].value(y); }
     return y; }
   //--------------------------------------------------------------
   @Override
   public double doubleValue (final Object x) { 
-    return value(x)[0]; }
-
-  @Override
-  public double doubleValue (final double[] x) {
-    return value(x)[0]; }
+    return ((double[]) value(x))[0]; }
 
   @Override
   public double doubleValue (final double x) {
-    return value(x)[0]; }
+    return ((double[]) value(x))[0]; }
   //--------------------------------------------------------------
-
-  @Override
-  public Function derivativeAt (final double[] x) {
-    final Function[] d = new Function[_reversedTerms.length];
-    d[0] = _reversedTerms[0].derivativeAt(x);
-    double[] y = _reversedTerms[0].value(x);
-    for (int i=1;i<_reversedTerms.length;i++) {
-      d[i] = _reversedTerms[i].derivativeAt(y);
-      y = _reversedTerms[i].value(y); }
-    return new Composition(d); }
 
   @Override
   public Function derivativeAt (final Object x) {
     final Function[] d = new Function[_reversedTerms.length];
     d[0] = _reversedTerms[0].derivativeAt(x);
-    double[] y = _reversedTerms[0].value(x);
+    Object y = _reversedTerms[0].value(x);
     for (int i=1;i<_reversedTerms.length;i++) {
       d[i] = _reversedTerms[i].derivativeAt(y);
       y = _reversedTerms[i].value(y); }

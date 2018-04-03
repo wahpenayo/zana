@@ -9,7 +9,7 @@ import zana.java.geometry.Dn;
 /** Linear functionals (dual vectors) on linear spaces.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-03-31
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -45,12 +45,14 @@ public final class LinearFunctional extends Function {
   //--------------------------------------------------------------
   
   @Override
-  public final double doubleValue (final double[] x) {
-    //assert domain().contains(x);
-    return zana.java.arrays.Arrays.dot(_dual,x); }
+  public final double doubleValue (final Object x) {
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
+   return zana.java.arrays.Arrays.dot(_dual,xx); }
   
   @Override
-  public final Function derivativeAt (final double[] x) {
+  public final Function derivativeAt (final Object x) {
     // a linear functional is its own derivative, independent of x
     return this; }
 

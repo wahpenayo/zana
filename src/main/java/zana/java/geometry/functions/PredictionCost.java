@@ -39,7 +39,7 @@ import zana.java.geometry.Dn;
  * TODO: should this be in taiga instead?
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-03-01
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -63,14 +63,15 @@ public final class PredictionCost extends Function {
   // TODO: replace Kahan sum with fully accurate?
 
   @Override
-  public final double doubleValue (final Function f) { 
+  public final double doubleValue (final Object f) { 
+    final Function ff = (Function) f;
     double s = 0.0;
     double c = 0.0;
     for (final Object xi : _data) {
       // TODO: precompute y_i?
       final double yi = _groundTruth.invokePrim(xi);
       final double zi = 
-        _rho.doubleValue(f.doubleValue(xi) - yi) - c;
+        _rho.doubleValue(ff.doubleValue(xi) - yi) - c;
       final double t = s + zi;
       c = (t - s) - zi;
       s = t; } 
@@ -82,7 +83,8 @@ public final class PredictionCost extends Function {
     private static final long serialVersionUID = 0L;
     private final Function _f0;
     @Override
-    public final double doubleValue (final Function f) { 
+    public final double doubleValue (final Object f) { 
+      final Function ff = (Function) f;
       double s = 0.0;
       double c = 0.0;
       for (final Object xi : _data) {
@@ -91,7 +93,7 @@ public final class PredictionCost extends Function {
         // TODO: precompute y_i, f0(x_i), rho_i, ...
         final double zi = 
           (_rho.slopeAt(_f0.doubleValue(xi) - yi) 
-            * f.doubleValue(xi))
+            * ff.doubleValue(xi))
           - c;
         final double t = s + zi;
         c = (t - s) - zi;
@@ -106,8 +108,8 @@ public final class PredictionCost extends Function {
   }
 
   @Override
-  public final Function derivativeAt (final Function f) { 
-    return new DerivativeAt(f); }
+  public final Function derivativeAt (final Object f) { 
+    return new DerivativeAt((Function) f); }
 
   //--------------------------------------------------------------
   // Object methods

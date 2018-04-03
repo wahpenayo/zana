@@ -8,7 +8,7 @@ package zana.java.geometry.functions;
  * function implementation is used where.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-03-31
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -27,15 +27,11 @@ public final class Composition2 extends Function {
   // methods
   //--------------------------------------------------------------
   @Override
-  public double[] value (final Object x) {
+  public Object value (final Object x) {
     return _f0.value(_f1.value(x)); }
 
   @Override
-  public double[] value (final double[] x) {
-    return _f0.value(_f1.value(x)); }
-
-  @Override
-  public double[] value (final double x) {
+  public Object value (final double x) {
     return _f0.value(_f1.value(x)); }
   //--------------------------------------------------------------
   @Override
@@ -43,19 +39,9 @@ public final class Composition2 extends Function {
     return _f0.doubleValue(_f1.value(x)); }
 
   @Override
-  public double doubleValue (final double[] x) {
-    return _f0.doubleValue(_f1.value(x)); }
-
-  @Override
   public double doubleValue (final double x) {
     return _f0.doubleValue(_f1.value(x)); }
   //--------------------------------------------------------------
-
-  @Override
-  public Function derivativeAt (final double[] x) {
-    final Function d1 = _f1.derivativeAt(x);
-    final Function d0 = _f0.derivativeAt(_f1.value(x));
-    return compose(d0,d1); }
 
   @Override
   public Function derivativeAt (final Object x) {

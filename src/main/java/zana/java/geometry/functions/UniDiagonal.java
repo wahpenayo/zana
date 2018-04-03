@@ -1,10 +1,12 @@
 package zana.java.geometry.functions;
 
+import zana.java.geometry.Dn;
+
 //----------------------------------------------------------------
 /** Apply a scalar function to each coordinate.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-27
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -19,21 +21,25 @@ public final class UniDiagonal extends Function  {
   //--------------------------------------------------------------
   
   @Override
-  public final double[] value (final double[] x) { 
-    // assert domain().contains(x);
-    final int n = x.length;
+  public final Object value (final Object x) { 
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
+    final int n = xx.length;
     final double[] y = new double[n];
     for (int i=0;i<n;i++) {
-      y[i] = _coordinateTransform.doubleValue(x[i]); }
+      y[i] = _coordinateTransform.doubleValue(xx[i]); }
     return y; }
   
   @Override
-  public final Function derivativeAt (final double[] x) { 
-    // assert domain().contains(x);
-       final int n = x.length;
+  public final Function derivativeAt (final Object x) { 
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
+       final int n = xx.length;
        final Function[] df = new Function[n];
        for (int i=0;i<n;i++) {
-         df[i] = _coordinateTransform.derivativeAt(x[i]); }
+         df[i] = _coordinateTransform.derivativeAt(xx[i]); }
     return Diagonal.make(df); }
   
   //--------------------------------------------------------------

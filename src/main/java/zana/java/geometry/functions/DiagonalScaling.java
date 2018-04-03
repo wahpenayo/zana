@@ -9,7 +9,7 @@ import zana.java.geometry.Dn;
  * Only handles domain == codomain for now.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-27
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -24,16 +24,18 @@ public final class DiagonalScaling extends Function  {
   //--------------------------------------------------------------
 
   @Override
-  public final double[] value (final double[] x) { 
-    // assert domain().contains(x);
+  public final Object value (final Object x) { 
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
     final int n = _diagonal.length;
-    assert x.length == n;
+    assert xx.length == n;
     final double[] y = new double[n];
-    for (int i=0;i<n;i++) { y[i] = _diagonal[i]*x[i]; }
+    for (int i=0;i<n;i++) { y[i] = _diagonal[i]*xx[i]; }
     return y; }
 
   @Override
-  public final Function derivativeAt (final double[] x) { 
+  public final Function derivativeAt (final Object x) { 
     return this; }
 
   //--------------------------------------------------------------

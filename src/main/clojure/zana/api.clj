@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-03-31"
+      :date "2018-04-02"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -38,7 +38,7 @@
             [zana.geometry.r1 :as r1]
             [zana.geometry.z1 :as z1]
             [zana.geometry.compose :as compose]
-            [zana.geometry.functionals :as gf]
+            [zana.geometry.functions :as gf]
             [zana.geometry.generic :as gg]
             [zana.functions.generic :as fgeneric]
             [zana.functions.inverse :as inverse]
@@ -307,11 +307,14 @@
                 compose/compose
                 r1/cspan
                 gf/affine-functional
+                gf/affine-dual
                 gf/dual
                 gf/generate-affine-functional
                 gf/generate-linear-functional
+                gf/l2distance2-from
                 gf/linear-part
                 gf/linear-functional
+                gf/sampler
                 gf/translation
                 gg/interval-contains?
                 gg/interval-max

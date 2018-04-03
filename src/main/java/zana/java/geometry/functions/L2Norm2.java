@@ -11,7 +11,7 @@ import zana.java.geometry.Dn;
 /** Squared l2 norm on {@link zana.java.geometry.Dn}.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-03-21
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -25,10 +25,13 @@ public final class L2Norm2 extends Function {
   // TODO: replace Kahan sum with fully accurate?
 
   @Override
-  public final double doubleValue (final double[] x) { 
+  public final double doubleValue (final Object x) { 
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
     double s = 0.0;
     double c = 0.0;
-    for (final double xi : x) {
+    for (final double xi : xx) {
       final double zi =  xi*xi - c;
       final double t = s + zi;
       c = (t - s) - zi;
@@ -36,8 +39,9 @@ public final class L2Norm2 extends Function {
     return s; }
 
   @Override
-  public final Function derivativeAt (final double[] x) { 
-    return LinearFunctional.make(MathArrays.scale(2.0,x)); }
+  public final Function derivativeAt (final Object x) { 
+    return LinearFunctional.make(
+      MathArrays.scale(2.0,(double[]) x)); }
 
   //--------------------------------------------------------------
   // Object methods

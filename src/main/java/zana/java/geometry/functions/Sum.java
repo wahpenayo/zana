@@ -7,7 +7,7 @@ import zana.java.math.Statistics;
 /** Sum the coordinates.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-02-27
+ * @version 2018-04-02
  */
 
 @SuppressWarnings("unchecked")
@@ -21,11 +21,11 @@ public final class Sum extends Function  {
   // TODO: replace with fully accurate sum?
   
   @Override
-  public final double doubleValue (final double[] x) { 
-    return Statistics.kahanSum(x); }
+  public final double doubleValue (final Object x) { 
+    return Statistics.kahanSum((double[]) x); }
   
   @Override
-  public final Function derivativeAt (final double[] x) { 
+  public final Function derivativeAt (final Object x) { 
     return this; }
   
   //--------------------------------------------------------------

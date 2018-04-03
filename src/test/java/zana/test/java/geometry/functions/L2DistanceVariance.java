@@ -60,12 +60,15 @@ public final class L2DistanceVariance  extends Function  {
     return s / _points.length; }
 
   @Override
-  public final double doubleValue (final double[] x) {
-    final double mean = meanL2Distance(x);
+  public final double doubleValue (final Object x) {
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
+    final double mean = meanL2Distance(xx);
     double s = 0.0;
     double c = 0.0;
     for (final double[] p : _points) {
-      final double di = l2Distance(x,p) - mean;
+      final double di = l2Distance(xx,p) - mean;
       final double zi =  di*di - c;
       final double t = s + zi;
       c = (t - s) - zi;
@@ -73,20 +76,23 @@ public final class L2DistanceVariance  extends Function  {
     return s; }
 
   @Override
-  public final Function derivativeAt (final double[] x) { 
-    final double mean = meanL2Distance(x);
+  public final Function derivativeAt (final Object x) { 
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
+    final double mean = meanL2Distance(xx);
     double s0 = 0.0;
     double c0 = 0.0;
     double s1 = 0.0;
     double c1 = 0.0;
     for (final double[] p : _points) {
-      final double dp = l2Distance(x,p);
+      final double dp = l2Distance(xx,p);
       final double a = (dp - mean) / dp;
-      final double z0 = a*(x[0] - p[0]) - c0;
+      final double z0 = a*(xx[0] - p[0]) - c0;
       final double t0 = s0 + z0;
       c0 = (t0 - s0) - z0;
       s0 = t0;
-      final double z1 = a*(x[1] - p[1]) - c1;
+      final double z1 = a*(xx[1] - p[1]) - c1;
       final double t1 = s1 + z1;
       c1 = (t1 - s1) - z1;
       s1 = t1; }

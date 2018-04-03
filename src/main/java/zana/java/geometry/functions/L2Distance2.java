@@ -31,14 +31,17 @@ public final class L2Distance2 extends Function {
   // TODO: replace Kahan sum with fully accurate?
 
   @Override
-  public final double doubleValue (final double[] x) {
+  public final double doubleValue (final Object x) {
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
     final int n = _target.length;
-    assert n == x.length;
+    assert n == xx.length;
     double s = 0.0;
     double c = 0.0;
     for (int i=0;i<n;i++) {
       // TODO: this isn't right, even as compensated l2 distance
-      final double di = _target[i] - x[i];
+      final double di = _target[i] - xx[i];
       final double zi =  di*di - c;
       final double t = s + zi;
       c = (t - s) - zi;
@@ -46,11 +49,14 @@ public final class L2Distance2 extends Function {
     return s; }
 
   @Override
-  public final Function derivativeAt (final double[] x) { 
-    final int n = _target.length;
-    assert n == x.length;
+  public final Function derivativeAt (final Object x) { 
+    final double[] xx = (double[]) x;
+    assert ((Dn) domain()).dimension() == xx.length :
+      this.toString() + "\n" + xx;
+     final int n = _target.length;
+    assert n == xx.length;
     final double[] dx = new double[n];
-    for (int i=0;i<n;i++) { dx[i] = 2.0*(x[i] - _target[i]); } 
+    for (int i=0;i<n;i++) { dx[i] = 2.0*(xx[i] - _target[i]); } 
     return LinearFunctional.make(dx); }
 
   //--------------------------------------------------------------
