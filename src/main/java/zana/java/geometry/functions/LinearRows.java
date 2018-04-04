@@ -11,7 +11,7 @@ import zana.java.geometry.Dn;
  * (that is, matrix rows).
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-04-02
+ * @version 2018-04-04
  */
 
 @SuppressWarnings("unchecked")
@@ -115,7 +115,7 @@ public final class LinearRows extends Function {
 
   //--------------------------------------------------------------
 
-  private LinearRows (final double[][] rows) {
+  LinearRows (final double[][] rows) {
     super(Dn.get(rows[0].length),Dn.get(rows.length));
     _rows = rows;}
 

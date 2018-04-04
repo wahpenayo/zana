@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-02"
+      :date "2018-04-04"
       :doc 
       "Functions between affine/linear spaces." }
     
@@ -16,8 +16,8 @@
            [clojure.lang IFn IFn$D IFn$OD]
            [zana.java.arrays Arrays]
            [zana.java.geometry.functions 
-            AffineDual AffineFunctional L2Distance2 
-            LinearFunctional Sample]))
+            AffineDual AffineFunctional L2Distance2From
+            LinearFunctional QRDistanceFrom Sample]))
 ;;----------------------------------------------------------------
 #_(deftype LinearFunctional [^doubles dual]
    Serializable
@@ -135,8 +135,14 @@
 (defn l2distance2-from 
   "Return a real-valued function that measures the squared l2 
   distance from the supplied point."
-  ^L2Distance2 [p]
-  (L2Distance2/make p))
+  ^L2Distance2From [y]
+  (L2Distance2From/make y))
+;;----------------------------------------------------------------
+(defn qrdistance-from 
+  "Return a real-valued function that measures the Huberized
+   quantile regression 'distance' from the supplied point."
+  ^QRDistanceFrom [^double p ^double epsilon y]
+  (QRDistanceFrom/make p epsilon y))
 ;;----------------------------------------------------------------
 (defn sampler 
   "Return a function that maps a real-valued function to a vector 

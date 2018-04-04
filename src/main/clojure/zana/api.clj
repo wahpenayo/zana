@@ -314,6 +314,7 @@
                 gf/l2distance2-from
                 gf/linear-part
                 gf/linear-functional
+                gf/qrdistance-from
                 gf/sampler
                 gf/translation
                 gg/interval-contains?

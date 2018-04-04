@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-01"
+      :date "2018-04-04"
       :doc 
       "Tests for [[zana.optimization.math3.cg]]." }
     
@@ -11,8 +11,8 @@
             [zana.api :as z])
   (:import [clojure.lang IFn IFn$OD]
            [zana.java.geometry.functions 
-            Composition2 L2Distance2 LinearFunctional LinearRows 
-            Function]
+            Composition2 L2Distance2From LinearFunctional 
+            LinearRows Function]
            [zana.test.java.geometry.functions
             L2DistanceVariance]))
 ;; mvn -Dtest=zana.test.optimization.math3.cg clojure:test
@@ -24,7 +24,7 @@
 ;;----------------------------------------------------------------
 (test/deftest trivial
   (let [lr (LinearRows/make [[2.0]])
-        l2d2 (L2Distance2/make [3.0])
+        l2d2 (L2Distance2From/make [3.0])
         objective (z/compose l2d2 lr) 
         options {:objective objective
                  :max-iterations 100
@@ -40,7 +40,7 @@
              [[1.0 -1.0] 
               [0.0  2.0] 
               [1.0 -2.0]])
-        l2d2 (L2Distance2/make [4.0 6.0 1.0])
+        l2d2 (L2Distance2From/make [4.0 6.0 1.0])
         objective (z/compose l2d2 lr) 
         options {:objective objective
                  :max-iterations 100
@@ -65,7 +65,7 @@
               [0 0 0 2 0 0]
               [0 0 0 0 2 0]
               [0 0 0 0 0 2]])
-        l2d2 (L2Distance2/make [0.0 1.1 2.2 3.3 4.4 5.5])
+        l2d2 (L2Distance2From/make [0.0 1.1 2.2 3.3 4.4 5.5])
         objective (z/compose l2d2 lr) 
         options {:objective objective
                  :max-iterations 100
@@ -87,7 +87,7 @@
              [[ 1  0  0]
               [-1  1  0]
               [ 0 -1  1]])
-        l2d2 (L2Distance2/make [1 1 1])
+        l2d2 (L2Distance2From/make [1 1 1])
         objective (z/compose l2d2 lr) 
         options {:objective objective
                  :max-iterations 100
@@ -161,7 +161,7 @@
              [[ 1  2 -3]
               [ 2  1  3]
               [-3  0 -9]])
-        l2d2 (L2Distance2/make [1 1 1])
+        l2d2 (L2Distance2From/make [1 1 1])
         objective (z/compose l2d2 lr) 
         options {:objective objective
                  :max-iterations 100
@@ -185,7 +185,7 @@
               [ 7  5  6  5]
               [ 8  6 10  9]
               [ 7  5  9 10]])
-        l2d2 (L2Distance2/make [32 23 33 31])
+        l2d2 (L2Distance2From/make [32 23 33 31])
         objective (z/compose l2d2 lr) 
         options {:objective objective
                  :max-iterations 200
@@ -210,7 +210,7 @@
               [ 7.08 5.04 6.00 5.00]
               [ 8.00 5.98 9.89 9.00]
               [ 6.99 4.99 9.00 9.98]])
-        l2d2 (L2Distance2/make [32 23 33 31])
+        l2d2 (L2Distance2From/make [32 23 33 31])
         objective (z/compose l2d2 lr) 
         options {:objective objective
                  :max-iterations 200
