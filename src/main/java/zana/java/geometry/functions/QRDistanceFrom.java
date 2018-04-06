@@ -13,7 +13,7 @@ import zana.java.geometry.Dn;
  * TODO: factor out differentiable rho.
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-04-04
+ * @version 2018-04-06
  */
 
 @SuppressWarnings("unchecked")
@@ -112,7 +112,9 @@ public final class QRDistanceFrom extends Function {
   @Override
   public final String toString () {
     return 
-      getClass().getSimpleName() + Arrays.toString(_target); }
+      getClass().getSimpleName() + "[" + domain() + "]"; } 
+      //+ Arrays.toString(_target); }
+
 
   //--------------------------------------------------------------
   // construction

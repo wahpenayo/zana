@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-04"
+      :date "2018-04-06"
       :doc 
       "Functions between affine/linear spaces." }
     
@@ -16,7 +16,8 @@
            [clojure.lang IFn IFn$D IFn$OD]
            [zana.java.arrays Arrays]
            [zana.java.geometry.functions 
-            AffineDual AffineFunctional L2Distance2From
+            AffineDual AffineFunctional HuberDistanceFrom 
+            L2Distance2From
             LinearFunctional QRDistanceFrom Sample]))
 ;;----------------------------------------------------------------
 #_(deftype LinearFunctional [^doubles dual]
@@ -137,6 +138,12 @@
   distance from the supplied point."
   ^L2Distance2From [y]
   (L2Distance2From/make y))
+;;----------------------------------------------------------------
+(defn huberdistance-from 
+  "Return a real-valued function that measures the squared l2 
+  distance from the supplied point."
+  ^HuberDistanceFrom [^double epsilon y]
+  (HuberDistanceFrom/make epsilon y))
 ;;----------------------------------------------------------------
 (defn qrdistance-from 
   "Return a real-valued function that measures the Huberized

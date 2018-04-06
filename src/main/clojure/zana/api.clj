@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-02"
+      :date "2018-04-06"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -311,6 +311,7 @@
                 gf/dual
                 gf/generate-affine-functional
                 gf/generate-linear-functional
+                gf/huberdistance-from
                 gf/l2distance2-from
                 gf/linear-part
                 gf/linear-functional

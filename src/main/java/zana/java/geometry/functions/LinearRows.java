@@ -11,7 +11,7 @@ import zana.java.geometry.Dn;
  * (that is, matrix rows).
  * 
  * @author wahpenayo at gmail dot com
- * @version 2018-04-04
+ * @version 2018-04-06
  */
 
 @SuppressWarnings("unchecked")
@@ -76,9 +76,8 @@ public final class LinearRows extends Function {
   @Override
   public String toString () { 
     return getClass().getSimpleName() + 
-      "[\n" +
-      
-      Arrays.toString(_rows); }
+      "[" + _rows.length + "," + _rows[0].length + "]"; }
+      //"[\n" + Arrays.toString(_rows); }
   
   //--------------------------------------------------------------
   // construction
