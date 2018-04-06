@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-02"
+      :date "2018-04-05"
       :doc 
       "Pose unconstrained differentiable optimization problems 
        using `Function` and solve them with the
@@ -74,17 +74,19 @@
     (converged? iteration previous current)))
 (defn- convergence-checker ^ConvergenceChecker [^IFn converged?]
   (ConvergenceWrapper. converged?))
-(defn value-convergence ^IFn [^double relative-tolerance
+(defn value-convergence ^IFn [^long max-iterations
+                              ^double relative-tolerance
                               ^double absolute-tolerance]
   (fn value-converged? [^long iteration
                         ^PointValuePair previous
                         ^PointValuePair current]
-    (let [y0 (.doubleValue ^Double (.getValue previous))
-          y1 (.doubleValue ^Double (.getValue current))
-          dy (Math/abs (- y1 y0))
-          my (Math/max (Math/abs y0) (Math/abs y1))]
-      (or (<= dy (* my relative-tolerance))
-          (<= dy absolute-tolerance)))))
+    (or (<= max-iterations iteration)
+        (let [y0 (.doubleValue ^Double (.getValue previous))
+              y1 (.doubleValue ^Double (.getValue current))
+              dy (Math/abs (- y1 y0))
+              my (Math/max (Math/abs y0) (Math/abs y1))]
+          (or (<= dy (* my relative-tolerance))
+              (<= dy absolute-tolerance))))))
 ;;----------------------------------------------------------------
 ;; skip Preconditioner for now.
 ;;----------------------------------------------------------------
@@ -155,7 +157,8 @@
         solver (NonLinearConjugateGradientOptimizer.
                  (update-formula (:update-formula options))
                  (convergence-checker
-                   (value-convergence 
+                   (value-convergence
+                     (long (:max-iterations options))
                      (:relative-tolerance options)
                      (:absolute-tolerance options)))
                  (double 
@@ -168,6 +171,7 @@
         _(assert (:start options)
                  "No :start point in options.")
         start (double-array (:start options))
+        _(println :start (Arrays/toString start))
         maxeval (MaxEval. (int (:max-evaluations options)))
         maxiter (MaxIter. (int (:max-iterations options)))
         ^"[Lorg.apache.commons.math3.optim.OptimizationData;"
@@ -182,5 +186,7 @@
                                maxeval
                                maxiter]))
         point-value (.optimize solver opt)]
+    (println :iterations (.getIterations solver))
+    (println :evaluations (.getEvaluations solver))
     [(.getPoint point-value) (.getValue point-value)]))
 ;;----------------------------------------------------------------
