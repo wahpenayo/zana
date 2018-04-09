@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-06"
+      :date "2018-04-09"
       :doc 
       "Functions between affine/linear spaces." }
     
@@ -9,31 +9,32 @@
   
   (:require [zana.commons.core :as commons]
             [zana.collections.clojurize :as clojurize]
+            [zana.io.gz :as gz]
             [zana.io.edn :as zedn])
   
   (:import [java.util List Map]
-           [java.io Serializable Writer]
+           [java.io PrintWriter Serializable Writer]
            [clojure.lang IFn IFn$D IFn$OD]
            [zana.java.arrays Arrays]
            [zana.java.geometry.functions 
-            AffineDual AffineFunctional HuberDistanceFrom 
-            L2Distance2From
-            LinearFunctional QRDistanceFrom Sample]))
+            AffineDual AffineFunctional Function GradientCheck 
+            HuberDistanceFrom L2Distance2From LinearFunctional 
+            QRDistanceFrom Sample Tracer]))
 ;;----------------------------------------------------------------
 #_(deftype LinearFunctional [^doubles dual]
-   Serializable
-   IFn$OD 
-   (invokePrim ^double [_ v] (Arrays/dot dual v))
-   IFn 
-   (invoke [this v] (.invokePrim this v))
-   Object 
-   (equals [_ that] 
-     (and (instance? LinearFunctional that)
-          (java.util.Arrays/equals 
-            dual 
-            (doubles (.dual ^LinearFunctional that)))))
-   (hashCode [_] (java.util.Arrays/hashCode dual))
-   (toString [_] (str "LinearFunctional" (into [] dual))))
+    Serializable
+    IFn$OD 
+    (invokePrim ^double [_ v] (Arrays/dot dual v))
+    IFn 
+    (invoke [this v] (.invokePrim this v))
+    Object 
+    (equals [_ that] 
+      (and (instance? LinearFunctional that)
+           (java.util.Arrays/equals 
+             dual 
+             (doubles (.dual ^LinearFunctional that)))))
+    (hashCode [_] (java.util.Arrays/hashCode dual))
+    (toString [_] (str "LinearFunctional" (into [] dual))))
 ;;----------------------------------------------------------------
 (defn dual ^doubles [^LinearFunctional lf]
   (.dual lf))
@@ -52,28 +53,28 @@
   (LinearFunctional/generate (int dim) g))
 ;;----------------------------------------------------------------
 #_(deftype AffineFunctional [^LinearFunctional linear-part
-                            ^double translation]
-   Serializable
-   IFn$OD 
-   (invokePrim ^double [_ v] 
-     (+ translation (.invokePrim linear-part v)))
-   IFn 
-   (invoke [this v] (.invokePrim this v))
-   Object 
-   (equals [_ that] 
-     (and (instance? AffineFunctional that)
-          (let [^AffineFunctional that that]
-            (and (== translation (.translation that))
-                 (.equals linear-part (.linearPart that))))))
-   (hashCode [_]    
-     (let [h (int 17)
-           h (unchecked-multiply-int h (int 31))
-           h (unchecked-add-int h (.hashCode linear-part))
-           h (unchecked-multiply-int h (int 31))
-           h (unchecked-add-int h (Double/hashCode translation))]
-       h))
-   (toString [_]
-     (str "AffineFunctional[" linear-part ", " translation "]")))
+                             ^double translation]
+    Serializable
+    IFn$OD 
+    (invokePrim ^double [_ v] 
+      (+ translation (.invokePrim linear-part v)))
+    IFn 
+    (invoke [this v] (.invokePrim this v))
+    Object 
+    (equals [_ that] 
+      (and (instance? AffineFunctional that)
+           (let [^AffineFunctional that that]
+             (and (== translation (.translation that))
+                  (.equals linear-part (.linearPart that))))))
+    (hashCode [_]    
+      (let [h (int 17)
+            h (unchecked-multiply-int h (int 31))
+            h (unchecked-add-int h (.hashCode linear-part))
+            h (unchecked-multiply-int h (int 31))
+            h (unchecked-add-int h (Double/hashCode translation))]
+        h))
+    (toString [_]
+      (str "AffineFunctional[" linear-part ", " translation "]")))
 ;;----------------------------------------------------------------
 (defn linear-part ^LinearFunctional [^AffineFunctional af]
   (.linearPart af))
@@ -132,6 +133,23 @@
           (IllegalArgumentException.
             (print-str 
               "can't determine the domain-dimension of" f)))))
+;;----------------------------------------------------------------
+(defn trace-function 
+  "return a Function that echos values and derivatives to output
+   writer (default <code>*out*</code>."
+  (^Function [^Function f out]
+    (Tracer/wrap f (gz/print-writer out)))
+  (^Function [^Function f]
+    (Tracer/wrap f (gz/print-writer *out*))))
+;;----------------------------------------------------------------
+(defn gradient-check 
+  "return a wrapper Function that compares derivatives to 
+   numerical estimates to output
+   writer (default <code>*out*</code>."
+  (^Function [^Function f out]
+    (GradientCheck/wrap f (gz/print-writer out)))
+  (^Function [^Function f]
+    (GradientCheck/wrap f (gz/print-writer *out*))))
 ;;----------------------------------------------------------------
 (defn l2distance2-from 
   "Return a real-valued function that measures the squared l2 

@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-05"
+      :date "2018-04-09"
       :doc 
       "Pose unconstrained differentiable optimization problems 
        using `Function` and solve them with the
@@ -107,7 +107,6 @@
       (.dual ^LinearFunctional df))))
 (defn- objective-function-gradient
   ^ObjectiveFunctionGradient [^Function f]
-  
   (ObjectiveFunctionGradient. (GradientWrapper. f)))
 ;;----------------------------------------------------------------
 ;; TODO: look into spec

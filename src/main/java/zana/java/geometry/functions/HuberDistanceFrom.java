@@ -75,7 +75,7 @@ public final class HuberDistanceFrom extends Function {
     assert n == xx.length;
     final double[] dx = new double[n];
     for (int i=0;i<n;i++) { 
-      dx[i] = drho(-(_target[i] - xx[i])); } 
+      dx[i] = -drho(_target[i] - xx[i]); } 
     return LinearFunctional.make(dx); }
 
   //--------------------------------------------------------------

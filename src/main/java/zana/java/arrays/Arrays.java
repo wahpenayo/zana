@@ -9,7 +9,7 @@ import clojure.lang.IFn;
 /** Numerical array utilities for use with Clojure code.
  *
  * @author wahpenayo at gmail dot com
- * @version 2018-01-29
+ * @version 2018-04-09
  */
 
 public final class Arrays extends Object {
@@ -234,6 +234,16 @@ public final class Arrays extends Object {
     // NOTE: fused-multiply-add requires Java 9
     for (int i=0;i<n;i++) { sum = Math.fma(v0[i],v1[i],sum); }
     return sum; }
+  
+  public static final double l2norm2 (final double[] v) {
+    final int n = v.length;
+    double sum = 0.0;
+    // NOTE: fused-multiply-add requires Java 9
+    for (int i=0;i<n;i++) { sum = Math.fma(v[i],v[i],sum); }
+    return sum; }
+  
+  public static final double l2norm (final double[] v) {
+    return Math.sqrt(l2norm2(v)); }
   
   //--------------------------------------------------------------
   // disabled constructor

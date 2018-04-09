@@ -311,12 +311,14 @@
                 gf/dual
                 gf/generate-affine-functional
                 gf/generate-linear-functional
+                gf/gradient-check
                 gf/huberdistance-from
                 gf/l2distance2-from
                 gf/linear-part
                 gf/linear-functional
                 gf/qrdistance-from
                 gf/sampler
+                gf/trace-function
                 gf/translation
                 gg/interval-contains?
                 gg/interval-max

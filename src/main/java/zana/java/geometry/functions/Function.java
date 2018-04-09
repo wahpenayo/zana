@@ -1,6 +1,8 @@
 package zana.java.geometry.functions;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import clojure.lang.IFn;
 import clojure.lang.ISeq;
@@ -32,6 +34,284 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
   // methods
   //--------------------------------------------------------------
 
+  private static final double EPSILON = Math.ulp(1.0);
+
+  @SuppressWarnings("static-method")
+  public double accuracy () { return EPSILON; }
+
+  private static final double
+  SQRT_ACCURACY = Math.sqrt(EPSILON);
+
+  @SuppressWarnings("static-method")
+  public double sqrtAccuracy () { return SQRT_ACCURACY; }
+
+  private static final double
+  CBRT_ACCURACY = Math.pow(EPSILON,1.0/3.0);
+
+  @SuppressWarnings("static-method")
+  public double cbrtAccuracy () { return CBRT_ACCURACY; }
+
+  //----------------------------------------------------------
+
+  @SuppressWarnings("static-method")
+  public double typicalParameter (@SuppressWarnings("unused") final int i) { 
+    return 1.0; }
+
+  //----------------------------------------------------------
+
+  @SuppressWarnings("static-method")
+  public double typicalValue () { return 1.0; }
+
+  //----------------------------------------------------------
+  /** A crude heuristic choice, based on Dennis-Schnabel,
+   * algorithm 5.6.4.
+   */
+
+  public final double[] centralDifferenceStepsizes (final double[] p) {
+
+    final double alpha = cbrtAccuracy();
+    final int n = p.length;
+    final double[] stepsizes = new double[n];
+    for (int i=0;i<n;i++) {
+      final double
+      stepsize = alpha * Math.max(Math.abs(p[i]),
+        Math.abs(typicalParameter(i)));
+      stepsizes[i] = Math.min(1.0,stepsize); } 
+    return stepsizes; }
+
+  //----------------------------------------------------------
+  /** Based on Dennis-Schnabel, algorithm 5.6.4. */
+
+  public final double[] centralDifferenceGradient (final double[] p) {
+
+    final double[] stepsizes = centralDifferenceStepsizes(p);
+    final int n = p.length;
+    final double[] g = new double[n];
+    for (int i=0;i<n;i++) {
+      final double pi = p[i];
+      final double si = stepsizes[i];
+      if (! (si > EPSILON)) { // negative test handles NaN
+        throw new IllegalArgumentException(
+          "stepsize["+ i + "]= " + si +
+          toString() + "\n" +
+          "at " + "\n" +
+          Arrays.toString(p) + "\n"); }
+
+      final double x0 = pi + si;
+      p[i] = x0;
+      final double v0 = doubleValue(p);
+      // this increases accuracy slightly, see Dennis-Schnabel
+      final double s0 = x0 - pi;
+
+      final double x1 = pi - si;
+      p[i] = x1;
+      final double v1 = doubleValue(p);
+      // this increases accuracy slightly, see Dennis-Schnabel
+      final double s1 = pi - x1;
+
+      final double gi = (v0 - v1) / (s0 + s1);
+      g[i] = gi;
+      p[i] = pi; } 
+
+    return g; }
+
+  //----------------------------------------------------------
+  /** A crude heuristic choice, based on Dennis-Schnabel,
+   * algorithm 5.6.3.
+   */
+
+  private final double[] forwardDifferenceStepsizes (final double[] p) {
+
+    final double alpha = sqrtAccuracy();
+    final int n = p.length;
+    final double[] stepsizes = new double[n];
+    for (int i=0;i<n;i++) {
+      final double stepsize
+      = alpha * Math.max(Math.abs(p[i]),
+        Math.abs(typicalParameter(i)) );
+      stepsizes[i] = 1.0e-1*stepsize; } 
+
+    return stepsizes; }
+
+  //----------------------------------------------------------
+  /** Based on Dennis-Schnabel, algorithm 5.6.3.
+   */
+
+  public final double[] forwardDifferenceGradient (final double[] p) {
+
+    final double[] stepsizes = forwardDifferenceStepsizes(p);
+    final double v = doubleValue(p);
+    final int n = p.length;
+    final double[] g = new double[n];
+    for (int i=0;i<n;i++) {
+      final double pi = p[i];
+      final double si = stepsizes[i];
+      if (! (si > EPSILON)) { // negative test handles NaN
+        throw new IllegalArgumentException("stepsize["+ i + "]= " + si); }
+
+      final double xi = pi + si;
+      p[i] = xi;
+      final double vi = doubleValue(p);
+      // this increases accuracy slightly, see Dennis-Schnabel
+      final double di = xi - pi;
+      final double gi = (vi - v) / di;
+      g[i] = gi;
+      p[i] = pi; }
+    return g; }
+
+  //----------------------------------------------------------
+  /** For comparison with forward difference.
+   * Based on Dennis-Schnabel, algorithm 5.6.3.
+   */
+
+  public final double[] backwardDifferenceGradient (final double[] p) {
+
+    final int n = p.length;
+    final double[] g = new double[n];
+    final double[] stepsizes = forwardDifferenceStepsizes(p);
+    final double v = doubleValue(p);
+    for (int i=0;i<n;i++) {
+      final double pi = p[i];
+      final double si = stepsizes[i];
+      if (! (si > EPSILON)) { // negative test handles NaN
+        throw new IllegalArgumentException("stepsize["+ i + "]= " + si); }
+      final double xi = pi - si;
+      p[i] = xi;
+      final double vi = doubleValue(p);
+      // this increases accuracy slightly, see Dennis-Schnabel
+      final double di = xi - pi;
+      final double gi = (vi - v) / di;
+      g[i] = gi;
+      p[i] = pi; } 
+
+    return g; }
+
+  //----------------------------------------------------------
+  // derivative tests
+  //----------------------------------------------------------
+  /** Compare the dual vector of the {@link #derivativeAt} 
+   * (that is, the gradient) to the forward,
+   ** backward, and central difference gradients at the
+   ** current point.
+   **/
+
+  public final boolean checkGradient (final double[] p,
+                                      final PrintWriter out) {
+    final int n = p.length;
+
+    final double val = doubleValue(p);
+    final double[] ag = ((LinearFunctional) derivativeAt(p)).dual();
+    final double[] cg = centralDifferenceGradient(p);
+    final double[] fg = forwardDifferenceGradient(p);
+    final double[] bg = backwardDifferenceGradient(p);
+
+    final double epsilon = 
+      Math.sqrt(accuracy()) 
+      * 
+      Math.max(Math.abs(val),Math.abs(typicalValue()));
+
+    final StringBuffer m = new StringBuffer("\n");
+    m.append(toString()); m.append("\n");
+    boolean close_enough = true;
+    for (int i=0;i<n;i++) {
+      final double gi = ag[i];
+      final double ci = cg[i];
+      final double fi = fg[i];
+      final double bi = bg[i];
+      // check if estimated derivatiives are too far apart
+      final double fc = Math.abs(fi-ci);
+      final double bc = Math.abs(bi-ci);
+      final double fb = Math.abs(bi-fi);
+      final double cfb = 3*(1.0 + Math.abs(ci) + Math.abs(fi) + Math.abs(bi));
+      final double ddg = (fb + fc + bc) / cfb;
+
+      if (ddg > 1.0e-3) {
+        final String w = "\n"
+          + "est. partial derivatives inconsistent:"
+          + "\n"
+          + String.format("%3d",Integer.valueOf(i))
+          + String.format(" %#13.6e",Double.valueOf(p[i]))
+          + String.format(" %#13.6e",Double.valueOf(gi))
+          + String.format(" %#13.6e",Double.valueOf(ci))
+          + String.format(" %#13.6e",Double.valueOf(fi))
+          + String.format(" %#13.6e",Double.valueOf(bi))
+          + "\n";
+        out.println(w); }
+
+      final double diff = gi - ci;
+      final double absdiff = Math.abs(diff);
+      final double
+      reference = 2*Math.max(epsilon,Math.max(Math.abs(fi-ci),Math.abs(bi-ci)));
+      if (!(absdiff < reference)) { close_enough = false; m.append("* "); }
+      else { m.append("  "); }
+      double ratio = 0;
+      if (EPSILON < Math.abs(ci)) { ratio = gi/ci; }
+      m.append(String.format("%3d",Integer.valueOf(i)));
+      m.append(String.format(" %#13.6e",Double.valueOf(p[i])));
+      //m.append(String.format(" %#13.6e",Double.valueOf((stepsizes[i])));
+      m.append(String.format(" %#13.6e",Double.valueOf(gi)));
+      m.append(String.format(" %#13.6e",Double.valueOf(ci)));
+      m.append(String.format(" %#13.6e",Double.valueOf(fi)));
+      m.append(String.format(" %#13.6e",Double.valueOf(bi)));
+      m.append(String.format(" %#13.6e",Double.valueOf(ratio)));
+      m.append(String.format(" %#13.6e",Double.valueOf(diff)));
+      m.append(String.format(" %#13.6e",Double.valueOf(reference)));
+      m.append("\n");
+    }
+
+    final double gnorm = zana.java.arrays.Arrays.l2norm(ag);
+    final double cnorm = zana.java.arrays.Arrays.l2norm(cg);
+    final double cosine = (EPSILON < gnorm*cnorm)
+      ? zana.java.arrays.Arrays.dot(ag,cg) / (gnorm*cnorm)
+        : 1.0;
+      final double angle = (1.0 > cosine)
+        ? Math.acos(cosine)*180/Math.PI
+          : 0.0;
+        //final double dcnorm = Math.abs(gnorm-cnorm);
+        //final double rdcnorm = dcnorm/(1.0+gnorm+cnorm);
+
+        m.append("  i");
+        m.append(String.format(" %13s","position"));
+        m.append(String.format(" %13s","step*10^6"));
+        m.append(String.format(" %13s","analytic"));
+        m.append(String.format(" %13s","central"));
+        m.append(String.format(" %13s","forward"));
+        m.append(String.format(" %13s","backward"));
+        m.append(String.format(" %13s","ratio"));
+        m.append(String.format(" %13s","absolute"));
+        m.append(String.format(" %13s","reference"));
+        m.append("\n");
+        m.append("\n");
+        m.append(String.format(" %#13.6e",Double.valueOf(val)));
+        m.append(" value"); m.append("\n");
+        m.append(String.format(" %#13.6e",Double.valueOf(accuracy())));
+        m.append(" estimated accuracy");
+        m.append("\n");
+        m.append(String.format(" %#13.6e",Double.valueOf(cosine)));
+        m.append(" cosine of error angle");
+        m.append("\n");
+        m.append(String.format(" %#13.6e",Double.valueOf(angle)));
+        m.append(" error angle degrees");
+        m.append("\n");
+        m.append(toString());
+        m.append("\n");
+
+        final String msg = close_enough
+          ? this + " gradient ok"
+            //  + "\n" + m.toString()
+            : this + " gradient failed"
+            + "\n" + m.toString() ;
+        if (close_enough) {
+          out.println(msg); }
+        else {
+          out.println(msg); 
+          //throw new IllegalStateException(msg); 
+          }
+
+        return close_enough; }
+
+  //--------------------------------------------------------------
+
   /** If the {@link #codomain() codomain} of this function is
    * 1-dimensional, return the value as a <code>double</code>.
    * <br>Otherwise throw an {@link UnsupportedOperationException}.
@@ -41,27 +321,27 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-//  /** If the {@link #codomain() codomain} of this function is
-//   * 1-dimensional, and the {@link #domain() domain} contains
-//   * {@link Function functions}
-//   * return the value as a <code>double</code>.
-//   * <br>Otherwise throw an {@link UnsupportedOperationException}.
-//   */
-//  @SuppressWarnings("unused")
-//  public double doubleValue (final Function x) {
-//    throw new UnsupportedOperationException(
-//      getClass().getName()); }
+  //  /** If the {@link #codomain() codomain} of this function is
+  //   * 1-dimensional, and the {@link #domain() domain} contains
+  //   * {@link Function functions}
+  //   * return the value as a <code>double</code>.
+  //   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+  //   */
+  //  @SuppressWarnings("unused")
+  //  public double doubleValue (final Function x) {
+  //    throw new UnsupportedOperationException(
+  //      getClass().getName()); }
 
-//  /** If the {@link #codomain() codomain} of this function is
-//   * 1-dimensional, and the {@link #domain() domain} contains
-//   * <code>double[]</code> arrays,
-//   * return the value as a <code>double</code>.
-//   * <br>Otherwise throw an {@link UnsupportedOperationException}.
-//   */
-//  @SuppressWarnings("unused")
-//  public double doubleValue (final double[] x) {
-//    throw new UnsupportedOperationException(
-//      getClass().getName()); }
+  //  /** If the {@link #codomain() codomain} of this function is
+  //   * 1-dimensional, and the {@link #domain() domain} contains
+  //   * <code>double[]</code> arrays,
+  //   * return the value as a <code>double</code>.
+  //   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+  //   */
+  //  @SuppressWarnings("unused")
+  //  public double doubleValue (final double[] x) {
+  //    throw new UnsupportedOperationException(
+  //      getClass().getName()); }
 
   /** If the {@link #codomain() codomain} and
    * {@link #codomain() codomain} of this function are
@@ -85,29 +365,29 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-//  /** If the elements of the {@link #codomain() codomains} can be
-//   * represented by <code>double[]</code>
-//   * can, and the {@link #domain() domain} contains
-//   * {@link Function functions},
-//   * return the value as a <code>double[]</code>.
-//   * <br>Otherwise throw an {@link UnsupportedOperationException}.
-//   */
-//  @SuppressWarnings("unused")
-//  public Object value (final Function f) {
-//    throw new UnsupportedOperationException(
-//      getClass().getName()); }
+  //  /** If the elements of the {@link #codomain() codomains} can be
+  //   * represented by <code>double[]</code>
+  //   * can, and the {@link #domain() domain} contains
+  //   * {@link Function functions},
+  //   * return the value as a <code>double[]</code>.
+  //   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+  //   */
+  //  @SuppressWarnings("unused")
+  //  public Object value (final Function f) {
+  //    throw new UnsupportedOperationException(
+  //      getClass().getName()); }
 
-//  /** If the elements of the {@link #codomain() codomain} can be
-//   * represented by <code>double[]</code>
-//   * can, and {@link #domain() domain} contains elements that can
-//   * be represented by <code>double[]</code>,
-//   * return the value as a <code>double[]</code>.
-//   * <br>Otherwise throw an {@link UnsupportedOperationException}.
-//   */
-//  @SuppressWarnings("unused")
-//  public Object value (final double[] x) {
-//    throw new UnsupportedOperationException(
-//      getClass().getName()); }
+  //  /** If the elements of the {@link #codomain() codomain} can be
+  //   * represented by <code>double[]</code>
+  //   * can, and {@link #domain() domain} contains elements that can
+  //   * be represented by <code>double[]</code>,
+  //   * return the value as a <code>double[]</code>.
+  //   * <br>Otherwise throw an {@link UnsupportedOperationException}.
+  //   */
+  //  @SuppressWarnings("unused")
+  //  public Object value (final double[] x) {
+  //    throw new UnsupportedOperationException(
+  //      getClass().getName()); }
 
   /** If the elements of the {@link #codomain() codomain} can be
    * represented by <code>double[]</code>
@@ -133,21 +413,21 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
-//  /** Return the derivative of this function at <code>x</code>.
-//   * Recall that the general definition of the derivative
-//   * of a function is the <em>linear</em> function that
-//   * approximates it in the limit as we approach x.
-//   * <br> Optional operation.
-//   */
-//  @SuppressWarnings("unused")
-//  public Function derivativeAt (final double[] x) {
-//    throw new UnsupportedOperationException(
-//      getClass().getName()); }
-//
-//  @SuppressWarnings("unused")
-//  public Function derivativeAt (final Function x) {
-//    throw new UnsupportedOperationException(
-//      getClass().getName()); }
+  //  /** Return the derivative of this function at <code>x</code>.
+  //   * Recall that the general definition of the derivative
+  //   * of a function is the <em>linear</em> function that
+  //   * approximates it in the limit as we approach x.
+  //   * <br> Optional operation.
+  //   */
+  //  @SuppressWarnings("unused")
+  //  public Function derivativeAt (final double[] x) {
+  //    throw new UnsupportedOperationException(
+  //      getClass().getName()); }
+  //
+  //  @SuppressWarnings("unused")
+  //  public Function derivativeAt (final Function x) {
+  //    throw new UnsupportedOperationException(
+  //      getClass().getName()); }
 
   @SuppressWarnings("unused")
   public Function derivativeAt (final Object x) {
@@ -159,7 +439,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
     throw new UnsupportedOperationException(
       getClass().getName()); }
 
- //--------------------------------------------------------------
+  //--------------------------------------------------------------
   // IFn interfaces
   //--------------------------------------------------------------
 
