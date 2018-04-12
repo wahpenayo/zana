@@ -149,7 +149,7 @@
   (^Function [^Function f out]
     (GradientCheck/wrap f (gz/print-writer out)))
   (^Function [^Function f]
-    (GradientCheck/wrap f (gz/print-writer *out*))))
+    (GradientCheck/wrap f (gz/print-writer System/out))))
 ;;----------------------------------------------------------------
 (defn l2distance2-from 
   "Return a real-valued function that measures the squared l2 

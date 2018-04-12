@@ -1,8 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :since "2015-11-17"
-      :date "2017-11-16"
+      :date "2018-04-11"
       :doc "File reader/writer with compression based on name." }
     
     zana.io.gz
@@ -24,43 +23,45 @@
 ;;----------------------------------------------------------------
 ;; readers
 ;;----------------------------------------------------------------
-(defn- gz-input-stream ^java.io.InputStream [x]
+(defn- gz-input-stream ^InputStream [x]
   (GZIPInputStream. (io/input-stream x)))
 
-(defn- zip-input-stream ^java.io.InputStream [x]
+(defn- zip-input-stream ^InputStream [x]
   (let [zis (ZipInputStream. (io/input-stream x))
         ze (.getNextEntry zis) ]
     (assert ze)
     (assert (not (.isDirectory ze)))
     zis))
 
-(defn- bzip2-input-stream ^java.io.InputStream [x]
+(defn- bzip2-input-stream ^InputStream [x]
   (BZip2CompressorInputStream. (io/input-stream x)))
 ;;----------------------------------------------------------------
 ;; TODP: could use Commons compress to detect the input type?
 (defn input-stream
   "Create an input stream that handles compression based on file 
    name ending."
-  ^java.io.InputStream [x]
+  ^InputStream [x]
   (assert (not (nil? x)) "Can't create an input stream for nil")
-  (let [^String name (str x)]
-    (cond (.endsWith name ".gz") (gz-input-stream x)
-          (.endsWith name ".svgz") (gz-input-stream x)
-          (.endsWith name ".zip") (zip-input-stream x)
-          (.endsWith name ".kmz") (zip-input-stream x)
-          (.endsWith name ".bz2") (bzip2-input-stream x)
-          :else (io/input-stream x))))
+  (if (instance? InputStream x)
+    x
+    (let [^String name (str x)]
+      (cond (.endsWith name ".gz") (gz-input-stream x)
+            (.endsWith name ".svgz") (gz-input-stream x)
+            (.endsWith name ".zip") (zip-input-stream x)
+            (.endsWith name ".kmz") (zip-input-stream x)
+            (.endsWith name ".bz2") (bzip2-input-stream x)
+            :else (io/input-stream x)))))
 ;;----------------------------------------------------------------
 (defn object-input-stream
   "Create an object input stream that handles compression based on 
    file name ending."
-  ^java.io.ObjectInputStream [x]
+  ^ObjectInputStream [x]
   (ObjectInputStream. (BufferedInputStream. (input-stream x))))
 ;;----------------------------------------------------------------
 (defn reader
   "Create a reader that handles compression based on file name 
    ending."
-  ^java.io.BufferedReader [x]
+  ^BufferedReader [x]
   (assert (not (nil? x)) "Can't create an input stream for nil")
   (cond (instance? BufferedReader x) 
         x
@@ -73,13 +74,13 @@
 ;;----------------------------------------------------------------
 ;; output streams
 ;;----------------------------------------------------------------
-(defn- gz-output-stream ^java.io.OutputStream [^String name]
+(defn- gz-output-stream ^OutputStream [^String name]
   (GZIPOutputStream. (FileOutputStream. name)))
-(defn- bzip2-output-stream ^java.io.OutputStream [^String name]
+(defn- bzip2-output-stream ^OutputStream [^String name]
   (BZip2CompressorOutputStream. 
     (BufferedOutputStream.
       (FileOutputStream. name))))
-(defn- zip-output-stream ^java.io.OutputStream [^String path]
+(defn- zip-output-stream ^OutputStream [^String path]
   (let [file (File. path)
         name (.getName file)
         zos (ZipOutputStream. (FileOutputStream. file) )
@@ -98,18 +99,20 @@
 (defn output-stream
   "Create an output-stream that handles compression based on file 
    name ending."
-  ^java.io.OutputStream [f]
-  (let [^String name (str f)]
-    (cond (.endsWith name ".gz") (gz-output-stream name)
-          (.endsWith name ".zip") (zip-output-stream name)
-          (.endsWith name ".kmz") (zip-output-stream name)
-          (.endsWith name ".svgz") (gz-output-stream name)
-          :else (FileOutputStream. name))))
+  ^OutputStream [x]
+  (if (instance? OutputStream x)
+    x
+    (let [^String name (str x)]
+      (cond (.endsWith name ".gz") (gz-output-stream name)
+            (.endsWith name ".zip") (zip-output-stream name)
+            (.endsWith name ".kmz") (zip-output-stream name)
+            (.endsWith name ".svgz") (gz-output-stream name)
+            :else (FileOutputStream. name)))))
 ;;----------------------------------------------------------------
 (defn object-output-stream
   "Create an object output stream that handles compression based 
    on file name ending."
-  ^java.io.ObjectOutputStream [f]
+  ^ObjectOutputStream [f]
   (ObjectOutputStream. (BufferedOutputStream. (output-stream f))))
 ;;----------------------------------------------------------------
 ;; writers
@@ -117,11 +120,14 @@
 (defn writer
   "Create a writer that handles compression based on file name 
    ending."
-  ^java.io.BufferedWriter [f]
+  ^BufferedWriter [f]
   (BufferedWriter. (OutputStreamWriter. (output-stream f))))
 ;;----------------------------------------------------------------
 (defn print-writer
   "Create a writer that handles compression based on file name 
    ending."
-  ^java.io.PrintWriter [f] (PrintWriter. (writer f)))
+  ^PrintWriter [x]
+  (if (instance? PrintWriter x)
+    x
+    (PrintWriter. (writer x))))
 ;;----------------------------------------------------------------

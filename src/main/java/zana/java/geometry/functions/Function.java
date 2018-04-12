@@ -1,5 +1,6 @@
 package zana.java.geometry.functions;
 
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import clojure.lang.ISeq;
 /** Base class for functions from and to geometric spaces.
  *
  * @author wahpenayo at gmail dot com
- * @version 2018-03-14
+ * @version 2018-04-11
  */
 
 @SuppressWarnings("unchecked")
@@ -76,7 +77,25 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       final double
       stepsize = alpha * Math.max(Math.abs(p[i]),
         Math.abs(typicalParameter(i)));
-      stepsizes[i] = Math.min(1.0,stepsize); } 
+      stepsizes[i] = 1.0e-1*Math.min(1.0,stepsize); } 
+    return stepsizes; }
+
+  //----------------------------------------------------------
+  /** A crude heuristic choice, based on Dennis-Schnabel,
+   * algorithm 5.6.3.
+   */
+
+  private final double[] forwardDifferenceStepsizes (final double[] p) {
+
+    final double alpha = sqrtAccuracy();
+    final int n = p.length;
+    final double[] stepsizes = new double[n];
+    for (int i=0;i<n;i++) {
+      final double stepsize
+      = alpha * Math.max(Math.abs(p[i]),
+        Math.abs(typicalParameter(i)) );
+      stepsizes[i] = 1.0e-1*stepsize; } 
+
     return stepsizes; }
 
   //----------------------------------------------------------
@@ -114,24 +133,6 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       p[i] = pi; } 
 
     return g; }
-
-  //----------------------------------------------------------
-  /** A crude heuristic choice, based on Dennis-Schnabel,
-   * algorithm 5.6.3.
-   */
-
-  private final double[] forwardDifferenceStepsizes (final double[] p) {
-
-    final double alpha = sqrtAccuracy();
-    final int n = p.length;
-    final double[] stepsizes = new double[n];
-    for (int i=0;i<n;i++) {
-      final double stepsize
-      = alpha * Math.max(Math.abs(p[i]),
-        Math.abs(typicalParameter(i)) );
-      stepsizes[i] = 1.0e-1*stepsize; } 
-
-    return stepsizes; }
 
   //----------------------------------------------------------
   /** Based on Dennis-Schnabel, algorithm 5.6.3.
@@ -202,7 +203,9 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
     final double val = doubleValue(p);
     final double[] ag = ((LinearFunctional) derivativeAt(p)).dual();
     final double[] cg = centralDifferenceGradient(p);
+    final double[] cstep = centralDifferenceStepsizes(p);
     final double[] fg = forwardDifferenceGradient(p);
+    final double[] fstep = forwardDifferenceStepsizes(p);
     final double[] bg = backwardDifferenceGradient(p);
 
     final double epsilon = 
@@ -218,7 +221,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       final double ci = cg[i];
       final double fi = fg[i];
       final double bi = bg[i];
-      // check if estimated derivatiives are too far apart
+      // check if estimated derivatives are too far apart
       final double fc = Math.abs(fi-ci);
       final double bc = Math.abs(bi-ci);
       final double fb = Math.abs(bi-fi);
@@ -233,10 +236,12 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
           + String.format(" %#13.6e",Double.valueOf(p[i]))
           + String.format(" %#13.6e",Double.valueOf(gi))
           + String.format(" %#13.6e",Double.valueOf(ci))
+          + String.format(" %#13.6e",Double.valueOf(cstep[i]))
           + String.format(" %#13.6e",Double.valueOf(fi))
+          + String.format(" %#13.6e",Double.valueOf(fstep[i]))
           + String.format(" %#13.6e",Double.valueOf(bi))
           + "\n";
-        out.println(w); }
+        System.out.println(w); }
 
       final double diff = gi - ci;
       final double absdiff = Math.abs(diff);
@@ -302,14 +307,17 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
             : this + " gradient failed"
             + "\n" + m.toString() ;
         if (close_enough) {
-          out.println(msg); }
+          System.out.println(msg); }
         else {
-          out.println(msg); 
+          System.out.println(msg); 
           //throw new IllegalStateException(msg); 
           }
 
         return close_enough; }
 
+  public final boolean checkGradient (final double[] p,
+                                      final OutputStream out) {
+   return checkGradient(p,new PrintWriter(out)); }
   //--------------------------------------------------------------
 
   /** If the {@link #codomain() codomain} of this function is
