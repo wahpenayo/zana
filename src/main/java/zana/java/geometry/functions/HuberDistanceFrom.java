@@ -58,12 +58,14 @@ public final class HuberDistanceFrom extends Function {
     final int n = _target.length;
     assert n == xx.length;
     double s = 0.0;
-    double c = 0.0;
     for (int i=0;i<n;i++) {
-      final double zi =  rho(_target[i] - xx[i]) - c;
-      final double t = s + zi;
-      c = (t - s) - zi;
-      s = t; } 
+      s += rho(_target[i] - xx[i]); } 
+//    double c = 0.0;
+//    for (int i=0;i<n;i++) {
+//      final double zi =  rho(_target[i] - xx[i]) - c;
+//      final double t = s + zi;
+//      c = (t - s) - zi;
+//      s = t; } 
     return s; }
 
   @Override

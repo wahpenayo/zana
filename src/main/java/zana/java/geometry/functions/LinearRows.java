@@ -40,6 +40,9 @@ public final class LinearRows extends Function {
     assert ((Dn) domain()).dimension() == n :
       domain().toString() + "\n" + Arrays.toString(xx);
      final double[] y = new double[((Dn) codomain()).dimension()];
+     System.out.println("x:" + Arrays.toString(xx));
+     System.out.println("row[0]:" + Arrays.toString(_rows[0]));
+     
     int i = 0;
     for (final double[] row : _rows) {
       y[i] = zana.java.arrays.Arrays.dot(row,xx); 
@@ -76,8 +79,11 @@ public final class LinearRows extends Function {
   @Override
   public String toString () { 
     return getClass().getSimpleName() + 
-      "[" + _rows.length + "," + _rows[0].length + "]"; }
-      //"[\n" + Arrays.toString(_rows); }
+      "[" + _rows.length + "," + _rows[0].length + "]"
+  + "[" + Arrays.toString(_rows[0])
+  //+ ", " + Arrays.toString(_rows[1]) 
+  + "...]"; 
+  }
   
   //--------------------------------------------------------------
   // construction

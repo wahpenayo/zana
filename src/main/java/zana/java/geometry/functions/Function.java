@@ -12,7 +12,7 @@ import clojure.lang.ISeq;
 /** Base class for functions from and to geometric spaces.
  *
  * @author wahpenayo at gmail dot com
- * @version 2018-04-11
+ * @version 2018-04-12
  */
 
 @SuppressWarnings("unchecked")
@@ -35,7 +35,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
   // methods
   //--------------------------------------------------------------
 
-  private static final double EPSILON = Math.ulp(1.0);
+  private static final double EPSILON = Math.ulp(1.0F);
 
   @SuppressWarnings("static-method")
   public double accuracy () { return EPSILON; }
@@ -253,7 +253,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
       if (EPSILON < Math.abs(ci)) { ratio = gi/ci; }
       m.append(String.format("%3d",Integer.valueOf(i)));
       m.append(String.format(" %#13.6e",Double.valueOf(p[i])));
-      //m.append(String.format(" %#13.6e",Double.valueOf((stepsizes[i])));
+      m.append(String.format(" %#13.6e",Double.valueOf(cstep[i])));
       m.append(String.format(" %#13.6e",Double.valueOf(gi)));
       m.append(String.format(" %#13.6e",Double.valueOf(ci)));
       m.append(String.format(" %#13.6e",Double.valueOf(fi)));
@@ -303,9 +303,9 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
 
         final String msg = close_enough
           ? this + " gradient ok"
-            //  + "\n" + m.toString()
+            + "\n" + m.toString()
             : this + " gradient failed"
-            + "\n" + m.toString() ;
+            + "\n" + m.toString();
         if (close_enough) {
           System.out.println(msg); }
         else {
