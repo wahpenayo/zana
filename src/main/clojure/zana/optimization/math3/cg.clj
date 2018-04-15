@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-12"
+      :date "2018-04-14"
       :doc 
       "Pose unconstrained differentiable optimization problems 
        using `Function` and solve them with the
@@ -81,23 +81,23 @@
   (fn value-converged? [^long iteration
                         ^PointValuePair previous
                         ^PointValuePair current]
-    (println "converged?" iteration max-iterations)
-    (println "previous:" 
-             (Arrays/toString (.getPoint previous))
-             "->" (.getValue previous))
-    (println "current:" 
-             (Arrays/toString (.getPoint current))
-             "->" (.getValue current))
+    #_(println "converged?" iteration max-iterations)
+    #_(println "previous:" 
+              (Arrays/toString (.getPoint previous))
+              "->" (.getValue previous))
+    #_(println "current:" 
+              (Arrays/toString (.getPoint current))
+              "->" (.getValue current))
     (or (<= max-iterations iteration)
         (let [y0 (.doubleValue ^Double (.getValue previous))
               y1 (.doubleValue ^Double (.getValue current))
               dy (Math/abs (- y1 y0))
               my (Math/max (Math/abs y0) (Math/abs y1))
               my (Math/max 1.0 my)]
-          (println dy "/" my "=" (/ dy my) "<=" relative-tolerance 
-                   "->" (<= dy (* my relative-tolerance)))
-          (println dy  "<=" absolute-tolerance 
-                   "->" (<= dy absolute-tolerance))
+          #_(println dy "/" my "=" (/ dy my) "<=" relative-tolerance 
+                    "->" (<= dy (* my relative-tolerance)))
+          #_(println dy  "<=" absolute-tolerance 
+                    "->" (<= dy absolute-tolerance))
           (and (<= dy (* my relative-tolerance))
                (<= dy absolute-tolerance))))))
 ;;----------------------------------------------------------------
@@ -165,7 +165,7 @@
   [options]
   
   (let [options (merge defaults options)
-        _(pp/pprint options)
+        #_(pp/pprint options)
         #_(check options)
         solver (NonLinearConjugateGradientOptimizer.
                  (update-formula (:update-formula options))

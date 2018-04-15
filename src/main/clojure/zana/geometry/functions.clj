@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-09"
+      :date "2018-04-14"
       :doc 
       "Functions between affine/linear spaces." }
     
@@ -18,8 +18,8 @@
            [zana.java.arrays Arrays]
            [zana.java.geometry.functions 
             AffineDual AffineFunctional Function GradientCheck 
-            HuberDistanceFrom L2Distance2From LinearFunctional 
-            QRDistanceFrom Sample Tracer]))
+            HuberDistanceFrom L2Distance2From LinearDual 
+            LinearFunctional QRDistanceFrom Sample Tracer]))
 ;;----------------------------------------------------------------
 #_(deftype LinearFunctional [^doubles dual]
     Serializable
@@ -181,6 +181,12 @@
    to an AffineFunctional."
   ^AffineDual [domain]
   (AffineDual/make domain))
+;;----------------------------------------------------------------
+(defn linear-dual 
+  "Return a function that maps a domain vector to a
+   LinearFunctional."
+  ^LinearDual [domain]
+  (LinearDual/make domain))
 ;;----------------------------------------------------------------
 ;; EDN io
 ;;----------------------------------------------------------------

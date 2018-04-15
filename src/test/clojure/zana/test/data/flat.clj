@@ -1,10 +1,10 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com"
-      :date "2018-02-07"
+      :date "2018-04-14"
       :doc "Tests for zana.data.flatten." }
     
-    zana.test.data.affine
+    zana.test.data.flat
   
   (:require [clojure.pprint :as pp]
             [clojure.test :as test]
@@ -19,7 +19,7 @@
            [zana.test.defs.data.primitive Primitive]
            [zana.test.defs.data.typical Typical]
            [zana.test.defs.data.change Change]))
-;;  mvn -Dtest=zana.test.data.affine clojure:test
+;; mvn -Dtest=zana.test.data.flat clojure:test
 ;;----------------------------------------------------------------
 (def nss (str *ns*))
 ;;----------------------------------------------------------------
@@ -29,14 +29,14 @@
   (let [empties (setup/empties)
         attributes []
         bindings {}
-        embed0 (z/affine-embedding "empty" [] empties)
+        embed0 (z/linear-embedding "empty" [] empties)
         efile (setup/embed-file nss embed0)
         _ (z/write-edn embed0 efile)
         embed1 (z/read-edn efile)]
     (z/mapc (fn [^Empty x]
               (let [d0 (doubles (embed0 bindings x))
                     d1 (doubles (embed1 bindings x))
-                    d2 (doubles (into-array Double/TYPE [1.0]))]
+                    d2 (doubles (into-array Double/TYPE []))]
                 (test/is (Arrays/equals d0 d1)
                          (print-str
                            (into [] d0)
@@ -54,16 +54,14 @@
   (let [primitives (setup/primitives)
         attributes primitive/numerical-attributes 
         bindings (z/attribute-bindings attributes)
-        embed0 (z/affine-embedding
+        embed0 (z/linear-embedding
                  "primitive" attributes primitives)
         efile (setup/embed-file nss embed0)
         _ (z/write-edn embed0 efile)
         embed1 (z/read-edn efile)
         to-doubles (fn to-doubles ^doubles [^Primitive p]
                      (into-array Double/TYPE 
-                                 (conj 
-                                   (mapv #(% p) attributes)
-                                   1.0)))]
+                                 (mapv #(% p) attributes)))]
     (z/mapc (fn [^Primitive x]
               (let [d0 (doubles (embed0 bindings x))
                     d1 (doubles (embed1 bindings x))
@@ -87,7 +85,7 @@
                     typical/p-f]
         bindings (z/attribute-bindings attributes)
         typicals (setup/typicals)
-        embed0 (z/affine-embedding 
+        embed0 (z/linear-embedding 
                  "typical" attributes typicals)
         efile (setup/embed-file nss embed0)
         _ (z/write-edn embed0 efile)
@@ -103,8 +101,7 @@
                                   (typical/p-l t)  
                                   (typical/p-b t)  
                                   (typical/p-d t)  
-                                  (typical/p-f t)
-                                  1.0]))]
+                                  (typical/p-f t)]))]
     (z/mapc 
       (fn [^Typical x]
         (let [d0 (doubles (embed0 bindings x))
@@ -139,7 +136,7 @@
                     change/after-p-l2-norm2
                     change/after-p-i]
         bindings (z/attribute-bindings attributes)
-        embed0 (z/affine-embedding 
+        embed0 (z/linear-embedding 
                  "change" attributes changes)
         efile (setup/embed-file nss embed0)
         _ (z/write-edn embed0 efile)
@@ -168,8 +165,7 @@
                         (if (= "Kepler" (change/after-string c)) 1.0 0.0)
                         (change/after-p-b c)
                         (change/after-p-l2-norm2 c)
-                        (change/after-p-i c)
-                        1.0]))]
+                        (change/after-p-i c)]))]
     #_(pp/pprint (mapv z/name change/attributes))
     #_(pp/pprint (z/frequencies change/before-string changes))
     #_(pp/pprint (z/frequencies change/after-string changes))

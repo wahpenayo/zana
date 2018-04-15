@@ -40,8 +40,8 @@ public final class LinearRows extends Function {
     assert ((Dn) domain()).dimension() == n :
       domain().toString() + "\n" + Arrays.toString(xx);
      final double[] y = new double[((Dn) codomain()).dimension()];
-     System.out.println("x:" + Arrays.toString(xx));
-     System.out.println("row[0]:" + Arrays.toString(_rows[0]));
+     //System.out.println("x:" + Arrays.toString(xx));
+     //System.out.println("row[0]:" + Arrays.toString(_rows[0]));
      
     int i = 0;
     for (final double[] row : _rows) {

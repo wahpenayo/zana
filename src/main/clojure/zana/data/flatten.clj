@@ -72,9 +72,9 @@
     (map (fn [a] [(commons/name-keyword a) a]) attributes))) 
 ;;----------------------------------------------------------------
 
-(defn affine-embedding
+#_(defn affine-embedding
   
-  "AKA one-hot encoding.
+   "AKA one-hot encoding.
 
    Return a function that maps a the supplied attributes of 
    a record object into an element of an affine space (ie a point
@@ -88,12 +88,12 @@
    See [attribute-linearizer] for details.
    Dates and times are currently not supported."
   
-  (^IFn [^String name ^List attributeValues]
-    (AffineEmbedding/make name attributeValues))
-  (^IFn [^String name ^List attributes ^List training-data]
-    (affine-embedding 
-      name
-      (mapv #(attribute-values % training-data) attributes))))
+   (^IFn [^String name ^List attributeValues]
+     (AffineEmbedding/make name attributeValues))
+   (^IFn [^String name ^List attributes ^List training-data]
+     (affine-embedding 
+       name
+       (mapv #(attribute-values % training-data) attributes))))
 ;;----------------------------------------------------------------
 
 (defn linear-embedding

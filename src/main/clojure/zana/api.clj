@@ -280,10 +280,10 @@
                 missing/finite?
                 #_missing/select-finite
                 missing/select-finite-values
+                #_flatten/affine-embedding
                 flatten/attribute-bindings
                 flatten/embedding-dimension
-                flatten/linear-embedding
-                flatten/affine-embedding)
+                flatten/linear-embedding)
 ;;----------------------------------------------------------------
 ;; prng
 ;;----------------------------------------------------------------
@@ -306,16 +306,17 @@
 (pn/import-vars r1/centered-interval
                 compose/compose
                 r1/cspan
-                gf/affine-functional
                 gf/affine-dual
+                gf/affine-functional
                 gf/dual
                 gf/generate-affine-functional
                 gf/generate-linear-functional
                 gf/gradient-check
                 gf/huberdistance-from
                 gf/l2distance2-from
-                gf/linear-part
+                gf/linear-dual
                 gf/linear-functional
+                gf/linear-part
                 gf/qrdistance-from
                 gf/sampler
                 gf/trace-function

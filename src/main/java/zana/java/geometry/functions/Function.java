@@ -12,7 +12,7 @@ import clojure.lang.ISeq;
 /** Base class for functions from and to geometric spaces.
  *
  * @author wahpenayo at gmail dot com
- * @version 2018-04-12
+ * @version 2018-04-14
  */
 
 @SuppressWarnings("unchecked")
@@ -196,6 +196,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
    ** current point.
    **/
 
+  @SuppressWarnings("unused")
   public final boolean checkGradient (final double[] p,
                                       final PrintWriter out) {
     final int n = p.length;

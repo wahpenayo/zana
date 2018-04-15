@@ -67,6 +67,25 @@ public final class Sample extends Function  {
       } }
     return new LinearRows(rows); }
 
+  /** {@link LinearDual} maps <b>R</b><sup>n</sup> 
+   * (the dual vector) to linear functionals from 
+   * <b>R</b><sup>n</sup> to <b>R</b>.
+   * The composition maps <b>R</b><sup>n</sup> to 
+   * <b>R</b><sup>m</sup>
+   */
+  @SuppressWarnings("unused")
+  public final LinearRows compose (final LinearDual ld) {
+    final int m  = ((Dn) codomain()).dimension();
+    final int n = ((Dn) ld.domain()).dimension();
+    final double[][] rows = new double[m][n];
+    for (int i=0;i<m;i++) {
+      final double[] row = rows[i];
+      // data must be vectors in R^n for this to work
+      final double[] datum = (double[]) _data.get(i);
+      assert n == datum.length;
+      System.arraycopy(datum,0,row,0,n); }
+      return new LinearRows(rows); }
+
   //--------------------------------------------------------------
   // Function methods
   //--------------------------------------------------------------

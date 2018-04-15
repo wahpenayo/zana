@@ -1,0 +1,1603 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building zana 4.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ zana ---
+[INFO] Deleting c:\porta\projects\zana\target
+[INFO] Deleting c:\porta\projects\zana\lib (includes = [**/*], excludes = [])
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M1:enforce (enforce-maven) @ zana ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ zana ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 47 resources
+[INFO] Copying 51 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ zana ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 73 source files to c:\porta\projects\zana\target\classes
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.8.1:compile (clojure-compile) @ zana ---
+Compiling zana.functions.generic to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.textin to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.guava to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.optimization.math3.lp to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.io.cheshire to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.sets to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.geometry.functions to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.deftype to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.table to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.binaryio to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.stats.ranks to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.io to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.stats.accumulators to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.stats.statistics to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.html.slides to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.geometry.z1 to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.maps to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.prob.prng to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.datum to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.functions.wrappers to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.reflect to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.textout to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.stats.prng to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.generic to c:\\porta\\projects\\zana\\target\\classes
+Compiling potemkin.namespaces to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.commons.core to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.clojurize to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.optimization.math3.cg to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.io.tsv to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.attribute to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.prob.empirical to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.geometry.r1 to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.cube to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.prob.seed to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.geometry.generic to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.io.paths to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.enum to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.geometry.compose to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.collections.hppc to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.io.gz to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.prob.measure to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.functions.inverse to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.flatten to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.io.edn to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.api to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.data.missing to c:\\porta\\projects\\zana\\target\\classes
+Compiling zana.time.core to c:\\porta\\projects\\zana\\target\\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ zana ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 32 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ zana ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 2 source files to c:\porta\projects\zana\target\test-classes
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.8.1:testCompile (test-compile) @ zana ---
+Compiling zana.test.collections.sets to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.prob.measure to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.flat to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.functions.kolor to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.textin to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.textio to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.optimization.math3.cg to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.functions.record to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.serialization.read to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.io.paths to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.linear to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.datum to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.geometry.functions.huber to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.setup to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.collections.cube to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.optimization.math3.lp to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.io.edn to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.functions.primate to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.enum to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.geometry.z1 to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.functions.enum to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.math.prng to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.edn to c:\\porta\\projects\\zana\\target\\test-classes
+Compiling zana.test.data.binaryio to c:\\porta\\projects\\zana\\target\\test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ zana ---
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.8.1:test (clojure-test) @ zana ---
+
+Testing zana.test.functions.enum
+
+Ran 1 tests containing 4 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.binaryio
+
+Ran 4 tests containing 30 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.edn
+
+Ran 1 tests containing 3 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.math.prng
+
+Ran 2 tests containing 10 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.io.paths
+
+Ran 2 tests containing 4 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.setup
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.geometry.functions.huber
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.datum
+
+Ran 4 tests containing 46 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.linear
+
+Ran 4 tests containing 42 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.functions.primate
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.io.edn
+
+Ran 1 tests containing 5 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.optimization.math3.lp
+[15.0 -10.0 -10.0] -10.0
+[1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0] 1.0
+[0.005] 0.005
+[0.9999999999999998 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0] 0.9999999999999998
+[1.0 0.0] 1.0
+[0.0 1.0 1.0] 3.0
+[-1.0E-18 1.0 0.0 0.0 0.0 6.0479213453759165E-12 7.776901099591982E-9] 1.0
+[1.0909090909090913 0.8181818181818182 -0.7272727272727272] 2.0000000000000018
+[1.0 0.0 1.0 0.0] 1.0
+[1.0 0.0 1.0 0.0] 1.0
+
+Ran 11 tests containing 63 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.collections.cube
+
+Ran 1 tests containing 0 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.geometry.z1
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.enum
+
+Ran 2 tests containing 12 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.collections.sets
+
+Ran 1 tests containing 3 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.textin
+
+Ran 1 tests containing 1 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.functions.kolor
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.flat
+
+FAIL in (change) (flat.clj:182)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (change) (flat.clj:182)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (change) (flat.clj:182)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (change) (flat.clj:182)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (change) (flat.clj:182)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (change) (flat.clj:182)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (change) (flat.clj:182)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (change) (flat.clj:182)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (empty-datum) (flat.clj:44)
+[] []
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (empty-datum) (flat.clj:44)
+[] []
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (empty-datum) (flat.clj:44)
+[] []
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (primitive) (flat.clj:72)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (primitive) (flat.clj:72)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (primitive) (flat.clj:72)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (primitive) (flat.clj:72)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (primitive) (flat.clj:72)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (typical) (flat.clj:114)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (typical) (flat.clj:114)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (typical) (flat.clj:114)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (typical) (flat.clj:114)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+FAIL in (typical) (flat.clj:114)
+expected: (Arrays/equals d0 d2)
+  actual: false
+
+Ran 4 tests containing 42 assertions.
+21 failures, 0 errors.
+
+Testing zana.test.prob.measure
+
+Ran 5 tests containing 290 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.serialization.read
+
+Ran 1 tests containing 6 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.functions.record
+
+#object[zana.test.functions.record$x0 0x2b0b7e5a zana.test.functions.record$x0@2b0b7e5a]
+"zana.test.functions.record" "x0"
+clojure.lang.Symbol zana.test.functions.record/x0
+clojure.lang.Var #'zana.test.functions.record/x0
+[datum1577]
+clojure.lang.Var #'clojure.core/double
+false
+
+#object[zana.test.functions.record$kolor 0x79518e00 zana.test.functions.record$kolor@79518e00]
+"zana.test.functions.record" "kolor"
+clojure.lang.Symbol zana.test.functions.record/kolor
+clojure.lang.Var #'zana.test.functions.record/kolor
+[datum1583]
+java.lang.Class zana.test.java.Kolor
+true
+
+#object[zana.test.functions.record$primate 0x6dc9da2d zana.test.functions.record$primate@6dc9da2d]
+"zana.test.functions.record" "primate"
+clojure.lang.Symbol zana.test.functions.record/primate
+clojure.lang.Var #'zana.test.functions.record/primate
+[datum1584]
+java.lang.Class clojure.lang.Keyword
+false
+
+Ran 1 tests containing 0 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.optimization.math3.cg
+{:line-search-relative-tolerance 0.001,
+ :relative-tolerance 1.0E-6,
+ :line-search-absolute-tolerance 0.001,
+ :absolute-tolerance 1.0E-6,
+ :max-evaluations 2147483647,
+ :initial-bracket-range 1.0,
+ :start [0 0 0 0 0 0],
+ :max-iterations 100,
+ :minimize? true,
+ :update-formula :polak-ribiere,
+ :objective
+ #object[zana.java.geometry.functions.Composition2 0x22ad1bae "(L2Distance2From[L6] o LinearRows[6,6][[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]...])"],
+ :preconditioner
+ #object[clojure.core$identity 0x388623ad "clojure.core$identity@388623ad"]}
+:start [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 4.4, 8.8, 13.2, 17.6, 22.0]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, -7.1193496000000005, -14.238699200000001, -21.3580488, -28.477398400000002, -35.596748]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, -2.7193495694070315, -5.438699138814063, -8.158048708221093, -10.877398277628126, -13.596747847035155]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 1.6806504495004626, 3.361300899000925, 5.041951348501387, 6.72260179800185, 8.403252247502312]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.5500000000000007, 1.1000000000000014, 1.6500000000000017, 2.200000000000003, 2.750000000000003]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+converged? 2 100
+previous: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0] -> 66.55000000000001
+current: [0.0, 0.55, 1.1, 1.65, 2.2, 2.75] -> 0.0
+66.55000000000001 / 66.55000000000001 = 1.0 <= 1.0E-6 -> false
+66.55000000000001 <= 1.0E-6 -> false
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x:[0.0, 0.55, 1.1, 1.65, 2.2, 2.75]
+row[0]:[2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+converged? 3 100
+previous: [0.0, 0.55, 1.1, 1.65, 2.2, 2.75] -> 0.0
+current: [0.0, 0.55, 1.1, 1.65, 2.2, 2.75] -> 0.0
+0.0 / 1.0 = 0.0 <= 1.0E-6 -> true
+0.0 <= 1.0E-6 -> true
+:iterations 3
+:evaluations 16
+no-dependency [0.0 0.55 1.1 1.65 2.2 2.75] 0.0
+{:line-search-relative-tolerance 1.0E-15,
+ :relative-tolerance 1.0E-30,
+ :line-search-absolute-tolerance 1.0E-13,
+ :absolute-tolerance 1.0E-30,
+ :max-evaluations 2147483647,
+ :initial-bracket-range 1.0,
+ :start [98.68 47.345],
+ :max-iterations 100,
+ :minimize? true,
+ :update-formula :polak-ribiere,
+ :objective
+ #object[zana.test.java.geometry.functions.L2DistanceVariance 0x6f825516 "zana.test.java.geometry.functions.L2DistanceVariance@6e"],
+ :preconditioner
+ #object[clojure.core$identity 0x388623ad "clojure.core$identity@388623ad"]}
+:start [98.68, 47.345]
+converged? 2 100
+previous: [98.68, 47.345] -> 13.407733501734075
+current: [97.47672625661227, 48.91882217286976] -> 4.260815550874826
+9.14691795085925 / 13.407733501734075 = 0.6822120942123621 <= 1.0E-30 -> false
+9.14691795085925 <= 1.0E-30 -> false
+converged? 3 100
+previous: [97.47672625661227, 48.91882217286976] -> 4.260815550874826
+current: [96.06781038572039, 48.14685114478853] -> 3.1272375234607566
+1.1335780274140692 / 4.260815550874826 = 0.26604719539697613 <= 1.0E-30 -> false
+1.1335780274140692 <= 1.0E-30 -> false
+converged? 4 100
+previous: [96.06781038572039, 48.14685114478853] -> 3.1272375234607566
+current: [96.0745882320518, 48.134480989553914] -> 3.126753697172682
+4.838262880744182E-4 / 3.1272375234607566 = 1.5471363605889198E-4 <= 1.0E-30 -> false
+4.838262880744182E-4 <= 1.0E-30 -> false
+converged? 5 100
+previous: [96.0745882320518, 48.134480989553914] -> 3.126753697172682
+current: [96.07590208557623, 48.13516792206582] -> 3.1267527059048947
+9.912677874091003E-7 / 3.126753697172682 = 3.1702778133929723E-7 <= 1.0E-30 -> false
+9.912677874091003E-7 <= 1.0E-30 -> false
+converged? 6 100
+previous: [96.07590208557623, 48.13516792206582] -> 3.1267527059048947
+current: [96.07590208557623, 48.13516792206582] -> 3.1267527059048947
+0.0 / 3.1267527059048947 = 0.0 <= 1.0E-30 -> true
+0.0 <= 1.0E-30 -> true
+:iterations 6
+:evaluations 49
+circle-fitting [96.07590208557623 48.13516792206582] 3.1267527059048947
+{:line-search-relative-tolerance 0.001,
+ :relative-tolerance 1.0E-6,
+ :line-search-absolute-tolerance 0.001,
+ :absolute-tolerance 1.0E-6,
+ :max-evaluations 2147483647,
+ :initial-bracket-range 1.0,
+ :start [0 0 0],
+ :max-iterations 100,
+ :minimize? true,
+ :update-formula :polak-ribiere,
+ :objective
+ #object[zana.java.geometry.functions.Composition2 0x3fcee3d9 "(L2Distance2From[L3] o LinearRows[3,3][[1.0, 2.0, -3.0]...])"],
+ :preconditioner
+ #object[clojure.core$identity 0x388623ad "clojure.core$identity@388623ad"]}
+:start [0.0, 0.0, 0.0]
+x:[0.0, 0.0, 0.0]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 0.0, 0.0]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 0.0, 0.0]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 6.0, -18.0]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, -9.708204, 29.124612]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 0.0, 0.0]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, -3.708203958282315, 11.124611874846945]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 2.2917960675006306, -6.875388202501892]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 0.032822757111597226, -0.09846827133479166]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 0.03282275711159738, -0.09846827133479213]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 0.032822757111597226, -0.09846827133479166]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 0.032822757111597226, -0.09846827133479166]
+row[0]:[1.0, 2.0, -3.0]
+converged? 2 100
+previous: [0.0, 0.0, 0.0] -> 3.0
+current: [0.0, 0.032822757111597226, -0.09846827133479166] -> 2.0153172866520785
+0.9846827133479215 / 3.0 = 0.32822757111597384 <= 1.0E-6 -> false
+0.9846827133479215 <= 1.0E-6 -> false
+x:[0.0, 0.032822757111597226, -0.09846827133479166]
+row[0]:[1.0, 2.0, -3.0]
+x:[5.645514223194722, 6.123060201389486, -1.4326379345842954]
+row[0]:[1.0, 2.0, -3.0]
+x:[-9.134633960612648, -9.821388495803133, 2.060263605571456]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.0, 0.032822757111597226, -0.09846827133479166]
+row[0]:[1.0, 2.0, -3.0]
+x:[-3.489119698164963, -3.7311510091801425, 0.7260939330455406]
+row[0]:[1.0, 2.0, -3.0]
+x:[2.1563945492894234, 2.359086461268457, -0.6080757359371005]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040937, 0.30409356725146175, -0.15789473684210417]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040935, 0.30409356725146147, -0.15789473684210412]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040937, 0.30409356725146175, -0.15789473684210417]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040937, 0.30409356725146175, -0.15789473684210417]
+row[0]:[1.0, 2.0, -3.0]
+converged? 3 100
+previous: [0.0, 0.032822757111597226, -0.09846827133479166] -> 2.0153172866520785
+current: [0.2514619883040937, 0.30409356725146175, -0.15789473684210417] -> 0.6666666666666666
+1.348650619985412 / 2.0153172866520785 = 0.6692001447701774 <= 1.0E-6 -> false
+1.348650619985412 <= 1.0E-6 -> false
+x:[0.2514619883040937, 0.30409356725146175, -0.15789473684210417]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.25146198830409366, 0.3040935672515425, -0.15789473684234642]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040938, 0.304093567251331, -0.15789473684171218]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040938, 0.3040935672513491, -0.15789473684176636]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040939, 0.3040935672511195, -0.15789473684107794]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040938, 0.304093567251331, -0.15789473684171218]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.25146198830409383, 0.30409356725125025, -0.15789473684146993]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040938, 0.304093567251331, -0.15789473684171218]
+row[0]:[1.0, 2.0, -3.0]
+x:[0.2514619883040938, 0.304093567251331, -0.15789473684171218]
+row[0]:[1.0, 2.0, -3.0]
+converged? 4 100
+previous: [0.2514619883040937, 0.30409356725146175, -0.15789473684210417] -> 0.6666666666666666
+current: [0.2514619883040938, 0.304093567251331, -0.15789473684171218] -> 0.6666666666666665
+1.1102230246251565E-16 / 1.0 = 1.1102230246251565E-16 <= 1.0E-6 -> true
+1.1102230246251565E-16 <= 1.0E-6 -> true
+:iterations 4
+:evaluations 27
+not-invertiable [0.2514619883040938 0.304093567251331 -0.15789473684171218] 0.6666666666666665
+{:line-search-relative-tolerance 1.0E-8,
+ :relative-tolerance 1.0E-6,
+ :line-search-absolute-tolerance 1.0E-8,
+ :absolute-tolerance 1.0E-6,
+ :max-evaluations 2147483647,
+ :initial-bracket-range 1.0E-6,
+ :start [0.0],
+ :max-iterations 100,
+ :minimize? true,
+ :update-formula :polak-ribiere,
+ :objective
+ #object[zana.java.geometry.functions.Composition2 0x3290b1a6 "(L2Distance2From[L1] o LinearRows[1,1][[2.0]...])"],
+ :preconditioner
+ #object[clojure.core$identity 0x388623ad "clojure.core$identity@388623ad"]}
+:start [0.0]
+x:[0.0]
+row[0]:[2.0]
+x:[0.0]
+row[0]:[2.0]
+x:[0.0]
+row[0]:[2.0]
+x:[1.2E-5]
+row[0]:[2.0]
+x:[3.1416407999999995E-5]
+row[0]:[2.0]
+x:[0.0019536408]
+row[0]:[2.0]
+x:[0.192253855608]
+row[0]:[2.0]
+x:[1.5000000000001659]
+row[0]:[2.0]
+x:[3.615977724995599]
+row[0]:[2.0]
+x:[1.5000000000001659]
+row[0]:[2.0]
+x:[2.3082315715107433]
+row[0]:[2.0]
+x:[1.0004854214989862]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+x:[1.5000000000000018]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+converged? 2 100
+previous: [0.0] -> 9.0
+current: [1.5] -> 0.0
+9.0 / 9.0 = 1.0 <= 1.0E-6 -> false
+9.0 <= 1.0E-6 -> false
+x:[1.5]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+x:[1.5]
+row[0]:[2.0]
+converged? 3 100
+previous: [1.5] -> 0.0
+current: [1.5] -> 0.0
+0.0 / 1.0 = 0.0 <= 1.0E-6 -> true
+0.0 <= 1.0E-6 -> true
+:iterations 3
+:evaluations 20
+trivial [1.5] 0.0
+{:line-search-relative-tolerance 0.001,
+ :relative-tolerance 1.0E-6,
+ :line-search-absolute-tolerance 0.001,
+ :absolute-tolerance 1.0E-6,
+ :max-evaluations 2147483647,
+ :initial-bracket-range 1.0,
+ :start [0.0 0.0],
+ :max-iterations 100,
+ :minimize? true,
+ :update-formula :polak-ribiere,
+ :objective
+ #object[zana.java.geometry.functions.Composition2 0x468173fa "(L2Distance2From[L3] o LinearRows[3,2][[1.0, -1.0]...])"],
+ :preconditioner
+ #object[clojure.core$identity 0x388623ad "clojure.core$identity@388623ad"]}
+:start [0.0, 0.0]
+x:[0.0, 0.0]
+row[0]:[1.0, -1.0]
+x:[0.0, 0.0]
+row[0]:[1.0, -1.0]
+x:[0.0, 0.0]
+row[0]:[1.0, -1.0]
+x:[10.0, 12.0]
+row[0]:[1.0, -1.0]
+x:[-16.18034, -19.416408]
+row[0]:[1.0, -1.0]
+x:[0.0, 0.0]
+row[0]:[1.0, -1.0]
+x:[-6.1803399304705255, -7.41640791656463]
+row[0]:[1.0, -1.0]
+x:[3.819660112501051, 4.583592135001261]
+row[0]:[1.0, -1.0]
+x:[1.572164948453608, 1.8865979381443294]
+row[0]:[1.0, -1.0]
+x:[1.5721649484536095, 1.8865979381443316]
+row[0]:[1.0, -1.0]
+x:[1.572164948453608, 1.8865979381443294]
+row[0]:[1.0, -1.0]
+x:[1.572164948453608, 1.8865979381443294]
+row[0]:[1.0, -1.0]
+converged? 2 100
+previous: [0.0, 0.0] -> 53.0
+current: [1.572164948453608, 1.8865979381443294] -> 33.819587628865975
+19.180412371134025 / 53.0 = 0.3618945730402646 <= 1.0E-6 -> false
+19.180412371134025 <= 1.0E-6 -> false
+x:[1.572164948453608, 1.8865979381443294]
+row[0]:[1.0, -1.0]
+x:[32.29259219895843, 8.188224040811978]
+row[0]:[1.0, -1.0]
+x:[-48.134530837389704, -8.309647351259418]
+row[0]:[1.0, -1.0]
+x:[1.572164948453608, 1.8865979381443294]
+row[0]:[1.0, -1.0]
+x:[-17.41410337328737, -2.008021204776893]
+row[0]:[1.0, -1.0]
+x:[13.306324009227968, 4.293604924969836]
+row[0]:[1.0, -1.0]
+x:[6.999999999999998, 2.9999999999999982]
+row[0]:[1.0, -1.0]
+x:[6.999999999999993, 2.9999999999999973]
+row[0]:[1.0, -1.0]
+x:[6.999999999999998, 2.9999999999999982]
+row[0]:[1.0, -1.0]
+x:[6.999999999999998, 2.9999999999999982]
+row[0]:[1.0, -1.0]
+converged? 3 100
+previous: [1.572164948453608, 1.8865979381443294] -> 33.819587628865975
+current: [6.999999999999998, 2.9999999999999982] -> 1.5777218104420236E-29
+33.819587628865975 / 33.819587628865975 = 1.0 <= 1.0E-6 -> false
+33.819587628865975 <= 1.0E-6 -> false
+x:[6.999999999999998, 2.9999999999999982]
+row[0]:[1.0, -1.0]
+x:[6.999999999999995, 3.0000000000000195]
+row[0]:[1.0, -1.0]
+x:[7.0000000000000036, 2.9999999999999636]
+row[0]:[1.0, -1.0]
+x:[6.999999999999998, 2.9999999999999982]
+row[0]:[1.0, -1.0]
+x:[7.0, 2.999999999999985]
+row[0]:[1.0, -1.0]
+x:[6.999999999999998, 2.9999999999999982]
+row[0]:[1.0, -1.0]
+x:[6.999999999999998, 2.9999999999999982]
+row[0]:[1.0, -1.0]
+converged? 4 100
+previous: [6.999999999999998, 2.9999999999999982] -> 1.5777218104420236E-29
+current: [6.999999999999998, 2.9999999999999982] -> 1.5777218104420236E-29
+0.0 / 1.0 = 0.0 <= 1.0E-6 -> true
+0.0 <= 1.0E-6 -> true
+:iterations 4
+:evaluations 25
+column-permutation [6.999999999999998 2.9999999999999982] 1.5777218104420236E-29
+{:line-search-relative-tolerance 1.0E-15,
+ :relative-tolerance 1.0E-13,
+ :line-search-absolute-tolerance 1.0E-15,
+ :absolute-tolerance 1.0E-13,
+ :max-evaluations 2147483647,
+ :initial-bracket-range 1.0,
+ :start [0 1 2 3],
+ :max-iterations 200,
+ :minimize? true,
+ :update-formula :polak-ribiere,
+ :objective
+ #object[zana.java.geometry.functions.Composition2 0x51fc862e "(L2Distance2From[L4] o LinearRows[4,4][[10.0, 7.0, 8.0, 7.0]...])"],
+ :preconditioner
+ #object[clojure.core$identity 0x388623ad "clojure.core$identity@388623ad"]}
+:start [0.0, 1.0, 2.0, 3.0]
+x:[0.0, 1.0, 2.0, 3.0]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.0, 1.0, 2.0, 3.0]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.0, 1.0, 2.0, 3.0]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-994.0, -717.0, -1094.0, -1055.0]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1608.325796, 1162.748412, 1775.365264, 1714.879972]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.0, 1.0, 2.0, 3.0]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[614.3257890887702, 444.7484070077837, 679.3652563795696, 656.8799646437816]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-379.6742151826045, -273.25159607757547, -416.6347483301152, -401.1200399026112]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-0.542310538889615, 0.6082706570193727, 1.4020398887092373, 2.4227720823488808]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-0.5423105388896295, 0.6082706570193621, 1.4020398887092214, 2.422772082348865]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-0.542310538889615, 0.6082706570193727, 1.4020398887092373, 2.4227720823488808]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-0.542310538889615, 0.6082706570193727, 1.4020398887092373, 2.4227720823488808]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 2 200
+previous: [0.0, 1.0, 2.0, 3.0] -> 1109.0
+current: [-0.542310538889615, 0.6082706570193727, 1.4020398887092373, 2.4227720823488808] -> 65.80511861700796
+1043.194881382992 / 1109.0 = 0.9406626522840325 <= 1.0E-13 -> false
+1043.194881382992 <= 1.0E-13 -> false
+x:[-0.542310538889615, 0.6082706570193727, 1.4020398887092373, 2.4227720823488808]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[37.96871070470696, 25.46152106655932, -15.517919982153694, -36.80417720334224]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-62.85445228575115, -39.60513351613019, 28.77911023840107, 65.89330974287283]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-0.542310538889615, 0.6082706570193727, 1.4020398887092373, 2.4227720823488808]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[-24.343430774389475, -14.751882933786895, 11.859150249894547, 26.66636018443879]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[14.167590634695031, 10.101367582551388, -5.060809693676121, -12.560589269816717]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7499982556527838, 1.4422676023108036, 0.8342592316835196, 1.1064389935867553]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7499982556527853, 1.4422676023108048, 0.8342592316835189, 1.1064389935867538]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7499982556527853, 1.4422676023108048, 0.8342592316835189, 1.1064389935867538]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7499982556527853, 1.4422676023108048, 0.8342592316835189, 1.1064389935867538]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 3 200
+previous: [-0.542310538889615, 0.6082706570193727, 1.4020398887092373, 2.4227720823488808] -> 65.80511861700796
+current: [0.7499982556527853, 1.4422676023108048, 0.8342592316835189, 1.1064389935867538] -> 0.003488858944476269
+65.80162975806348 / 65.80511861700796 = 0.9999469819518937 <= 1.0E-13 -> false
+65.80162975806348 <= 1.0E-13 -> false
+x:[0.7499982556527853, 1.4422676023108048, 0.8342592316835189, 1.1064389935867538]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.720134772088404, 1.4514249557700845, 0.9096844296521861, 1.0501379268245894]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.6718146403227938, 1.4662418650172167, 1.0317249644222206, 0.9590408865671373]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.720134772088404, 1.4514249557700845, 0.9096844296521861, 1.0501379268245894]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7016781240948144, 1.4570845114942663, 0.956299765929126, 1.01534195372076]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7315416077875239, 1.447927157995636, 0.8808745676363448, 1.071643020724859]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7289922088399182, 1.448708906957428, 0.8873134989790235, 1.066836686592972]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7289922088399184, 1.4487089069574277, 0.8873134989790228, 1.0668366865929726]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7289922088399184, 1.4487089069574277, 0.8873134989790228, 1.0668366865929726]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7289922088399184, 1.4487089069574277, 0.8873134989790228, 1.0668366865929726]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 4 200
+previous: [0.7499982556527853, 1.4422676023108048, 0.8342592316835189, 1.1064389935867538] -> 0.003488858944476269
+current: [0.7289922088399184, 1.4487089069574277, 0.8873134989790228, 1.0668366865929726] -> 3.0077736235020726E-5
+0.003458781208241248 / 1.0 = 0.003458781208241248 <= 1.0E-13 -> false
+0.003458781208241248 <= 1.0E-13 -> false
+x:[0.7289922088399184, 1.4487089069574277, 0.8873134989790228, 1.0668366865929726]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7290480872806461, 1.4486164790991365, 0.8873367574750882, 1.0668229526134432]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7291385004976103, 1.4484669276818738, 0.8873743905125109, 1.066800730567609]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7380894089770749, 1.433661337372883, 0.8911000612173585, 1.0646007480300441]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863862057805772, 1.3537741853201322, 0.9112028207754089, 1.052730208873957]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.8645320650997353, 1.2245140571356117, 0.9437297692341594, 1.0335232729210768]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863862057805772, 1.3537741853201322, 0.9112028207754089, 1.052730208873957]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.8162352679604279, 1.3044012097438136, 0.9236270095363356, 1.045393812159699]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7679384709493866, 1.384288362139852, 0.9035242498919005, 1.0572643513667956]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863862054582013, 1.3537741858533703, 0.9112028206412252, 1.0527302089531916]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863758103659744, 1.3537913802506865, 0.9111984938524224, 1.0527327638917687]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863822348862868, 1.3537807535287292, 0.9112011679549646, 1.0527311848528889]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863845382817658, 1.353776943509907, 0.911202126706032, 1.052730618717078]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863854339835501, 1.3537754619403335, 0.9112024995273947, 1.0527303985686662]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863858333024364, 1.3537748014317554, 0.9112026657374147, 1.0527303004228101]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863862054582013, 1.3537741858533703, 0.9112028206412252, 1.0527302089531916]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863862054582013, 1.3537741858533703, 0.9112028206412252, 1.0527302089531916]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 5 200
+previous: [0.7289922088399184, 1.4487089069574277, 0.8873134989790228, 1.0668366865929726] -> 3.0077736235020726E-5
+current: [0.7863862054582013, 1.3537741858533703, 0.9112028206412252, 1.0527302089531916] -> 2.3712210379671003E-5
+6.3655258553497236E-6 / 1.0 = 6.3655258553497236E-6 <= 1.0E-13 -> false
+6.3655258553497236E-6 <= 1.0E-13 -> false
+x:[0.7863862054582013, 1.3537741858533703, 0.9112028206412252, 1.0527302089531916]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7147025017676695, 1.3020988808755998, 0.8363185683407753, 0.9820274015425725]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9023728752754072, 1.4373865862677722, 1.0323680869279312, 1.1671297552390252]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863862054582013, 1.3537741858533703, 0.9112028206412252, 1.0527302089531916]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.8306891710864623, 1.385711280930706, 0.957483834106815, 1.0964269473368131]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7590054670878944, 1.3340359757308786, 0.8825995814845758, 1.025724139622373]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863471366849337, 1.3537460219797175, 0.9111620075174074, 1.052691674784198]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863471366849337, 1.3537460219797175, 0.9111620075174074, 1.052691674784198]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863471366849337, 1.3537460219797175, 0.9111620075174074, 1.052691674784198]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863471366849337, 1.3537460219797175, 0.9111620075174074, 1.052691674784198]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 6 200
+previous: [0.7863862054582013, 1.3537741858533703, 0.9112028206412252, 1.0527302089531916] -> 2.3712210379671003E-5
+current: [0.7863471366849337, 1.3537460219797175, 0.9111620075174074, 1.052691674784198] -> 1.8693857721134574E-5
+5.018352658536429E-6 / 1.0 = 5.018352658536429E-6 <= 1.0E-13 -> false
+5.018352658536429E-6 <= 1.0E-13 -> false
+x:[0.7863471366849337, 1.3537460219797175, 0.9111620075174074, 1.052691674784198]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7863918917940007, 1.3536735774760762, 0.91117992694292, 1.0526801588640633]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7864643070821449, 1.3535563598060714, 0.9112089211826602, 1.052661525713744]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.793633420608413, 1.3419518104755996, 0.9140793509169223, 1.0508168438321395]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.794861595163944, 1.3399637805519742, 0.9145710977347322, 1.0505008227032044]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7968488233527278, 1.336747080542531, 0.9153667608053404, 1.049989489771869]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.794861595163944, 1.3399637805519742, 0.9145710977347322, 1.0505008227032044]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7956206487886575, 1.338735110479979, 0.9148750139841114, 1.0503055109030015]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7943924742278489, 1.3407231404121474, 0.9143832671641884, 1.0506215320332946]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948615951632988, 1.3399637805530185, 0.914571097734474, 1.0505008227033703]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7946804391184038, 1.3402570154490479, 0.9144985649595495, 1.0505474358965547]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7947923997114165, 1.3400757863166142, 0.9145433926797512, 1.0505186273588427]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948284391521996, 1.3400174497500528, 0.9145578224529792, 1.0505093540640076]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948453555171533, 1.3399900674536394, 0.9145645955688995, 1.050505001320559]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948535573666337, 1.3399767912282667, 0.914567879494107, 1.050502890905781]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948575964617652, 1.339970253198351, 0.914569496700854, 1.050501851607745]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948596008242169, 1.3399670087633366, 0.9145702992242843, 1.050501335866003]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948605992420078, 1.3399653926376518, 0.9145706989791639, 1.0505010789634999]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948610975143676, 1.3399645860907674, 0.9145708984816256, 1.0505009507532281]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948613464160482, 1.339964183196906, 0.9145709981389658, 1.0505008867084311]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948614708084362, 1.3399639818445914, 0.9145710479442322, 1.050500854701073]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948615951632988, 1.3399637805530185, 0.914571097734474, 1.0505008227033703]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.7948615951632988, 1.3399637805530185, 0.914571097734474, 1.0505008227033703]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 7 200
+previous: [0.7863471366849337, 1.3537460219797175, 0.9111620075174074, 1.052691674784198] -> 1.8693857721134574E-5
+current: [0.7948615951632988, 1.3399637805530185, 0.914571097734474, 1.0505008227033703] -> 1.7960942141401767E-5
+7.329155797328073E-7 / 1.0 = 7.329155797328073E-7 <= 1.0E-13 -> false
+7.329155797328073E-7 <= 1.0E-13 -> false
+x:[0.7948615951632988, 1.3399637805530185, 0.914571097734474, 1.0505008227033703]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.0343236464879466, 0.943330335530446, 1.0138244668805183, 0.9918922394547407]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.4217813872409715, 0.301563935946793, 1.174419792773369, 0.8970615590666275]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.0343236464879466, 0.943330335530446, 1.0138244668805183, 0.9918922394547407]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.182319334251357, 0.698197383727137, 1.0751664229372213, 0.9556701427227595]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9428572818977029, 1.094830830454106, 0.9759130533646696, 1.0142787262232396]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9984645853454778, 1.0027255627805873, 0.9989614327875765, 1.0006687815354598]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9984645853455257, 1.0027255627805078, 0.9989614327875964, 1.000668781535448]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9984645853455257, 1.0027255627805078, 0.9989614327875964, 1.000668781535448]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9984645853455257, 1.0027255627805078, 0.9989614327875964, 1.000668781535448]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 8 200
+previous: [0.7948615951632988, 1.3399637805530185, 0.914571097734474, 1.0505008227033703] -> 1.7960942141401767E-5
+current: [0.9984645853455257, 1.0027255627805078, 0.9989614327875964, 1.000668781535448] -> 1.4624086765192075E-7
+1.7814701273749848E-5 / 1.0 = 1.7814701273749848E-5 <= 1.0E-13 -> false
+1.7814701273749848E-5 <= 1.0E-13 -> false
+x:[0.9984645853455257, 1.0027255627805078, 0.9989614327875964, 1.000668781535448]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.0006303777280272, 0.9988809968582629, 1.000426392844828, 0.9997254260377748]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.0041347034398556, 0.9926603584808292, 1.0027967480260707, 0.9981990447684527]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.0006303777280272, 0.9988809968582629, 1.000426392844828, 0.9997254260377748]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.0019689110422954, 0.9965049244298052, 1.0013317879586532, 0.999142400272685]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9998031186504872, 1.0003494903685708, 0.9998668278951265, 1.0000857557744118]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999998354401, 1.0000000004079834, 0.9999999999730721, 1.0000000001176303]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999998354301, 1.0000000004080012, 0.9999999999730653, 1.0000000001176348]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999998354301, 1.0000000004080012, 0.9999999999730653, 1.0000000001176348]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999998354301, 1.0000000004080012, 0.9999999999730653, 1.0000000001176348]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 9 200
+previous: [0.9984645853455257, 1.0027255627805078, 0.9989614327875964, 1.000668781535448] -> 1.4624086765192075E-7
+current: [0.9999999998354301, 1.0000000004080012, 0.9999999999730653, 1.0000000001176348] -> 1.2043288053237515E-17
+1.4624086763987745E-7 / 1.0 = 1.4624086763987745E-7 <= 1.0E-13 -> false
+1.4624086763987745E-7 <= 1.0E-13 -> false
+x:[0.9999999998354301, 1.0000000004080012, 0.9999999999730653, 1.0000000001176348]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999998888254342, 0.9999999205370433, 0.9999998838942423, 0.9999998905022496]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.0000001794533777, 1.0000001296419265, 1.0000001877925475, 1.000000177479055]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999998354301, 1.0000000004080012, 0.9999999999730653, 1.0000000001176348]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[1.0000000684433812, 1.0000000497709682, 1.0000000717137238, 1.000000067863669]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999574333848, 0.99999996990001, 0.9999999556349003, 0.9999999582482834]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999997749278, 1.0000000003644702, 0.9999999999098005, 1.0000000000578926]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999997749278, 1.0000000003644702, 0.9999999999098005, 1.0000000000578926]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999997749278, 1.0000000003644702, 0.9999999999098005, 1.0000000000578926]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+x:[0.9999999997749278, 1.0000000003644702, 0.9999999999098005, 1.0000000000578926]
+row[0]:[10.0, 7.0, 8.0, 7.0]
+converged? 10 200
+previous: [0.9999999998354301, 1.0000000004080012, 0.9999999999730653, 1.0000000001176348] -> 1.2043288053237515E-17
+current: [0.9999999997749278, 1.0000000003644702, 0.9999999999098005, 1.0000000000578926] -> 4.960061770071318E-22
+1.2042792047060508E-17 / 1.0 = 1.2042792047060508E-17 <= 1.0E-13 -> true
+1.2042792047060508E-17 <= 1.0E-13 -> true
+:iterations 10
+:evaluations 102
+ill-conditioned-0 [0.9999999997749278 1.0000000003644702 0.9999999999098005 1.0000000000578926] 4.960061770071318E-22
+{:line-search-relative-tolerance 0.001,
+ :relative-tolerance 1.0E-6,
+ :line-search-absolute-tolerance 0.001,
+ :absolute-tolerance 1.0E-6,
+ :max-evaluations 2147483647,
+ :initial-bracket-range 1.0,
+ :start [0 0 0],
+ :max-iterations 100,
+ :minimize? true,
+ :update-formula :polak-ribiere,
+ :objective
+ #object[zana.java.geometry.functions.Composition2 0x474179fa "(L2Distance2From[L3] o LinearRows[3,3][[1.0, 0.0, 0.0]...])"],
+ :preconditioner
+ #object[clojure.core$identity 0x388623ad "clojure.core$identity@388623ad"]}
+:start [0.0, 0.0, 0.0]
+x:[0.0, 0.0, 0.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 0.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 0.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 2.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 5.2360679999999995]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 2.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 3.236067986094105]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 1.2360679774997898]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 1.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 1.000000000000001]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 1.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 0.0, 1.0]
+row[0]:[1.0, 0.0, 0.0]
+converged? 2 100
+previous: [0.0, 0.0, 0.0] -> 3.0
+current: [0.0, 0.0, 1.0] -> 2.0
+1.0 / 3.0 = 0.3333333333333333 <= 1.0E-6 -> false
+1.0 <= 1.0E-6 -> false
+x:[0.0, 0.0, 1.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 2.0, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 5.2360679999999995, 6.2360679999999995]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 2.0, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 3.236067986094105, 4.236067986094104]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 1.2360679774997898, 2.23606797749979]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 1.0, 2.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 1.000000000000001, 2.000000000000001]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 1.0, 2.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.0, 1.0, 2.0]
+row[0]:[1.0, 0.0, 0.0]
+converged? 3 100
+previous: [0.0, 0.0, 1.0] -> 2.0
+current: [0.0, 1.0, 2.0] -> 1.0
+1.0 / 2.0 = 0.5 <= 1.0E-6 -> false
+1.0 <= 1.0E-6 -> false
+x:[0.0, 1.0, 2.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[2.0, 3.0, 4.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[5.2360679999999995, 6.2360679999999995, 7.2360679999999995]
+row[0]:[1.0, 0.0, 0.0]
+x:[2.0, 3.0, 4.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[3.236067986094105, 4.236067986094104, 5.236067986094104]
+row[0]:[1.0, 0.0, 0.0]
+x:[1.2360679774997898, 2.23606797749979, 3.23606797749979]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.9999999999999998, 1.9999999999999998, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[1.0000000000000009, 2.000000000000001, 3.000000000000001]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.9999999999999998, 1.9999999999999998, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.9999999999999998, 1.9999999999999998, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+converged? 4 100
+previous: [0.0, 1.0, 2.0] -> 1.0
+current: [0.9999999999999998, 1.9999999999999998, 3.0] -> 9.860761315262648E-32
+1.0 / 1.0 = 1.0 <= 1.0E-6 -> false
+1.0 <= 1.0E-6 -> false
+x:[0.9999999999999998, 1.9999999999999998, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[1.0000000000000002, 2.0, 2.9999999999999996]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.9999999999999991, 1.9999999999999991, 3.000000000000001]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.9999999999999998, 1.9999999999999998, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.9999999999999996, 1.9999999999999996, 3.0000000000000004]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.9999999999999998, 1.9999999999999998, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+x:[0.9999999999999998, 1.9999999999999998, 3.0]
+row[0]:[1.0, 0.0, 0.0]
+converged? 5 100
+previous: [0.9999999999999998, 1.9999999999999998, 3.0] -> 9.860761315262648E-32
+current: [0.9999999999999998, 1.9999999999999998, 3.0] -> 9.860761315262648E-32
+0.0 / 1.0 = 0.0 <= 1.0E-6 -> true
+0.0 <= 1.0E-6 -> true
+:iterations 5
+:evaluations 34
+one-set [0.9999999999999998 1.9999999999999998 3.0] 9.860761315262648E-32
+{:line-search-relative-tolerance 1.0E-15,
+ :relative-tolerance 1.0E-13,
+ :line-search-absolute-tolerance 1.0E-15,
+ :absolute-tolerance 1.0E-13,
+ :max-evaluations 2147483647,
+ :initial-bracket-range 1.0,
+ :start [0 1 2 3],
+ :max-iterations 200,
+ :minimize? true,
+ :update-formula :polak-ribiere,
+ :objective
+ #object[zana.java.geometry.functions.Composition2 0x7edb6fca "(L2Distance2From[L4] o LinearRows[4,4][[10.0, 7.0, 8.1, 7.2]...])"],
+ :preconditioner
+ #object[clojure.core$identity 0x388623ad "clojure.core$identity@388623ad"]}
+:start [0.0, 1.0, 2.0, 3.0]
+x:[0.0, 1.0, 2.0, 3.0]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.0, 1.0, 2.0, 3.0]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.0, 1.0, 2.0, 3.0]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-1006.7478000000002, -724.5142000000001, -1099.4328, -1065.1228000000003]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[1628.9521698252004, 1174.9066430828002, 1784.1557191152, 1731.2590065752006]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.0, 1.0, 2.0, 3.0]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[622.2043628253356, 449.3924380383379, 682.7229114569956, 663.1361991485985]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-384.54344150081863, -276.12176507931105, -418.7098932760348, -404.9866054412939]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470506053765655, 0.6057672216226402, 1.4014990844563002, 2.4195992041338332]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470506053765894, 0.6057672216226229, 1.4014990844562742, 2.4195992041338084]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5466308409149269, 0.6060697254647883, 1.401958327919582, 2.420044558960639]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5468902696194888, 0.6058827678086134, 1.4016744998501627, 2.4197693145406194]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5469832764460375, 0.6058157423099155, 1.4015727456974498, 2.419670637680345]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.547019436751091, 0.6057896833358678, 1.4015331845024375, 2.419632272911847]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470355781146918, 0.6057780510397757, 1.4015155250376672, 2.4196151475121344]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470432236726769, 0.6057725412577974, 1.401507160412148, 2.419607035853184]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470469466452886, 0.6057698582924151, 1.4015030872925962, 2.4196030859146487]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470487839367302, 0.6057685342457867, 1.4015010772032204, 2.4196011366152526]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470496966252535, 0.605767876515535, 1.4015000786760066, 2.419600168285924]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470501514914659, 0.6057675487155675, 1.4014995810294602, 2.419599685689416]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470503785564612, 0.6057673850808633, 1.4014993326089185, 2.4195994447817144]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470504919971073, 0.6057673033297042, 1.4014992084991382, 2.419599324425315]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470505486944824, 0.605767262470662, 1.4014991464693543, 2.4195992642714623]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470505770374505, 0.6057672420452628, 1.4014991154607195, 2.4195992342006036]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470505912074837, 0.6057672318336087, 1.4014990999579895, 2.419599219166714]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470505982921501, 0.605767226728034, 1.4014990922070076, 2.4195992116501404]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470506018343936, 0.6057672241753113, 1.4014990883316147, 2.419599207891949]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.547050603605494, 0.6057672228989653, 1.4014990863939418, 2.419599206012876]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470506044910309, 0.6057672222608019, 1.4014990854251197, 2.4195992050733537]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470506050383214, 0.6057672218663963, 1.4014990848263564, 2.419599204492698]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470506053765655, 0.6057672216226402, 1.4014990844563002, 2.4195992041338332]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470506053765655, 0.6057672216226402, 1.4014990844563002, 2.4195992041338332]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 2 200
+previous: [0.0, 1.0, 2.0, 3.0] -> 1116.9441000000004
+current: [-0.5470506053765655, 0.6057672216226402, 1.4014990844563002, 2.4195992041338332] -> 58.98843265874804
+1057.9556673412524 / 1116.9441000000004 = 0.9471876590254177 <= 1.0E-13 -> false
+1057.9556673412524 <= 1.0E-13 -> false
+x:[-0.5470506053765655, 0.6057672216226402, 1.4014990844563002, 2.4195992041338332]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[35.155672407599546, 23.7426641660056, -14.128388551182182, -34.09915866321237]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-58.31527033295436, -36.8305186888851, 26.529385295098976, 61.508191071267476]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.5470506053765655, 0.6057672216226402, 1.4014990844563002, 2.4195992041338332]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-22.612547071739087, -13.69362158363251, 10.999497551482001, 24.989432950008272]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[13.090176094657256, 9.443275460173345, -4.530390150890857, -11.52932507426479]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384131554602, 1.4123143258706934, 0.8601306402811296, 1.146563391274124]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384131554622, 1.4123143258706947, 0.8601306402811287, 1.146563391274122]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.7045161432088464, 1.4168361944433578, 0.8570954834489316, 1.1394261756003865]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.7002036688715331, 1.4140415259727919, 0.858971313532416, 1.1438372174717937]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6986553358908271, 1.4130381397437592, 0.8596448038206548, 1.1454209397329747]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.698055061050291, 1.4126491358821003, 0.8599059099783178, 1.146034934680851]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6977874153769413, 1.4124756899978843, 0.8600223298724466, 1.1463086977642927]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6976607077409825, 1.412393578011239, 0.860077444866009, 1.146438301477596]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975990233528954, 1.4123536038801419, 0.8601042761980483, 1.1465013957472385]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.697568585741729, 1.412333879001663, 0.8601175158795465, 1.1465325290518842]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975534665372934, 1.4123240811082423, 0.8601240923960195, 1.1465479938265384]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975459316454476, 1.412319198174914, 0.8601273699057956, 1.1465557009387037]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975421703535708, 1.4123167606963354, 0.860129005983811, 1.1465595482000812]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975402912432126, 1.412315542952168, 0.8601298233548758, 1.146561470260092]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975393520715615, 1.4123149343286272, 0.8601302318735818, 1.1465624308978033]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975388825815748, 1.4123146300789644, 0.8601304360912472, 1.1465629111186295]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975386478605349, 1.4123144779696557, 0.8601305381896607, 1.1465631512045418]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975385305060008, 1.4123144019188805, 0.8601305892362637, 1.1465632712413754]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384718302319, 1.4123143638944637, 0.8601306147589135, 1.1465633312582595]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384424927223, 1.4123143448824984, 0.8601306275200754, 1.1465633612663182]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384278240607, 1.4123143353765761, 0.8601306339006157, 1.146563376270252]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384204897525, 1.4123143306236297, 0.8601306370908761, 1.1465633837721962]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384168226025, 1.412314328247159, 0.8601306386860046, 1.146563387523164]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384149890308, 1.4123143270589258, 0.8601306394835673, 1.1465633893986444]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384140722457, 1.4123143264648097, 0.8601306398823483, 1.1465633903363839]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384135056423, 1.4123143260976265, 0.8601306401288081, 1.1465633909159378]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.697538413289219, 1.4123143259573747, 0.8601306402229475, 1.1465633911373079]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384131554622, 1.4123143258706947, 0.8601306402811287, 1.146563391274122]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6975384131554622, 1.4123143258706947, 0.8601306402811287, 1.146563391274122]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 3 200
+previous: [-0.5470506053765655, 0.6057672216226402, 1.4014990844563002, 2.4195992041338332] -> 58.98843265874804
+current: [0.6975384131554622, 1.4123143258706947, 0.8601306402811287, 1.146563391274122] -> 0.04298024905952201
+58.945452409688514 / 58.98843265874804 = 0.9992713783512749 <= 1.0E-13 -> false
+58.945452409688514 <= 1.0E-13 -> false
+x:[0.6975384131554622, 1.4123143258706947, 0.8601306402811287, 1.146563391274122]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6003826131512582, 1.4445289709547526, 1.1026734382365322, 0.9660529923112107]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.44318122544725586, 1.496653361998691, 1.4951159317835057, 0.6739810294356553]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6003826131512582, 1.4445289709547526, 1.1026734382365322, 0.9660529923112107]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.5403370261269791, 1.4644387166906465, 1.2525731321417148, 0.854491429653646]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6374928265486769, 1.4322240714681571, 1.0100303331440665, 1.035001829392239]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6177296166397458, 1.4387771006533463, 1.0593678325798663, 0.9982828182236362]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6177296166397459, 1.4387771006533463, 1.059367832579866, 0.9982828182236364]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6177296166397458, 1.4387771006533463, 1.0593678325798663, 0.9982828182236362]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6177296166397458, 1.4387771006533463, 1.0593678325798663, 0.9982828182236362]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 4 200
+previous: [0.6975384131554622, 1.4123143258706947, 0.8601306402811287, 1.146563391274122] -> 0.04298024905952201
+current: [0.6177296166397458, 1.4387771006533463, 1.0593678325798663, 0.9982828182236362] -> 0.001133456945045589
+0.04184679211447642 / 1.0 = 0.04184679211447642 <= 1.0E-13 -> false
+0.04184679211447642 <= 1.0E-13 -> false
+x:[0.6177296166397458, 1.4387771006533463, 1.0593678325798663, 0.9982828182236362]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6177227616637511, 1.4387886585553702, 1.059364932314136, 0.9982846724292332]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6177116700795224, 1.4388073596338136, 1.0593602395855755, 0.9982876725969324]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.617691471565648, 1.438841415543647, 1.0593516938142065, 0.9982931361022033]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176587896834498, 1.438896519163659, 1.059337866465575, 0.9983019762394908]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.617691471565648, 1.438841415543647, 1.0593516938142065, 0.9982931361022033]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176789881974646, 1.4388624632535885, 1.0593464122370035, 0.998296512734182]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176991867114258, 1.4388284073436086, 1.0593549580084094, 0.9982910492288876]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176914717123723, 1.4388414152962612, 1.059351693876284, 0.9982931360625158]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176927264047932, 1.4388392998093384, 1.0593522247229905, 0.998292796680188]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176919509622317, 1.4388406072521596, 1.059351896641683, 0.9982930064300017]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.617691683964579, 1.4388410574262684, 1.0593517836778823, 0.9982930786503191]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176915720577645, 1.4388412461078917, 1.0593517363313272, 0.9982931089200446]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176915205722151, 1.4388413329156262, 1.0593517145483515, 0.9982931228463945]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176914958060763, 1.4388413746728264, 1.0593517040700677, 0.9982931295453987]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176914717123723, 1.4388414152962612, 1.059351693876284, 0.9982931360625158]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176914717123723, 1.4388414152962612, 1.059351693876284, 0.9982931360625158]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 5 200
+previous: [0.6177296166397458, 1.4387771006533463, 1.0593678325798663, 0.9982828182236362] -> 0.001133456945045589
+current: [0.6176914717123723, 1.4388414152962612, 1.059351693876284, 0.9982931360625158] -> 0.001133456409664414
+5.353811749399945E-10 / 1.0 = 5.353811749399945E-10 <= 1.0E-13 -> false
+5.353811749399945E-10 <= 1.0E-13 -> false
+x:[0.6176914717123723, 1.4388414152962612, 1.059351693876284, 0.9982931360625158]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6169420216570741, 1.4383196947722214, 1.0585757991876799, 0.9975608719310326]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6189041073831465, 1.4396855768426553, 1.0606071178628647, 0.9994779643242361]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176914717123723, 1.4388414152962612, 1.059351693876284, 0.9982931360625158]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6181546573226375, 1.439163856314988, 1.0598312231688658, 0.9987457001876615]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6174052072641188, 1.4386421357887065, 1.0590553284769277, 0.9980134360530316]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.617691064792495, 1.438841132023947, 1.0593512725980825, 0.9982927384738728]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176910647924443, 1.4388411320239116, 1.0593512725980299, 0.9982927384738232]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.617691064792495, 1.438841132023947, 1.0593512725980825, 0.9982927384738728]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.617691064792495, 1.438841132023947, 1.0593512725980825, 0.9982927384738728]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 6 200
+previous: [0.6176914717123723, 1.4388414152962612, 1.059351693876284, 0.9982931360625158] -> 0.001133456409664414
+current: [0.617691064792495, 1.438841132023947, 1.0593512725980825, 0.9982927384738728] -> 0.0011334558742830173
+5.35381396767759E-10 / 1.0 = 5.35381396767759E-10 <= 1.0E-13 -> false
+5.35381396767759E-10 <= 1.0E-13 -> false
+x:[0.617691064792495, 1.438841132023947, 1.0593512725980825, 0.9982927384738728]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176841430385616, 1.4388526429293773, 1.0593482934482057, 0.9982945153115371]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6176729434053577, 1.4388712679657347, 1.059343473082414, 0.9982973902952904]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.6165641797181725, 1.4407151465651082, 1.0588662568690437, 0.998582013686868]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.5067965746868307, 1.623259127903093, 1.011621851745369, 1.026759729453054]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.1514917521282571, 2.2141325179156497, 0.8586972709953404, 1.1179676800824947]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.4234035311354821, 3.1701857526512267, 0.611260099906049, 1.2655452452712512]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.1514917521282571, 2.2141325179156497, 0.8586972709953404, 1.1179676800824947]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-0.0680987061064926, 2.5793123585303586, 0.764184681719354, 1.1743372940076464]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.28720611797888185, 1.9884389659787258, 0.9171092631265234, 1.0831293429862705]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.151491787757088, 2.2141324586647566, 0.8586972863301282, 1.1179676709364532]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.15148850379963136, 2.2141379198995947, 0.8586958729020366, 1.1179685139394482]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.1514917521282571, 2.2141325179156497, 0.8586972709953404, 1.1179676800824947]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[0.1514917521282571, 2.2141325179156497, 0.8586972709953404, 1.1179676800824947]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 7 200
+previous: [0.617691064792495, 1.438841132023947, 1.0593512725980825, 0.9982927384738728] -> 0.0011334558742830173
+current: [0.1514917521282571, 2.2141325179156497, 0.8586972709953404, 1.1179676800824947] -> 0.001126975685058098
+6.480189224919268E-6 / 1.0 = 6.480189224919268E-6 <= 1.0E-13 -> false
+6.480189224919268E-6 <= 1.0E-13 -> false
+x:[0.1514917521282571, 2.2141325179156497, 0.8586972709953404, 1.1179676800824947]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-13.144162918477932, 24.29755364089452, -4.853453793693143, 4.53994563157985]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-34.65698422777754, 60.02927985419251, -14.095908429495307, 10.076822304352923]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02072673740886, 133.71524964682706, -33.15569941295069, 21.494969998086816]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-150.80277048523766, 252.94165409428268, -63.99508925707493, 39.969921183569845]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02072673740886, 133.71524964682706, -33.15569941295069, 21.494969998086816]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-106.43902766714758, 179.25568378931348, -44.935298141097824, 28.55177341044617]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-62.07528496687826, 105.56971368003869, -25.87550707573952, 17.133625667646694]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02072673747702, 133.71524964694024, -33.15569941297996, 21.494969998104356]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-89.49358577883832, 151.11014762690064, -37.65510575328595, 24.190429049692685]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-82.28845168197283, 139.14277825317726, -34.559597076032006, 22.33600287603731]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.39605317479554, 135.99959845482684, -33.74657459497392, 21.84894555336754]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.65797232597032, 134.77368287479547, -33.42947630903815, 21.658981504685823]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.32808228779578, 134.22575192910162, -33.28774716673764, 21.57407583700572]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.17173451916028, 133.96606606165437, -33.22057619282183, 21.53383572621078]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.09558037573416, 133.83957781709603, -33.187858437868876, 21.514235502966752]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.05799308440245, 133.77714719567012, -33.17170998248865, 21.50456144889569]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.03932005041501, 133.74613221495616, -33.16368757264011, 21.499755464371]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.03001346078385, 133.7306744324599, -33.15968922527119, 21.497360174683465]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02536761976587, 133.72295792159883, -33.15769325392756, 21.496164448265812]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02304655920582, 133.71910275545102, -33.15669606733708, 21.49556706376258]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02188649339779, 133.71717594384197, -33.1561976735908, 21.495268491054745]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02130657667286, 133.71621273100513, -33.15594852663115, 21.4951192346025]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02101664734518, 133.71573117281204, -33.15582396562541, 21.495044613849227]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02087168987404, 133.7154904056622, -33.1557616882127, 21.495007305323814]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02079921301892, 133.71537002521063, -33.15573055031424, 21.49498865154509]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02076297503194, 133.71530983571665, -33.1557149815543, 21.494979324769123]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02072673747702, 133.71524964694024, -33.15569941297996, 21.494969998104356]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-79.02072673747702, 133.71524964694024, -33.15569941297996, 21.494969998104356]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 8 200
+previous: [0.1514917521282571, 2.2141325179156497, 0.8586972709953404, 1.1179676800824947] -> 0.001126975685058098
+current: [-79.02072673747702, 133.71524964694024, -33.15569941297996, 21.494969998104356] -> 2.7458979205288913E-5
+0.0010995167058528092 / 1.0 = 0.0010995167058528092 <= 1.0E-13 -> false
+0.0010995167058528092 <= 1.0E-13 -> false
+x:[-79.02072673747702, 133.71524964694024, -33.15569941297996, 21.494969998104356]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-81.37162848284615, 137.61678246088206, -34.15851557096316, 22.094844179256587]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-85.17546743751275, 143.92959520595562, -35.781106210329355, 23.06546100008305]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-81.37162848284615, 137.61678246088206, -34.15851557096316, 22.094844179256587]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-82.82456567579791, 140.02806236488664, -34.77829004537362, 22.465586814759927]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.47366392032659, 136.1265295341793, -33.77547388308117, 21.865712631029947]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95770698595113, 136.9298425214682, -33.98195048650544, 21.989224784698596]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95770698594828, 136.92984252146346, -33.98195048650422, 21.989224784697868]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95770698595113, 136.9298425214682, -33.98195048650544, 21.989224784698596]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95770698595113, 136.9298425214682, -33.98195048650544, 21.989224784698596]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 9 200
+previous: [-79.02072673747702, 133.71524964694024, -33.15569941297996, 21.494969998104356] -> 2.7458979205288913E-5
+current: [-80.95770698595113, 136.9298425214682, -33.98195048650544, 21.989224784698596] -> 5.846560905660622E-7
+2.687432311472285E-5 / 1.0 = 2.687432311472285E-5 <= 1.0E-13 -> false
+2.687432311472285E-5 <= 1.0E-13 -> false
+x:[-80.95770698595113, 136.9298425214682, -33.98195048650544, 21.989224784698596]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.98203257093678, 136.9124283565906, -34.00709188495967, 21.965124189005508]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.91834736237448, 136.9580192323218, -33.94127084899895, 22.028220367950265]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95770698595113, 136.9298425214682, -33.98195048650544, 21.989224784698596]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.94267294752925, 136.9406050673231, -33.966412247627986, 22.004119772089606]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.96699853261943, 136.92319090237066, -33.991553646190255, 21.980019176292956]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95772019261825, 136.9298330670983, -33.981964136087996, 21.989211700180995]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95772019261825, 136.9298330670983, -33.981964136087996, 21.989211700181]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95772019261825, 136.9298330670983, -33.981964136087996, 21.989211700181]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95772019261825, 136.9298330670983, -33.981964136087996, 21.989211700181]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 10 200
+previous: [-80.95770698595113, 136.9298425214682, -33.98195048650544, 21.989224784698596] -> 5.846560905660622E-7
+current: [-80.95772019261825, 136.9298330670983, -33.981964136087996, 21.989211700181] -> 1.2449029492783187E-8
+5.72207061073279E-7 / 1.0 = 5.72207061073279E-7 <= 1.0E-13 -> false
+5.72207061073279E-7 <= 1.0E-13 -> false
+x:[-80.95772019261825, 136.9298330670983, -33.981964136087996, 21.989211700181]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776881656515, 136.92985281841615, -33.98183511448647, 21.989110684630198]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95784749176443, 136.92988477672, -33.98162635314848, 21.98894723803447]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776881656515, 136.92985281841615, -33.98183511448647, 21.989110684630198]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.9577988678172, 136.929865025402, -33.9817553747509, 21.989048253585974]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.9577502438701, 136.92984527408404, -33.981884396352974, 21.98914926913721]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95775907085559, 136.92984885965467, -33.98186097431761, 21.98913093120174]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95775907085559, 136.92984885965467, -33.98186097431761, 21.989130931201743]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95775907085559, 136.92984885965467, -33.98186097431761, 21.989130931201743]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95775907085559, 136.92984885965467, -33.98186097431761, 21.989130931201743]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 11 200
+previous: [-80.95772019261825, 136.9298330670983, -33.981964136087996, 21.989211700181] -> 1.2449029492783187E-8
+current: [-80.95775907085559, 136.92984885965467, -33.98186097431761, 21.989130931201743] -> 6.135172537070425E-10
+1.1835512239076145E-8 / 1.0 = 1.1835512239076145E-8 <= 1.0E-13 -> false
+1.1835512239076145E-8 <= 1.0E-13 -> false
+x:[-80.95775907085559, 136.92984885965467, -33.98186097431761, 21.989130931201743]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.9578697292135, 136.929808697434, -33.98174642786887, 21.989151431447887]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95758002187011, 136.92991384349324, -33.98204631436625, 21.989097761106475]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95775907085559, 136.92984885965467, -33.98186097431761, 21.989130931201743]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.9576906802288, 136.92987368127228, -33.98193176791671, 21.98911826135276]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95780133858717, 136.92983351905144, -33.98181722146749, 21.98913876159899]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776303739154, 136.92984742004455, -33.981856868413495, 21.98913166603068]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 12 200
+previous: [-80.95775907085559, 136.92984885965467, -33.98186097431761, 21.989130931201743] -> 6.135172537070425E-10
+current: [-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676] -> 3.035437992028136E-10
+3.099734545042289E-10 / 1.0 = 3.099734545042289E-10 <= 1.0E-13 -> false
+3.099734545042289E-10 <= 1.0E-13 -> false
+x:[-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776304134897, 136.9298474257314, -33.98185687034092, 21.989131666584775]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776303098825, 136.92984741084308, -33.981856865294894, 21.989131665134124]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.9577630349457, 136.9298474165299, -33.981856867222305, 21.989131665688223]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+x:[-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676]
+row[0]:[10.0, 7.0, 8.1, 7.2]
+converged? 13 200
+previous: [-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676] -> 3.035437992028136E-10
+current: [-80.95776303739153, 136.92984742004455, -33.98185686841351, 21.989131666030676] -> 3.035437992028136E-10
+0.0 / 1.0 = 0.0 <= 1.0E-13 -> true
+0.0 <= 1.0E-13 -> true
+:iterations 13
+:evaluations 181
+ill-conditioned-1 [-80.95776303739153 136.92984742004455 -33.98185686841351 21.989131666030676] 3.035437992028136E-10
+
+Ran 8 tests containing 28 assertions.
+0 failures, 0 errors.
+
+Testing zana.test.data.textio
+
+Ran 4 tests containing 44 assertions.
+0 failures, 0 errors.
+Tests run: , Assertions: 612, Failures: 21, Errors: 0
+There are test failures.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 36.557 s
+[INFO] Finished at: 2018-04-14T14:28:35-07:00
+[INFO] Final Memory: 30M/99M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal com.theoryinpractise:clojure-maven-plugin:1.8.1:test (clojure-test) on project zana: Clojure failed. -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

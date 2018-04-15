@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-04"
+      :date "2018-04-14"
       :doc 
       "Generic function composition." }
     
@@ -10,7 +10,7 @@
   #_(:require )
   (:import [zana.java.geometry.functions 
             AffineDual AffineFunctional Composition2 Function 
-            LinearFunctional LinearRows Sample]))
+            LinearDual LinearFunctional LinearRows Sample]))
 ;;----------------------------------------------------------------
 ;; TODO: https://github.com/palisades-lakes/faster-multimethods
 
@@ -38,6 +38,11 @@
 (defmethod compose 
   [Sample AffineDual] 
   [^Sample f0 ^AffineDual f1]
+  (.compose f0 f1))
+
+(defmethod compose 
+  [Sample LinearDual] 
+  [^Sample f0 ^LinearDual f1]
   (.compose f0 f1))
 ;;----------------------------------------------------------------
   
