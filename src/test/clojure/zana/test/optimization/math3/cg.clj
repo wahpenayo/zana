@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-04"
+      :date "2018-04-16"
       :doc 
       "Tests for [[zana.optimization.math3.cg]]." }
     
@@ -23,87 +23,87 @@
 ;; which is derived from Fortran minpack tests
 ;;----------------------------------------------------------------
 (test/deftest trivial
-  (let [lr (LinearRows/make [[2.0]])
-        l2d2 (L2Distance2From/make [3.0])
-        objective (z/compose l2d2 lr) 
-        options {:objective objective
-                 :max-iterations 100
-                 :start [0.0]}
-        [^doubles x ^double y] (z/optimize-cg options)
-        epsilon (double 1.0e-10)]
-    (println "trivial" (into [] x) y)
-    (test/is (z/approximately== epsilon 0.0 y))
-    (test/is (z/approximately== epsilon 1.5 (aget x 0)))))
+ (let [lr (LinearRows/make [[2.0]])
+       l2d2 (L2Distance2From/make [3.0])
+       objective (z/compose l2d2 lr) 
+       options {:objective objective
+                :max-iterations 100
+                :start [0.0]}
+       [^doubles x ^double y] (z/optimize-cg options)
+       ulps (double 1.0)]
+   (println "trivial" (into [] x) y)
+   (test/is (z/approximately== ulps 0.0 y))
+   (test/is (z/approximately== ulps 1.5 (aget x 0)))))
 ;;----------------------------------------------------------------
 (test/deftest column-permutation
-  (let [lr (LinearRows/make 
-             [[1.0 -1.0] 
-              [0.0  2.0] 
-              [1.0 -2.0]])
-        l2d2 (L2Distance2From/make [4.0 6.0 1.0])
-        objective (z/compose l2d2 lr) 
-        options {:objective objective
-                 :max-iterations 100
-                 :start [0.0 0.0]
-                 :relative-tolerance 1.0e-6
-                 :absolute-tolerance 1.0e-6
-                 :line-search-relative-tolerance 1.0e-3
-                 :line-search-absolute-tolerance 1.0e-3
-                 :initial-bracket-range 1.0}
-        [^doubles x ^double y] (z/optimize-cg options)
-        epsilon (double 1.0e-10)]
-    (println "column-permutation" (into [] x) y)
-    (test/is (z/approximately== epsilon 0.0 y))
-    (test/is (z/approximately== epsilon 7.0 (aget x 0)))
-    (test/is (z/approximately== epsilon 3.0 (aget x 1)))))
+ (let [lr (LinearRows/make 
+            [[1.0 -1.0] 
+             [0.0  2.0] 
+             [1.0 -2.0]])
+       l2d2 (L2Distance2From/make [4.0 6.0 1.0])
+       objective (z/compose l2d2 lr) 
+       options {:objective objective
+                :max-iterations 100
+                :start [0.0 0.0]
+                :relative-tolerance 1.0e-6
+                :absolute-tolerance 1.0e-6
+                :line-search-relative-tolerance 1.0e-3
+                :line-search-absolute-tolerance 1.0e-3
+                :initial-bracket-range 1.0}
+       [^doubles x ^double y] (z/optimize-cg options)
+       ulps (double 1.0e1)]
+   (println "column-permutation" (into [] x) y)
+   (test/is (z/approximately== ulps 0.0 y))
+   (test/is (z/approximately== ulps 7.0 (aget x 0)))
+   (test/is (z/approximately== ulps 3.0 (aget x 1)))))
 ;;----------------------------------------------------------------
 (test/deftest no-dependency
-  (let [lr (LinearRows/make 
-             [[2 0 0 0 0 0]
-              [0 2 0 0 0 0]
-              [0 0 2 0 0 0]
-              [0 0 0 2 0 0]
-              [0 0 0 0 2 0]
-              [0 0 0 0 0 2]])
-        l2d2 (L2Distance2From/make [0.0 1.1 2.2 3.3 4.4 5.5])
-        objective (z/compose l2d2 lr) 
-        options {:objective objective
-                 :max-iterations 100
-                 :start [0 0 0 0 0 0]
-                 :relative-tolerance 1.0e-6
-                 :absolute-tolerance 1.0e-6
-                 :line-search-relative-tolerance 1.0e-3
-                 :line-search-absolute-tolerance 1.0e-3
-                 :initial-bracket-range 1.0}
-        [^doubles x ^double y] (z/optimize-cg options)
-        epsilon (double 1.0e-10)]
-    (println "no-dependency" (into [] x) y)
-    (test/is (z/approximately== epsilon 0.0 y))
-    (dotimes [i 6]
-      (test/is (z/approximately== epsilon (* i 0.55) (aget x i))))))
+ (let [lr (LinearRows/make 
+            [[2 0 0 0 0 0]
+             [0 2 0 0 0 0]
+             [0 0 2 0 0 0]
+             [0 0 0 2 0 0]
+             [0 0 0 0 2 0]
+             [0 0 0 0 0 2]])
+       l2d2 (L2Distance2From/make [0.0 1.1 2.2 3.3 4.4 5.5])
+       objective (z/compose l2d2 lr) 
+       options {:objective objective
+                :max-iterations 100
+                :start [0 0 0 0 0 0]
+                :relative-tolerance 1.0e-6
+                :absolute-tolerance 1.0e-6
+                :line-search-relative-tolerance 1.0e-3
+                :line-search-absolute-tolerance 1.0e-3
+                :initial-bracket-range 1.0}
+       [^doubles x ^double y] (z/optimize-cg options)
+       ulps (double 1.0)]
+   (println "no-dependency" (into [] x) y)
+   (test/is (z/approximately== ulps 0.0 y))
+   (dotimes [i 6]
+     (test/is (z/approximately== ulps (* i 0.55) (aget x i))))))
 ;;----------------------------------------------------------------
 (test/deftest one-set
-  (let [lr (LinearRows/make 
-             [[ 1  0  0]
-              [-1  1  0]
-              [ 0 -1  1]])
-        l2d2 (L2Distance2From/make [1 1 1])
-        objective (z/compose l2d2 lr) 
-        options {:objective objective
-                 :max-iterations 100
-                 :start [0 0 0]
-                 :relative-tolerance 1.0e-6
-                 :absolute-tolerance 1.0e-6
-                 :line-search-relative-tolerance 1.0e-3
-                 :line-search-absolute-tolerance 1.0e-3
-                 :initial-bracket-range 1.0}
-        [^doubles x ^double y] (z/optimize-cg options)
-        epsilon (double 1.0e-10)]
-    (println "one-set" (into [] x) y)
-    (test/is (z/approximately== epsilon 0.0 y))
-    (test/is (z/approximately== epsilon 1.0 (aget x 0)))
-    (test/is (z/approximately== epsilon 2.0 (aget x 1)))
-    (test/is (z/approximately== epsilon 3.0 (aget x 2)))))
+ (let [lr (LinearRows/make 
+            [[ 1  0  0]
+             [-1  1  0]
+             [ 0 -1  1]])
+       l2d2 (L2Distance2From/make [1 1 1])
+       objective (z/compose l2d2 lr) 
+       options {:objective objective
+                :max-iterations 100
+                :start [0 0 0]
+                :relative-tolerance 1.0e-6
+                :absolute-tolerance 1.0e-6
+                :line-search-relative-tolerance 1.0e-3
+                :line-search-absolute-tolerance 1.0e-3
+                :initial-bracket-range 1.0}
+       [^doubles x ^double y] (z/optimize-cg options)
+       ulps (double 1.0)]
+   (println "one-set" (into [] x) y)
+   (test/is (z/approximately== ulps 0.0 y))
+   (test/is (z/approximately== ulps 1.0 (aget x 0)))
+   (test/is (z/approximately== ulps 2.0 (aget x 1)))
+   (test/is (z/approximately== ulps 3.0 (aget x 2)))))
 ;;----------------------------------------------------------------
 ;    @Test
 ;    public void testTwoSets() {
@@ -157,102 +157,103 @@
 ;    }
 ;;----------------------------------------------------------------
 (test/deftest not-invertible
-  (let [lr (LinearRows/make 
-             [[ 1  2 -3]
-              [ 2  1  3]
-              [-3  0 -9]])
-        l2d2 (L2Distance2From/make [1 1 1])
-        objective (z/compose l2d2 lr) 
-        options {:objective objective
-                 :max-iterations 100
-                 :start [0 0 0]
-                 :relative-tolerance 1.0e-6
-                 :absolute-tolerance 1.0e-6
-                 :line-search-relative-tolerance 1.0e-3
-                 :line-search-absolute-tolerance 1.0e-3
-                 :initial-bracket-range 1.0}
-        [^doubles x ^double y] (z/optimize-cg options)
-        epsilon (double 1.0e-10)]
-    (println "not-invertiable" (into [] x) y)
-    (test/is (< 0.5 y))
-    #_(test/is (z/approximately== epsilon 1.0 (aget x 0)))
-    #_(test/is (z/approximately== epsilon 2.0 (aget x 1)))
-    #_(test/is (z/approximately== epsilon 3.0 (aget x 2)))))
+ (let [lr (LinearRows/make 
+            [[ 1  2 -3]
+             [ 2  1  3]
+             [-3  0 -9]])
+       l2d2 (L2Distance2From/make [1 1 1])
+       objective (z/compose l2d2 lr) 
+       options {:objective objective
+                :max-iterations 100
+                :start [0 0 0]
+                :relative-tolerance 1.0e-6
+                :absolute-tolerance 1.0e-6
+                :line-search-relative-tolerance 1.0e-3
+                :line-search-absolute-tolerance 1.0e-3
+                :initial-bracket-range 1.0}
+       [^doubles x ^double y] (z/optimize-cg options)
+       ulps (double 1.0)]
+   (println "not-invertiable" (into [] x) y)
+   (test/is (< 0.5 y))
+   (test/is (z/approximately== ulps 0.6666666666666665 y))
+   (test/is (z/approximately== ulps 0.2514619883040938 (aget x 0)))
+   (test/is (z/approximately== ulps 0.304093567251331 (aget x 1)))
+   (test/is (z/approximately== ulps -0.15789473684171218 (aget x 2)))))
 ;;----------------------------------------------------------------
 (test/deftest ill-conditioned-0
-  (let [lr (LinearRows/make 
-             [[10  7  8  7]
-              [ 7  5  6  5]
-              [ 8  6 10  9]
-              [ 7  5  9 10]])
-        l2d2 (L2Distance2From/make [32 23 33 31])
-        objective (z/compose l2d2 lr) 
-        options {:objective objective
-                 :max-iterations 200
-                 :start [0 1 2 3]
-                 :relative-tolerance 1.0e-13
-                 :absolute-tolerance 1.0e-13
-                 :line-search-relative-tolerance 1.0e-15
-                 :line-search-absolute-tolerance 1.0e-15
-                 :initial-bracket-range 1.0}
-        [^doubles x ^double y] (z/optimize-cg options)
-        epsilon (double 1.0e-10)]
-    (println "ill-conditioned-0" (into [] x) y)
-    #_(test/is (< 0.5 y))
-    (test/is (z/approximately== 1.0e-4 1.0 (aget x 0)))
-    (test/is (z/approximately== 1.0e-3 1.0 (aget x 1)))
-    (test/is (z/approximately== 1.0e-4 1.0 (aget x 2)))
-    (test/is (z/approximately== 1.0e-4 1.0 (aget x 3)))))
+ (let [lr (LinearRows/make 
+            [[10  7  8  7]
+             [ 7  5  6  5]
+             [ 8  6 10  9]
+             [ 7  5  9 10]])
+       l2d2 (L2Distance2From/make [32 23 33 31])
+       objective (z/compose l2d2 lr) 
+       options {:objective objective
+                :max-iterations 200
+                :start [0 1 2 3]
+                :relative-tolerance 1.0e-13
+                :absolute-tolerance 1.0e-13
+                :line-search-relative-tolerance 1.0e-15
+                :line-search-absolute-tolerance 1.0e-15
+                :initial-bracket-range 1.0}
+       [^doubles x ^double y] (z/optimize-cg options)
+       ulps (double 1.0e6)]
+   (println "ill-conditioned-0" (into [] x) y)
+   (test/is (z/approximately== 1.0 0.0 y))
+   (test/is (z/approximately== ulps 1.0 (aget x 0)))
+   (test/is (z/approximately== ulps 1.0 (aget x 1)))
+   (test/is (z/approximately== ulps 1.0 (aget x 2)))
+   (test/is (z/approximately== ulps 1.0 (aget x 3)))))
 ;;----------------------------------------------------------------
 (test/deftest ill-conditioned-1
-  (let [lr (LinearRows/make 
-             [[10.00 7.00 8.10 7.20]
-              [ 7.08 5.04 6.00 5.00]
-              [ 8.00 5.98 9.89 9.00]
-              [ 6.99 4.99 9.00 9.98]])
-        l2d2 (L2Distance2From/make [32 23 33 31])
-        objective (z/compose l2d2 lr) 
-        options {:objective objective
-                 :max-iterations 200
-                 :start [0 1 2 3]
-                 :relative-tolerance 1.0e-13
-                 :absolute-tolerance 1.0e-13
-                 :line-search-relative-tolerance 1.0e-15
-                 :line-search-absolute-tolerance 1.0e-15
-                 :initial-bracket-range 1.0}
-        [^doubles x ^double y] (z/optimize-cg options)
-        epsilon (double 1.0e-10)]
-    (println "ill-conditioned-1" (into [] x) y)
-    #_(test/is (< 0.5 y))
-    (test/is (z/approximately== 2 -81 (aget x 0)))
-    (test/is (z/approximately== 4 137 (aget x 1)))
-    (test/is (z/approximately== 1 -34 (aget x 2)))
-    (test/is (z/approximately== 1  22 (aget x 3)))))
+ (let [lr (LinearRows/make 
+            [[10.00 7.00 8.10 7.20]
+             [ 7.08 5.04 6.00 5.00]
+             [ 8.00 5.98 9.89 9.00]
+             [ 6.99 4.99 9.00 9.98]])
+       l2d2 (L2Distance2From/make [32 23 33 31])
+       objective (z/compose l2d2 lr) 
+       options {:objective objective
+                :max-iterations 400
+                :start [0 1 2 3]
+                :relative-tolerance 1.0e-13
+                :absolute-tolerance 1.0e-13
+                :line-search-relative-tolerance 1.0e-15
+                :line-search-absolute-tolerance 1.0e-15
+                :initial-bracket-range 1.0}
+       [^doubles x ^double y] (z/optimize-cg options)
+       ulps 2.0e12]
+   (println "ill-conditioned-1" (into [] x) y (float ulps))
+   (test/is (z/approximately== 2.0e6 0.0 y))
+   (test/is (z/approximately== ulps -81 (aget x 0)))
+   (test/is (z/approximately== ulps 137 (aget x 1)))
+   (test/is (z/approximately== ulps -34 (aget x 2)))
+   (test/is (z/approximately== ulps  22 (aget x 3)))))
 ;;----------------------------------------------------------------
 (test/deftest circle-fitting
-  (let [^L2DistanceVariance objective (L2DistanceVariance/make 
-                                        [[ 30  68]
-                                         [ 50  -6]
-                                         [110 -20]
-                                         [ 35  15]
-                                         [ 45  97]])
-        options {:objective objective
-                 :max-iterations 100
-                 :start [98.680 47.345]
-                 :relative-tolerance 1.0e-30
-                 :absolute-tolerance 1.0e-30
-                 :line-search-relative-tolerance 1.0e-15
-                 :line-search-absolute-tolerance 1.0e-13
-                 :initial-bracket-range 1.0}
-        [^doubles x ^double y] (z/optimize-cg options)
-        epsilon (double 1.0e-10)]
-    (println "circle-fitting" (into [] x) y)
-    (test/is (z/approximately== 
-               1.0e-8 69.960161753 (.meanL2Distance objective x)))
-    (test/is (z/approximately== 
-               1.0e-7 96.075902096 (aget x 0)))
-    (test/is (z/approximately== 
-               1.0e-6 48.135167894 (aget x 1)))))
+ (let [^L2DistanceVariance objective (L2DistanceVariance/make 
+                                       [[ 30  68]
+                                        [ 50  -6]
+                                        [110 -20]
+                                        [ 35  15]
+                                        [ 45  97]])
+       options {:objective objective
+                :max-iterations 100
+                :start [98.680 47.345]
+                :relative-tolerance 1.0e-30
+                :absolute-tolerance 1.0e-30
+                :line-search-relative-tolerance 1.0e-15
+                :line-search-absolute-tolerance 1.0e-13
+                :initial-bracket-range 1.0}
+       [^doubles x ^double y] (z/optimize-cg options)
+       ulps (double 2.0e6)]
+   (println "circle-fitting" (into [] x) y)
+   (test/is (z/approximately== 
+             ulps 69.960161753 (.meanL2Distance objective x)))
+   (test/is (z/approximately== 
+              ulps 96.075902096 (aget x 0)))
+   (test/is (z/approximately== 
+              ulps 48.135167894 (aget x 1)))))
 ;;----------------------------------------------------------------
 ;    @Test
 ;    public void testMoreEstimatedParametersSimple() {

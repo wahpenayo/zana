@@ -1,7 +1,6 @@
-(set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-08"
+      :date "2018-04-16"
       :doc "Stats that don't have an obvious home." }
     
     zana.stats.statistics
@@ -11,55 +10,104 @@
             [zana.geometry.z1 :as z1]
             [zana.collections.generic :as g]
             [zana.stats.accumulators :as accumulators])
-  (:import [clojure.lang IFn IFn$OD IFn$OL]
-           [org.apache.commons.math3.stat.descriptive DescriptiveStatistics]
+  (:import [java.util List Map]
+           [clojure.lang IFn IFn$OD IFn$OL]
+           [org.apache.commons.math3.stat.descriptive 
+            DescriptiveStatistics]
            [zana.java.functions IFnODWithMeta]
            [zana.java.math Statistics]
            [zana.java.prob ApproximatelyEqual]))
 ;;----------------------------------------------------------------
+;; TODO: handle relative and absolute equality epsilons
 ;; TODO: move somewhere else?
 (defn float-approximately== 
-  ([^double delta ^double x ^double y]
+  ([^double ulps ^double x ^double y]
     (let [x (float x)
           y (float y)
-          delta (float delta)]
-      (<= (Math/abs (- x y)) delta)))
+          delta (* (float ulps) 
+                   (Math/ulp 
+                     (float (+ 1.0 (Math/abs x) (Math/abs y)))))]
+      (<= (Math/abs (float (- x y))) delta)))
   ([^double x ^double y]
-    (let [x (float x)
-          y (float y)
-          delta (Math/ulp 
-                  (float (* 10.0
-                            (+ (Math/abs x) (Math/abs y)))))]
-      (float-approximately== delta x y))))
+    (float-approximately== 1.0 x y)))
 ;;----------------------------------------------------------------
 ;; TODO: move somewhere else?
 (defn approximately<= 
-  ([^double delta ^double x ^double y]
-    (<= (- x y)) delta)
+  ([^double ulps ^double x ^double y]
+    (let [delta (* ulps 
+                   (Math/ulp (+ 1.0 (Math/abs x) (Math/abs y))))]
+      (<= (- x y) delta)))
   ([^double x ^double y]
-    (approximately<= 
-      (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y))))
-      x y)))
+    (approximately<= 1.0 x y)))
+
 (defn approximately== 
-  ([^double delta ^double x ^double y]
-    (<= (Math/abs (- x y)) delta))
-  ([^double x ^double y]
-    (approximately== 
-      (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y))))
-      x y)))
+  ([^double ulps ^double x ^double y]
+    (let [delta (* ulps 
+                   (Math/ulp (+ 1.0 (Math/abs x) (Math/abs y))))]
+      (<= (Math/abs (- x y)) delta)))
+  ([^double x ^double y] (approximately== 1.0 x y)))
+
 (defn approximately>= 
-  ([^double delta ^double x ^double y]
-    (<= (- y x)) delta)
+  ([^double ulps ^double x ^double y]
+    (let [delta (* ulps 
+                   (Math/ulp (+ 1.0 (Math/abs x) (Math/abs y))))]
+      (<= (- y x) delta)))
   ([^double x ^double y]
-    (approximately<= 
-      (Math/ulp (* 10.0 (+ (Math/abs x) (Math/abs y))))
-      x y)))
+    (approximately<= 1.0 x y)))
+
 (defn approximatelyEqual 
   ([^ApproximatelyEqual x ^ApproximatelyEqual y]
     (.approximatelyEqual x y))
   ([^ApproximatelyEqual x ^ApproximatelyEqual y & more]
     (and (approximatelyEqual x y)
          (apply approximatelyEqual y (first more) (rest more)))))
+
+(defn doubles-approximately== 
+  ([^double ulps ^doubles s0 ^doubles s1]
+    (and (== (alength s0) (alength s1))
+         (let [n (int (alength s0))]
+           (loop [i (int 0)]
+             (if (< i n)
+               (let [z0 (aget s0 i)
+                     z1 (aget s1 i)]
+                 (if-not (approximately== ulps z0 z1)
+                   false
+                   (recur (inc i))))
+               true)))))
+  ([^doubles s0 ^doubles s1]
+    (doubles-approximately== 1.0 s0 s1)))
+
+(defn lists-approximately== 
+  ([^double ulps ^List s0 ^List s1]
+    (and (== (.size s0) (.size s1))
+         (let [i0 (.iterator s0)
+               i1 (.iterator s1)]
+           (loop []
+             (if (.hasNext i0)
+               (let [z0 (double (.next i0))
+                     z1 (double (.next i1))]
+                 (if-not (approximately== ulps z0 z1)
+                   false
+                   (recur)))
+               true)))))
+  ([^List s0 ^List s1]
+    (lists-approximately== 1.0 s0 s1)))
+
+(defn maps-approximately== 
+  ([^double ulps ^Map m0 ^Map m1]
+    (and (= (.keySet m0) (.keySet m1))
+         (let [it (.iterator (.keySet m0))]
+           (loop []
+             (if (.hasNext it)
+               (let [k (.next it)
+                     z0 (double (.get m0 k))
+                     z1 (double (.get m1 k))]
+                 (if-not (approximately== ulps z0 z1)
+                   false
+                   (recur)))
+               true)))))
+  ([^Map m0 ^Map m1]
+    (maps-approximately== 1.0 m0 m1)))
 ;;----------------------------------------------------------------
 ;; TODO: move to function namespace
 (defn numerical?
@@ -82,18 +130,18 @@
 ;; TODO: move to function namespace
 
 (defn constantly-0d 
-  "An instance of <code>clojure.lang.IFn$OD</code> that returns a primitve
+  "An instance of <code>IFn$OD</code> that returns a primitve
   <code>double</code> 0.0, regardless of input."
   (^double [] 0.0)
   (^double [arg] 0.0))
 
 (defn constantly-1d 
-  "An instance of <code>clojure.lang.IFn$OD</code> that returns a primitve
+  "An instance of <code>IFn$OD</code> that returns a primitve
   <code>double</code> 1.0, regardless of input."
   (^double [] 1.0)
   (^double [arg] 1.0))
 ;;----------------------------------------------------------------
-(defn- singular-longs? [^clojure.lang.IFn$OL z ^Iterable data]
+(defn- singular-longs? [^IFn$OL z ^Iterable data]
   (let [it (g/iterator data)]
     (if (.hasNext it)
       (let [z0 (.invokePrim z (.next it))] 
@@ -106,7 +154,7 @@
             true)))
       true)))
 
-(defn- singular-doubles? [^clojure.lang.IFn$OD z ^Iterable data]
+(defn- singular-doubles? [^IFn$OD z ^Iterable data]
   (let [it (g/iterator data)
         delta (Math/ulp (double 1.0))]
     (if-not (.hasNext it)
@@ -133,7 +181,7 @@
                 (recur)))
             true))))))
 
-(defn- singular-objects? [^clojure.lang.IFn z ^Iterable data]
+(defn- singular-objects? [^IFn z ^Iterable data]
   (if (nil? data)
     true
     (let [it (.iterator data)]
@@ -160,9 +208,9 @@
    <code>z</code> mapped over <code>data</code>."
   ([^doubles a] (zana.java.arrays.Arrays/isSingular a))
   
-  ([^clojure.lang.IFn z ^Iterable data]
-    (cond (instance? clojure.lang.IFn$OD z) (singular-doubles? z data)
-          (instance? clojure.lang.IFn$OL z) (singular-longs? z data)
+  ([^IFn z ^Iterable data]
+    (cond (instance? IFn$OD z) (singular-doubles? z data)
+          (instance? IFn$OL z) (singular-longs? z data)
           :else (singular-objects? z data))))
 ;;----------------------------------------------------------------
 ;; a mess of functions computing bounds of various kinds.
@@ -174,7 +222,7 @@
 ;; TODO: move to zana/tu.geometry?
 (defn- bounds-slow 
   
-  (^zana.java.geometry.r1.Interval [^clojure.lang.IFn f
+  (^zana.java.geometry.r1.Interval [^IFn f
                                     ^Iterable data
                                     ^double min0
                                     ^double max0]
@@ -197,14 +245,14 @@
 ;;----------------------------------------------------------------
 (defn- bounds-fast 
   
-  (^zana.java.geometry.r1.Interval [^clojure.lang.IFn$OD f
+  (^zana.java.geometry.r1.Interval [^IFn$OD f
                                     ^Iterable data
                                     ^double min0
                                     ^double max0]
     (assert (not (g/empty? data)))
-    (let [^clojure.lang.IFn$OD f (if (instance? IFnODWithMeta f) 
-                                   (.functionOD ^IFnODWithMeta f) 
-                                   f)
+    (let [^IFn$OD f (if (instance? IFnODWithMeta f) 
+                      (.functionOD ^IFnODWithMeta f) 
+                      f)
           it (.iterator data)]
       (loop [xmin min0
              xmax max0]
@@ -246,24 +294,24 @@
   (^zana.java.geometry.r1.Interval [^Iterable data]
     (bounds data Double/POSITIVE_INFINITY Double/NEGATIVE_INFINITY))
   
-  (^zana.java.geometry.r1.Interval [^clojure.lang.IFn f
+  (^zana.java.geometry.r1.Interval [^IFn f
                                     ^Iterable data
                                     ^double min0
                                     ^double max0]
     (when-not (g/empty? data)
       (let [it (.iterator data)]
-        (if (instance? clojure.lang.IFn$OD f)
+        (if (instance? IFn$OD f)
           (bounds-fast f data min0 max0)
           (bounds-slow f data min0 max0)))))
   
-  (^zana.java.geometry.r1.Interval [^clojure.lang.IFn f 
+  (^zana.java.geometry.r1.Interval [^IFn f 
                                     ^Iterable data]
     (bounds f data Double/POSITIVE_INFINITY Double/NEGATIVE_INFINITY)))
 ;;----------------------------------------------------------------
 (defn- bounding-box-slow 
   
-  (^java.awt.geom.Rectangle2D$Double [^clojure.lang.IFn xf
-                                      ^clojure.lang.IFn yf
+  (^java.awt.geom.Rectangle2D$Double [^IFn xf
+                                      ^IFn yf
                                       ^Iterable data]
     (let [it (.iterator data)]
       (loop [xmin Double/POSITIVE_INFINITY 
@@ -290,15 +338,15 @@
 ;;----------------------------------------------------------------
 (defn- bounding-box-fast 
   
-  (^java.awt.geom.Rectangle2D$Double [^clojure.lang.IFn$OD xf
-                                      ^clojure.lang.IFn$OD yf
+  (^java.awt.geom.Rectangle2D$Double [^IFn$OD xf
+                                      ^IFn$OD yf
                                       ^Iterable data]
-    (let [^clojure.lang.IFn$OD xf (if (instance? IFnODWithMeta xf) 
-                                    (.functionOD ^IFnODWithMeta xf) 
-                                    xf)
-          ^clojure.lang.IFn$OD yf (if (instance? IFnODWithMeta yf)
-                                    (.functionOD ^IFnODWithMeta yf)
-                                    yf)
+    (let [^IFn$OD xf (if (instance? IFnODWithMeta xf) 
+                       (.functionOD ^IFnODWithMeta xf) 
+                       xf)
+          ^IFn$OD yf (if (instance? IFnODWithMeta yf)
+                       (.functionOD ^IFnODWithMeta yf)
+                       yf)
           it (.iterator data)]
       (loop [xmin Double/POSITIVE_INFINITY
              xmax Double/NEGATIVE_INFINITY
@@ -318,22 +366,22 @@
             xmin ymin (- xmax xmin) (- ymax ymin)))))))
 ;;----------------------------------------------------------------
 (defn bounding-box 
-  (^java.awt.geom.Rectangle2D$Double [^clojure.lang.IFn xf
-                                      ^clojure.lang.IFn yf
+  (^java.awt.geom.Rectangle2D$Double [^IFn xf
+                                      ^IFn yf
                                       ^Iterable data]
-    (if (and (instance? clojure.lang.IFn$OD xf)
-             (instance? clojure.lang.IFn$OD yf))
+    (if (and (instance? IFn$OD xf)
+             (instance? IFn$OD yf))
       (bounding-box-fast xf yf data)
       ;;(Statistics/bounds xf yf data)
       (bounding-box-slow xf yf data))))
 ;;----------------------------------------------------------------
 (defn symmetric-bounds
-  ^java.awt.geom.Rectangle2D$Double [^clojure.lang.IFn$OD xf
-                                     ^clojure.lang.IFn$OD yf
+  ^java.awt.geom.Rectangle2D$Double [^IFn$OD xf
+                                     ^IFn$OD yf
                                      ^Iterable data]
   (Statistics/symmetricBounds xf yf data))
 ;;----------------------------------------------------------------
-(defn- minmax-long [^clojure.lang.IFn$OL z ^Iterable data]
+(defn- minmax-long [^IFn$OL z ^Iterable data]
   (assert (not (g/empty? data)))
   (let [i (g/iterator data)
         zz (.invokePrim z (.next i))]
@@ -346,7 +394,7 @@
                 :else (recur z0 z1)))
         [z0 z1]))))
 
-(defn- minmax-double [^clojure.lang.IFn$OD z ^Iterable data]
+(defn- minmax-double [^IFn$OD z ^Iterable data]
   (assert (not (g/empty? data)))
   (let [i (g/iterator data)
         zz (.invokePrim z (.next i))]
@@ -359,7 +407,7 @@
                 :else (recur z0 z1)))
         [z0 z1]))))
 
-(defn- minmax-comparable [^clojure.lang.IFn z ^Iterable data]
+(defn- minmax-comparable [^IFn z ^Iterable data]
   (assert (not (g/empty? data)))
   (let [i (g/iterator data)
         ^Comparable zz (z (.next i))]
@@ -378,14 +426,14 @@
    of <code>z</code> over <code>data</code>. The values of <code>z</code>
    need to be <code>Comparable</code>, or primitive numbers."
   ([z data]
-    (cond (instance? clojure.lang.IFn$OL z) (minmax-long z data)
-          (instance? clojure.lang.IFn$OD z) (minmax-double z data)
-          (instance? clojure.lang.IFn z) (minmax-comparable z data)
+    (cond (instance? IFn$OL z) (minmax-long z data)
+          (instance? IFn$OD z) (minmax-double z data)
+          (instance? IFn z) (minmax-comparable z data)
           :else (throw
                   (IllegalArgumentException.
                     (print-str "can't find the minmax values of " (class z)))))))
 ;;----------------------------------------------------------------
-(defn fast-min ^double [^clojure.lang.IFn$OD f ^Iterable data]
+(defn fast-min ^double [^IFn$OD f ^Iterable data]
   (let [it (.iterator data)]
     (loop [xmin Double/POSITIVE_INFINITY]
       (if (.hasNext it)
@@ -398,7 +446,7 @@
         xmin))))
 ;;----------------------------------------------------------------
 (defn min
-  (^double [^clojure.lang.IFn f ^Iterable data]
+  (^double [^IFn f ^Iterable data]
     (if (instance? IFn$OD f)
       (fast-min f data)
       (let [it (.iterator data)]
@@ -424,7 +472,7 @@
           xmin)))))
 ;;----------------------------------------------------------------
 ;; return Double/NEGATIVE_INFINITY for empty datasets
-(defn fast-max ^double [^clojure.lang.IFn$OD f ^Iterable data]
+(defn fast-max ^double [^IFn$OD f ^Iterable data]
   (let [it (.iterator data)]
     (loop [xmax Double/NEGATIVE_INFINITY]
       (if (.hasNext it)
@@ -438,8 +486,8 @@
 ;;----------------------------------------------------------------
 ;; return Double/NEGATIVE_INFINITY for empty datasets
 (defn max
-  (^double [^clojure.lang.IFn f ^Iterable data]
-    (if (instance? clojure.lang.IFn$OD f)
+  (^double [^IFn f ^Iterable data]
+    (if (instance? IFn$OD f)
       (fast-max f data)
       (let [it (.iterator data)]
         (loop [xmax Double/NEGATIVE_INFINITY]
@@ -464,10 +512,11 @@
           xmax)))))
 ;;----------------------------------------------------------------
 (defn quantiles
-  "Return a vector of the quantiles of the doubles in <code>zs</code>, or the 
-   doubles resulting from mapping <code>z</code> over <code>data</code>.
-   Return quantiles corresponding to the <code>ps</code> which must be 
-   numbers between 0.0 and 1.0 (both ends inclusive)."
+  "Return a vector of the quantiles of the doubles in 
+   <code>zs</code>, or the doubles resulting from mapping 
+   <code>z</code> over <code>data</code>. 
+   Return quantiles corresponding to the <code>ps</code>, which 
+   must be numbers between 0.0 and 1.0 (both ends inclusive)."
   ([zs ps]
     (let [^doubles zs (into-array Double/TYPE zs)
           ds (DescriptiveStatistics. zs)]
@@ -492,18 +541,18 @@
           (recur (+ sum (aget zs i)) (inc i))
           sum))))
   
-  (^double [^clojure.lang.IFn z ^Iterable data]
+  (^double [^IFn z ^Iterable data]
     (cond 
-      (instance? clojure.lang.IFn$OD z)
-      (let [^clojure.lang.IFn$OD z z
+      (instance? IFn$OD z)
+      (let [^IFn$OD z z
             it (g/iterator data)]
         (loop [sum (double 0.0)]
           (if (.hasNext it) 
             (recur (+ sum (.invokePrim z (.next it))))
             sum)))
       
-      (instance? clojure.lang.IFn$OL z)
-      (let [^clojure.lang.IFn$OL z z
+      (instance? IFn$OL z)
+      (let [^IFn$OL z z
             it (g/iterator data)]
         (loop [sum (long 0)]
           (if (.hasNext it) 
@@ -521,13 +570,13 @@
   "Compute the mean of the elements of an array, or of the 
    values of a function mapped over a data set."
   (^double [^doubles zs] (/ (sum zs) (alength zs)))
-  (^double [^clojure.lang.IFn z ^Iterable data]
+  (^double [^IFn z ^Iterable data]
     (/ (sum z data) (g/count data))))
 ;;----------------------------------------------------------------
 ;; TODO: Kahan summation
 (defn l1-norm 
-  "Compute the sum of absolute value of the elements of an array, or of the 
-   values of a function mapped over a data set."
+  "Compute the sum of absolute value of the elements of an array, 
+   or of the values of a function mapped over a data set."
   (^double [^doubles zs]
     (let [n (alength zs)]
       (loop [sum 0.0
@@ -535,7 +584,7 @@
         (if (< i n) 
           (recur (+ sum (Math/abs (aget zs i))) (inc i))
           sum))))
-  (^double [^clojure.lang.IFn$OD z ^Iterable data]
+  (^double [^IFn$OD z ^Iterable data]
     (let [it (g/iterator data)]
       (loop [sum 0.0]
         (if (.hasNext it) 
@@ -544,8 +593,8 @@
 ;;----------------------------------------------------------------
 ;; TODO: Kahan summation
 (defn l1-distance 
-  "Compute the sum of absolute differences between 2 arrays, or between the 
-   values of 2 functions mapped over a data set."
+  "Compute the sum of absolute differences between 2 arrays, or 
+   between the values of 2 functions mapped over a data set."
   (^double [^doubles z0 ^doubles z1]
     (let [n (alength z0)]
       (assert (== n (alength z1)))
@@ -555,27 +604,124 @@
           (recur (+ sum (Math/abs (- (aget z0 i) (aget z1 i)))) 
                  (inc i))
           sum))))
-  ;  (^double [^clojure.lang.IFn$OD z0 ^clojure.lang.IFn$OD z1 ^Iterable data]
+  ;  (^double [^IFn$OD z0 ^IFn$OD z1 ^Iterable data]
   ;    (let [it (g/iterator data)]
   ;      (loop [sum 0.0]
   ;        (if (.hasNext it) 
   ;          (let [datum (.next it)]
-  ;            (recur (+ sum (Math/abs (- (.invokePrim z0 datum)
-  ;                                       (.invokePrim z1 datum))))))
+  ;            (recur (+ sum (Math/abs 
+  ;                            (- (.invokePrim z0 datum)
+  ;                               (.invokePrim z1 datum))))))
   ;          sum)))))
-  (^double [^clojure.lang.IFn$OD z0 ^clojure.lang.IFn$OD z1 ^Iterable data]
+  (^double [^IFn$OD z0 ^IFn$OD z1 ^Iterable data]
     (let [absolute-residual (fn absolute-residual ^double [datum]
                               (Math/abs (- (.invokePrim z0 datum)
                                            (.invokePrim z1 datum))))]
       (l1-norm (g/pmap-doubles absolute-residual data)))))
 ;;----------------------------------------------------------------
 (defn mean-absolute-difference
-  "Compute the mean absolute difference between the elements of 2 arrays, or 
-   between the values of 2 functions mapped over a data set."
+  "Compute the mean absolute difference between the elements of 2 
+   arrays, or between the values of 2 functions mapped over a data 
+   set."
   (^double [^doubles z0 ^doubles z1]
     (/ (l1-distance z0 z1) (alength z0)))
-  (^double [^clojure.lang.IFn$OD z0 ^clojure.lang.IFn$OD z1 ^Iterable data]
+  (^double [^IFn$OD z0 ^IFn$OD z1 ^Iterable data]
     (/ (l1-distance z0 z1 data) (g/count data))))
+;;----------------------------------------------------------------
+(defn qr-cost
+  
+  "Compute the sum of usual quantile regression costs:
+   <code>(if (<= 0 dz) (* p dz) (* (- p 1) dz))</code>,
+   where <code>dz == (- z0 z1)</code>."
+  
+  (^double [^double p 
+            ^doubles z0 
+            ^doubles z1]
+    (let [n (alength z0)
+          p- (- p 1.0)]
+      (assert (== n (alength z1)))
+      (loop [sum 0.0
+             i 0]
+        (if (< i n) 
+          (let [dz (- (aget z0 i) (aget z1 i))
+                ds (if (<= 0.0 dz) (* p dz) (* p- dz))]
+            (recur (+ sum ds) (inc i)))
+          (* 2.0 sum)))))
+  
+  (^double [^double p
+            ^IFn$OD z0 
+            ^IFn$OD z1 
+            ^Iterable data]
+    (let [p- (- p 1.0)
+          it (.iterator data)]
+      (loop [sum 0.0]
+        (if (.hasNext it)
+          (let [datum (.next it)
+                dz (- (.invokePrim z0 datum)
+                      (.invokePrim z1 datum))
+                ds (if (<= 0.0 dz) (* p dz) (* p- dz))]
+            (recur (+ sum ds)))
+          (* 2.0 sum))))))
+;;----------------------------------------------------------------
+(defn mean-qr-cost
+  
+  "Compute the mean of usual quantile regression costs:
+   <code>(if (<= 0 dz) (* p dz) (* (- p 1) dz))</code>,
+   where <code>dz == (- z0 z1)</code>."
+  
+  (^double [^double p ^doubles z0 ^doubles z1]
+    (/ (qr-cost p z0 z1) (alength z0)))
+  (^double [^double p ^IFn$OD z0 ^IFn$OD z1 ^Iterable data]
+    (/ (qr-cost p z0 z1 data) (g/count data))))
+;;----------------------------------------------------------------
+(defn rq-cost
+  
+  "Compute the sum of a better (?) scaling of the usual quantile 
+   regression costs: 
+   <code>(if (<= 0 dz) (/ dz (- 1.0 p)) (/ (- dz) p))</code>,
+   where <code>dz == (- z0 z1)</code>."
+  
+  (^double [^double p 
+            ^doubles z0 
+            ^doubles z1]
+    (let [n (alength z0)
+          p- (- p)
+          p+ (- 1.0 p)]
+      (assert (== n (alength z1)))
+      (loop [sum 0.0
+             i 0]
+        (if (< i n) 
+          (let [dz (- (aget z0 i) (aget z1 i))
+                ds (if (<= 0.0 dz) (/ dz p+) (/ dz p-))]
+            (recur (+ sum ds) (inc i)))
+          (* 0.5 sum)))))
+  
+  (^double [^double p
+            ^IFn$OD z0 
+            ^IFn$OD z1 
+            ^Iterable data]
+    (let [p- (- p)
+          p+ (- 1.0 p)
+          it (.iterator data)]
+      (loop [sum 0.0]
+        (if (.hasNext it)
+          (let [datum (.next it)
+                dz (- (.invokePrim z0 datum)
+                      (.invokePrim z1 datum))
+                ds (if (<= 0.0 dz) (/ dz p+) (/ dz p-))]
+            (recur (+ sum ds)))
+          (* 0.5 sum))))))
+;;----------------------------------------------------------------
+(defn mean-rq-cost
+  
+  "Compute the mean of alternate quantile regression costs:
+   <code>(if (<= 0 dz) (/ dz (- 1 p)) (/ (- dz) p)</code>,
+   where <code>dz == (- z0 z1)</code>."
+  
+  (^double [^double p ^doubles z0 ^doubles z1]
+    (/ (rq-cost p z0 z1) (alength z0)))
+  (^double [^double p ^IFn$OD z0 ^IFn$OD z1 ^Iterable data]
+    (/ (rq-cost p z0 z1 data) (g/count data))))
 ;;----------------------------------------------------------------
 ;; TODO: more accurate summation
 (defn l2-norm 
@@ -589,7 +735,7 @@
           (let [zi (aget zs i)]
             (recur (+ sum (* zi zi)) (inc i)))
           sum))))
-  (^double [^clojure.lang.IFn$OD z ^Iterable data]
+  (^double [^IFn$OD z ^Iterable data]
     (let [it (g/iterator data)]
       (loop [sum 0.0]
         (if (.hasNext it) 
@@ -610,7 +756,7 @@
           (let [dz (- (aget z0 i) (aget z1 i))]
             (recur (+ sum (* dz dz)) (inc i)))
           sum))))
-  (^double [^clojure.lang.IFn$OD z0 ^clojure.lang.IFn$OD z1 ^Iterable data]
+  (^double [^IFn$OD z0 ^IFn$OD z1 ^Iterable data]
     (let [n (g/count data)
           it (g/iterator data)]
       (loop [sum 0.0]
@@ -624,6 +770,6 @@
   "Return the square root of the [[l2-distance]]."
   (^double [^doubles z0 ^doubles z1]
     (Math/sqrt (/ (l2-distance z0 z1) (alength z0))))
-  (^double [^clojure.lang.IFn$OD z0 ^clojure.lang.IFn$OD z1 ^Iterable data]
+  (^double [^IFn$OD z0 ^IFn$OD z1 ^Iterable data]
     (Math/sqrt (/ (l2-distance z0 z1 data) (g/count data)))))
 ;;----------------------------------------------------------------

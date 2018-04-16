@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-16"
+      :date "2018-04-16"
       :doc 
       "Tests for [[zana.optimization.math3.lp]]." }
     
@@ -53,288 +53,288 @@
                  :objective objective
                  :constraints constraints}
         [^doubles x ^double y] (z/optimize-lp options)
-        epsilon (double 1.0e-6)]
+        ulps (double 1.0)]
     (println (into [] x) y)
-    (test/is (z/approximately== epsilon 1.0 y))
+    (test/is (z/approximately== ulps 1.0 y))
     (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+      (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 (test/deftest math-842-cycle-linear
-  (let [objective (z/linear-functional [10.0 -57.0 -9.0 -24.0])
-        constraints [[(z/linear-functional [0.5 -5.5 -2.5 9.0])
-                      <=]
-                     [(z/linear-functional [0.5 -1.5 -0.5 1.0])
-                      <=]
-                     [(z/affine-functional [1.0 0.0 0.0 0.0] -1.0)
-                      <=]]
-        options {:minimize? false
-                 :nonnegative? true
-                 :pivot-selection-rule :bland
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)
-        epsilon (double 1.0e-6)]
-    (println (into [] x) y)
-    (test/is (z/approximately== epsilon 1.0 y))
-    (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+ (let [objective (z/linear-functional [10.0 -57.0 -9.0 -24.0])
+       constraints [[(z/linear-functional [0.5 -5.5 -2.5 9.0])
+                     <=]
+                    [(z/linear-functional [0.5 -1.5 -0.5 1.0])
+                     <=]
+                    [(z/affine-functional [1.0 0.0 0.0 0.0] -1.0)
+                     <=]]
+       options {:minimize? false
+                :nonnegative? true
+                :pivot-selection-rule :bland
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)
+       ulps (double 1.0)]
+   (println (into [] x) y)
+   (test/is (z/approximately== ulps 1.0 y))
+   (doseq [constraint constraints]
+     (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 (test/deftest math-828
-  (let [objective (z/linear-functional 
-                    [1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
-                     0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0])
-        constraints [[(z/affine-functional
-                        [ 0.0 39.0 23.0 96.0 15.0 48.0  9.0 21.0 
-                         48.0 36.0 76.0 19.0 88.0 17.0 16.0 36.0]
-                        -15.0)
-                      >=]
-                     [(z/affine-functional
-                        [ 0.0  59.0  93.0  12.0  29.0  78.0 
-                         73.0  87.0  32.0  70.0  68.0  24.0 
-                         11.0  26.0  65.0  25.0]
-                        -29.0)
-                      >=]
-                     [(z/affine-functional
-                        [ 0.0  74.0   5.0  82.0   6.0  97.0 
-                         55.0  44.0  52.0  54.0   5.0  93.0  
-                         91.0   8.0  20.0  97.0]
-                        -6.0)
-                      >=]
-                     [(z/linear-functional 
-                        [  8.0  -3.0 -28.0 -72.0  -8.0 -31.0  
-                         -31.0 -74.0 -47.0 -59.0 -24.0 -57.0  
-                         -56.0 -16.0 -92.0 -59.0])
-                      >=]
-                     [(z/linear-functional 
-                        [ 25.0  -7.0 -99.0 -78.0 -25.0 -14.0  
-                         -16.0 -89.0 -39.0 -56.0 -53.0  -9.0 
-                         -18.0 -26.0 -11.0 -61.0])
-                      >=]
-                     [(z/linear-functional 
-                        [ 33.0 -95.0 -15.0  -4.0 -33.0  -3.0  
-                         -20.0 -96.0 -27.0 -13.0 -80.0 -24.0 
-                         -3.0 -13.0 -57.0 -76.0])
-                      >=]
-                     [(z/linear-functional 
-                        [  7.0 -95.0 -39.0 -93.0  -7.0 -94.0 
-                         -94.0 -62.0 -76.0 -26.0 -53.0 -57.0 
-                         -31.0 -76.0 -53.0 -52.0])
-                      >=]]
-        options {:max-iterations 100
-                 :minimize? true
-                 :nonnegative? true
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)
-        epsilon (double 1.0e-6)]
-    (println (into [] x) y)
-    (test/is (z/approximately== epsilon 1.0 y))
-    (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+ (let [objective (z/linear-functional 
+                   [1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
+                    0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0])
+       constraints [[(z/affine-functional
+                       [ 0.0 39.0 23.0 96.0 15.0 48.0  9.0 21.0 
+                        48.0 36.0 76.0 19.0 88.0 17.0 16.0 36.0]
+                       -15.0)
+                     >=]
+                    [(z/affine-functional
+                       [ 0.0  59.0  93.0  12.0  29.0  78.0 
+                        73.0  87.0  32.0  70.0  68.0  24.0 
+                        11.0  26.0  65.0  25.0]
+                       -29.0)
+                     >=]
+                    [(z/affine-functional
+                       [ 0.0  74.0   5.0  82.0   6.0  97.0 
+                        55.0  44.0  52.0  54.0   5.0  93.0  
+                        91.0   8.0  20.0  97.0]
+                       -6.0)
+                     >=]
+                    [(z/linear-functional 
+                       [  8.0  -3.0 -28.0 -72.0  -8.0 -31.0  
+                        -31.0 -74.0 -47.0 -59.0 -24.0 -57.0  
+                        -56.0 -16.0 -92.0 -59.0])
+                     >=]
+                    [(z/linear-functional 
+                       [ 25.0  -7.0 -99.0 -78.0 -25.0 -14.0  
+                        -16.0 -89.0 -39.0 -56.0 -53.0  -9.0 
+                        -18.0 -26.0 -11.0 -61.0])
+                     >=]
+                    [(z/linear-functional 
+                       [ 33.0 -95.0 -15.0  -4.0 -33.0  -3.0  
+                        -20.0 -96.0 -27.0 -13.0 -80.0 -24.0 
+                        -3.0 -13.0 -57.0 -76.0])
+                     >=]
+                    [(z/linear-functional 
+                       [  7.0 -95.0 -39.0 -93.0  -7.0 -94.0 
+                        -94.0 -62.0 -76.0 -26.0 -53.0 -57.0 
+                        -31.0 -76.0 -53.0 -52.0])
+                     >=]]
+       options {:max-iterations 100
+                :minimize? true
+                :nonnegative? true
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)
+       ulps (double 1.0)]
+   (println (into [] x) y)
+   (test/is (z/approximately== ulps 1.0 y))
+   (doseq [constraint constraints]
+     (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 (test/deftest math-828-cycle
-  (let [objective (z/linear-functional 
-                    [1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
-                     0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
-                     0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0])
-        constraints [[(z/affine-functional
-                        [0.0 16.0 14.0 69.0 1.0 85.0 52.0 43.0 
-                         64.0 97.0 14.0 74.0 89.0 28.0 94.0 58.0 
-                         13.0 22.0 21.0 17.0 30.0 25.0 1.0 59.0 
-                         91.0 78.0 12.0 74.0 56.0 3.0 88.0] 
-                        -91.0)
-                      >=]
-                     [(z/affine-functional
-                        [0.0 60.0 40.0 81.0 71.0 72.0 46.0 45.0 
-                         38.0 48.0 40.0 17.0 33.0 85.0 64.0 32.0 
-                         84.0 3.0 54.0 44.0 71.0 67.0 90.0 95.0 
-                         54.0 99.0 99.0 29.0 52.0 98.0 9.0] 
-                        -54.0)
-                      >=]
-                     [(z/affine-functional
-                        [0.0 41.0 12.0 86.0 90.0 61.0 31.0 41.0 
-                         23.0 89.0 17.0 74.0 44.0 27.0 16.0 47.0 
-                         80.0 32.0 11.0 56.0 68.0 82.0 11.0 62.0 
-                         62.0 53.0 39.0 16.0 48.0 1.0 63.0] 
-                        -62.0)
-                      >=]
-                     [(z/linear-functional
-                        [83.0 -76.0 -94.0 -19.0 -15.0 -70.0 -72.0
-                         -57.0 -63.0 -65.0 -22.0 -94.0 -22.0 -88.0
-                         -86.0 -89.0 -72.0 -16.0 -80.0 -49.0 -70.0 
-                         -93.0 -95.0 -17.0 -83.0 -97.0 -31.0 -47.0
-                         -31.0 -13.0 -23.0])
-                      >=];
-                     [(z/linear-functional
-                        [41.0 -96.0 -41.0 -48.0 -70.0 -43.0 -43.0 
-                         -43.0 -97.0 -37.0 -85.0 -70.0 -45.0 -67.0
-                         -87.0 -69.0 -94.0 -54.0 -54.0 -92.0 -79.0
-                         -10.0 -35.0 -20.0 -41.0 -41.0 -65.0 -25.0
-                         -12.0 -8.0 -46.0])
-                      >=]
-                     [(z/linear-functional
-                        [27.0 -42.0 -65.0 -49.0 -53.0 -42.0 -17.0 
-                         -2.0 -61.0 -31.0 -76.0 -47.0 -8.0 -93.0 
-                         -86.0 -62.0 -65.0 -63.0 -22.0 -43.0 -27.0 
-                         -23.0 -32.0 -74.0 -27.0 -63.0 -47.0 -78.0
-                         -29.0 -95.0 -73.0])
-                      >=]
-                     [(z/linear-functional
-                        [15.0 -46.0 -41.0 -83.0 -98.0 -99.0 -21.0
-                         -35.0 -7.0 -14.0 -80.0 -63.0 -18.0 -42.0 
-                         -5.0 -34.0 -56.0 -70.0 -16.0 -18.0 -74.0
-                         -61.0 -47.0 -41.0 -15.0 -79.0 -18.0 -47.0 
-                         -88.0 -68.0 -55.0])
-                      >=]]
-        options {:max-iterations 100
-                 :minimize? true
-                 :nonnegative? true
-                 :pivot-selection-rule :bland
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)
-        epsilon (double 1.0e-6)]
-    (println (into [] x) y)
-    (test/is (z/approximately== epsilon 1.0 y))
-    (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+ (let [objective (z/linear-functional 
+                   [1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
+                    0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
+                    0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0])
+       constraints [[(z/affine-functional
+                       [0.0 16.0 14.0 69.0 1.0 85.0 52.0 43.0 
+                        64.0 97.0 14.0 74.0 89.0 28.0 94.0 58.0 
+                        13.0 22.0 21.0 17.0 30.0 25.0 1.0 59.0 
+                        91.0 78.0 12.0 74.0 56.0 3.0 88.0] 
+                       -91.0)
+                     >=]
+                    [(z/affine-functional
+                       [0.0 60.0 40.0 81.0 71.0 72.0 46.0 45.0 
+                        38.0 48.0 40.0 17.0 33.0 85.0 64.0 32.0 
+                        84.0 3.0 54.0 44.0 71.0 67.0 90.0 95.0 
+                        54.0 99.0 99.0 29.0 52.0 98.0 9.0] 
+                       -54.0)
+                     >=]
+                    [(z/affine-functional
+                       [0.0 41.0 12.0 86.0 90.0 61.0 31.0 41.0 
+                        23.0 89.0 17.0 74.0 44.0 27.0 16.0 47.0 
+                        80.0 32.0 11.0 56.0 68.0 82.0 11.0 62.0 
+                        62.0 53.0 39.0 16.0 48.0 1.0 63.0] 
+                       -62.0)
+                     >=]
+                    [(z/linear-functional
+                       [83.0 -76.0 -94.0 -19.0 -15.0 -70.0 -72.0
+                        -57.0 -63.0 -65.0 -22.0 -94.0 -22.0 -88.0
+                        -86.0 -89.0 -72.0 -16.0 -80.0 -49.0 -70.0 
+                        -93.0 -95.0 -17.0 -83.0 -97.0 -31.0 -47.0
+                        -31.0 -13.0 -23.0])
+                     >=];
+                    [(z/linear-functional
+                       [41.0 -96.0 -41.0 -48.0 -70.0 -43.0 -43.0 
+                        -43.0 -97.0 -37.0 -85.0 -70.0 -45.0 -67.0
+                        -87.0 -69.0 -94.0 -54.0 -54.0 -92.0 -79.0
+                        -10.0 -35.0 -20.0 -41.0 -41.0 -65.0 -25.0
+                        -12.0 -8.0 -46.0])
+                     >=]
+                    [(z/linear-functional
+                       [27.0 -42.0 -65.0 -49.0 -53.0 -42.0 -17.0 
+                        -2.0 -61.0 -31.0 -76.0 -47.0 -8.0 -93.0 
+                        -86.0 -62.0 -65.0 -63.0 -22.0 -43.0 -27.0 
+                        -23.0 -32.0 -74.0 -27.0 -63.0 -47.0 -78.0
+                        -29.0 -95.0 -73.0])
+                     >=]
+                    [(z/linear-functional
+                       [15.0 -46.0 -41.0 -83.0 -98.0 -99.0 -21.0
+                        -35.0 -7.0 -14.0 -80.0 -63.0 -18.0 -42.0 
+                        -5.0 -34.0 -56.0 -70.0 -16.0 -18.0 -74.0
+                        -61.0 -47.0 -41.0 -15.0 -79.0 -18.0 -47.0 
+                        -88.0 -68.0 -55.0])
+                     >=]]
+       options {:max-iterations 100
+                :minimize? true
+                :nonnegative? true
+                :pivot-selection-rule :bland
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)
+       ulps (double 1.0)]
+   (println (into [] x) y)
+   (test/is (z/approximately== ulps 1.0 y))
+   (doseq [constraint constraints]
+     (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 (test/deftest math-781
-  (let [objective (z/linear-functional [2.0 6.0 7.0])
-        constraints [[(z/affine-functional [1 2 1] -2) <=]
-                     [(z/affine-functional [-1 1 1] 1) <=]
-                     [(z/affine-functional [2 -3 1] 1) <=]]
-        options {:max-iterations 100
-                 :minimize? false
-                 :nonnegative? false
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)
-        epsilon (double 1.0e-6)]
-    (println (into [] x) y)
-    (test/is (z/approximately== epsilon 2.0 y))
-    (test/is (z/approximately<= epsilon 0.0 (aget x 0)))
-    (test/is (z/approximately<= epsilon 0.0 (aget x 1)))
-    (test/is (z/approximately>= epsilon 0.0 (aget x 1)))
-    (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+ (let [objective (z/linear-functional [2.0 6.0 7.0])
+       constraints [[(z/affine-functional [1 2 1] -2) <=]
+                    [(z/affine-functional [-1 1 1] 1) <=]
+                    [(z/affine-functional [2 -3 1] 1) <=]]
+       options {:max-iterations 100
+                :minimize? false
+                :nonnegative? false
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)
+       ulps (double 1.0)]
+   (println (into [] x) y)
+   (test/is (z/approximately== (* 2 ulps) 2.0 y))
+   (test/is (z/approximately<= ulps 1.0909090909090913 (aget x 0)))
+   (test/is (z/approximately<= ulps 0.8181818181818182 (aget x 1)))
+   (test/is (z/approximately>= ulps -0.7272727272727272 (aget x 2)))
+   (doseq [constraint constraints]
+     (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 (test/deftest math-713-negative-variable
-  (let [objective (z/linear-functional [1.0 1.0])
-        constraints [[(z/affine-functional [1 0] -1) ==]]
-        options {:max-iterations 100
-                 :minimize? true
-                 :nonnegative? true
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)
-        epsilon (double 1.0e-6)]
-    (println (into [] x) y)
-    (test/is (z/approximately== epsilon 1.0 y))
-    (test/is (z/approximately<= epsilon 0.0 (aget x 0)))
-    (test/is (z/approximately<= epsilon 0.0 (aget x 1)))
-    (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+ (let [objective (z/linear-functional [1.0 1.0])
+       constraints [[(z/affine-functional [1 0] -1) ==]]
+       options {:max-iterations 100
+                :minimize? true
+                :nonnegative? true
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)
+       ulps (double 1.0)]
+   (println (into [] x) y)
+   (test/is (z/approximately== ulps 1.0 y))
+   (test/is (z/approximately<= ulps 0.0 (aget x 0)))
+   (test/is (z/approximately<= ulps 0.0 (aget x 1)))
+   (doseq [constraint constraints]
+     (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 (test/deftest math-434-negative-variable
-  (let [objective (z/linear-functional [0 0 1])
-        constraints [[(z/affine-functional [1 1 0] -5) ==]
-                     [(z/affine-functional [0 0 1] 10) >=]]
-        options {:max-iterations 100
-                 :minimize? true
-                 :nonnegative? false
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)
-        epsilon (double 1.0e-6)]
-    (println (into [] x) y)
-    (test/is (z/approximately== epsilon -10.0 y))
-    (test/is (z/approximately== 
-               epsilon 5.0 (+ (aget x 0) (aget x 1))))
-    (test/is (z/approximately== epsilon -10.0 (aget x 2)))
-    (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+ (let [objective (z/linear-functional [0 0 1])
+       constraints [[(z/affine-functional [1 1 0] -5) ==]
+                    [(z/affine-functional [0 0 1] 10) >=]]
+       options {:max-iterations 100
+                :minimize? true
+                :nonnegative? false
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)
+       ulps (double 1.0)]
+   (println (into [] x) y)
+   (test/is (z/approximately== ulps -10.0 y))
+   (test/is (z/approximately== 
+              ulps 5.0 (+ (aget x 0) (aget x 1))))
+   (test/is (z/approximately== ulps -10.0 (aget x 2)))
+   (doseq [constraint constraints]
+     (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 (test/deftest math-434-unfeasible-solution
-  (let [epsilon (double 1.0e-6)
-        objective (z/linear-functional [1 0])
-        constraints [[(z/linear-functional [(/ epsilon 2.0) 0.5])
-                      ==]
-                     [(z/affine-functional [1.0e-3 0.1] -10) ==]]
-        options {:max-iterations 100
-                 :minimize? true
-                 :nonnegative? true
-                 :objective objective
-                 :constraints constraints}]
-    (test/is 
-      (thrown? NoFeasibleSolutionException
-               (z/optimize-lp options)))))
+(let [ulps (double 1.0e-6)
+      objective (z/linear-functional [1 0])
+      constraints [[(z/linear-functional [(/ ulps 2.0) 0.5])
+                    ==]
+                   [(z/affine-functional [1.0e-3 0.1] -10) ==]]
+      options {:max-iterations 100
+               :minimize? true
+               :nonnegative? true
+               :objective objective
+               :constraints constraints}]
+  (test/is 
+    (thrown? NoFeasibleSolutionException
+             (z/optimize-lp options)))))
 ;;----------------------------------------------------------------
 (test/deftest math-434-pivot-row-selection
-  (let [epsilon (double 1.0e-6)
-        objective (z/linear-functional [1])
-        constraints [[(z/affine-functional [200] -1) 
-                      >=]
-                     [(z/affine-functional [100] -0.499900001) 
-                      >=]]
-        options {:max-iterations 100
-                 :minimize? true
-                 :nonnegative? false
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)]
-    (println (into [] x) y)
-    (test/is (z/approximately== epsilon 0.0050 y))
-    (test/is 
-      (z/approximately<= epsilon 1.0 (* 200 (aget x 0))))))
+ (let [ulps (double 1.0)
+       objective (z/linear-functional [1])
+       constraints [[(z/affine-functional [200] -1) 
+                     >=]
+                    [(z/affine-functional [100] -0.499900001) 
+                     >=]]
+       options {:max-iterations 100
+                :minimize? true
+                :nonnegative? false
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)]
+   (println (into [] x) y)
+   (test/is (z/approximately== ulps 0.0050 y))
+   (test/is 
+     (z/approximately<= ulps 1.0 (* 200 (aget x 0))))))
 ;;----------------------------------------------------------------
 (test/deftest math-434-pivot-row-selection-2
-  (let [epsilon (double 1.0e-7)
-        objective (z/linear-functional [0 1 1 0 0 0 0])
-        constraints 
-        [[(z/affine-functional [1 -0.1 0 0 0 0 0] 0.1) ==]
-         [(z/affine-functional [1 0 0 0 0 0 0] 1.0e-18) >=]
-         [(z/linear-functional [0 1 0 0 0 0 0]) >=]
-         [(z/linear-functional [0 0 0 1 0 -0.0128588 1.0e-5]) ==]
-         [(z/affine-functional
-            [0 0 0 0 1 1.0e-5 -0.0128586] 1.0e-10) ==]
-         [(z/linear-functional [0 0 1 -1  0 0 0]) >=]
-         [(z/linear-functional [0 0 1  1  0 0 0]) >=]
-         [(z/linear-functional [0 0 1  0 -1 0 0]) >=]
-         [(z/linear-functional [0 0 1  0  1 0 0]) >=]]
-        options {:max-iterations 100
-                 :minimize? true
-                 :nonnegative? false
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)]
-    (println (into [] x) y)
-    (test/is (z/approximately>= epsilon -1.0e-18 (aget x 0)))
-    (test/is (z/approximately== epsilon 1.0 (aget x 1)))
-    (test/is (z/approximately== epsilon 0.0 (aget x 2)))
-    (test/is (z/approximately== epsilon 1.0 y))
-    (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+ (let [ulps (double 1.0)
+       objective (z/linear-functional [0 1 1 0 0 0 0])
+       constraints 
+       [[(z/affine-functional [1 -0.1 0 0 0 0 0] 0.1) ==]
+        [(z/affine-functional [1 0 0 0 0 0 0] 1.0e-18) >=]
+        [(z/linear-functional [0 1 0 0 0 0 0]) >=]
+        [(z/linear-functional [0 0 0 1 0 -0.0128588 1.0e-5]) ==]
+        [(z/affine-functional
+           [0 0 0 0 1 1.0e-5 -0.0128586] 1.0e-10) ==]
+        [(z/linear-functional [0 0 1 -1  0 0 0]) >=]
+        [(z/linear-functional [0 0 1  1  0 0 0]) >=]
+        [(z/linear-functional [0 0 1  0 -1 0 0]) >=]
+        [(z/linear-functional [0 0 1  0  1 0 0]) >=]]
+       options {:max-iterations 100
+                :minimize? true
+                :nonnegative? false
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)]
+   (println (into [] x) y)
+   (test/is (z/approximately>= ulps -1.0e-18 (aget x 0)))
+   (test/is (z/approximately== ulps 1.0 (aget x 1)))
+   (test/is (z/approximately== ulps 0.0 (aget x 2)))
+   (test/is (z/approximately== ulps 1.0 y))
+   (doseq [constraint constraints]
+     (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 (test/deftest math-272
-  (let [epsilon (double 1.0e-7)
-        objective (z/linear-functional [2 2 1])
-        constraints [[(z/affine-functional [1 1 0] -1) >=]
-                     [(z/affine-functional [1 0 1] -1) >=]
-                     [(z/affine-functional [0 1 0] -1) >=]]
-        options {:max-iterations 100
-                 :minimize? true
-                 :nonnegative? true
-                 :objective objective
-                 :constraints constraints}
-        [^doubles x ^double y] (z/optimize-lp options)]
-    (println (into [] x) y)
-    (test/is (z/approximately>= epsilon 0.0 (aget x 0)))
-    (test/is (z/approximately== epsilon 1.0 (aget x 1)))
-    (test/is (z/approximately== epsilon 1.0 (aget x 2)))
-    (test/is (z/approximately== epsilon 3.0 y))
-    (doseq [constraint constraints]
-      (test/is (approximatelySatisfies epsilon constraint x)))))
+ (let [ulps (double 1.0)
+       objective (z/linear-functional [2 2 1])
+       constraints [[(z/affine-functional [1 1 0] -1) >=]
+                    [(z/affine-functional [1 0 1] -1) >=]
+                    [(z/affine-functional [0 1 0] -1) >=]]
+       options {:max-iterations 100
+                :minimize? true
+                :nonnegative? true
+                :objective objective
+                :constraints constraints}
+       [^doubles x ^double y] (z/optimize-lp options)]
+   (println (into [] x) y)
+   (test/is (z/approximately>= ulps 0.0 (aget x 0)))
+   (test/is (z/approximately== ulps 1.0 (aget x 1)))
+   (test/is (z/approximately== ulps 1.0 (aget x 2)))
+   (test/is (z/approximately== ulps 3.0 y))
+   (doseq [constraint constraints]
+     (test/is (approximatelySatisfies ulps constraint x)))))
 ;;----------------------------------------------------------------
 ;    @Test
 ;    public void testMath272() {

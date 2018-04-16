@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-04-06"
+      :date "2018-04-16"
       :doc "Primary external interface to Zana, providing a subset
             of the functions found in other <code>zana.xxx</code> 
             namespaces, created using 
@@ -337,9 +337,14 @@
                 stats/bounds
                 stats/constantly-0d
                 stats/constantly-1d
+                stats/doubles-approximately==
                 stats/l1-norm
                 stats/l1-distance
+                stats/lists-approximately==
+                stats/maps-approximately==
                 stats/mean-absolute-difference
+                stats/mean-qr-cost
+                stats/mean-rq-cost
                 stats/l2-norm
                 stats/l2-distance
                 stats/max
@@ -347,6 +352,8 @@
                 stats/minmax
                 stats/rms-difference
                 stats/numerical?
+                stats/qr-cost
+                stats/rq-cost
                 stats/quantiles
                 stats/singular?
                 stats/sum
