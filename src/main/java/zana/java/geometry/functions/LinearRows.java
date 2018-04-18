@@ -45,6 +45,7 @@ public final class LinearRows extends Function {
      
     int i = 0;
     for (final double[] row : _rows) {
+      assert n == row.length;
       y[i] = zana.java.arrays.Arrays.dot(row,xx); 
       i++; }
     return y; }

@@ -12,7 +12,7 @@ import clojure.lang.ISeq;
 /** Base class for functions from and to geometric spaces.
  *
  * @author wahpenayo at gmail dot com
- * @version 2018-04-14
+ * @version 2018-04-17
  */
 
 @SuppressWarnings("unchecked")
@@ -196,7 +196,6 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
    ** current point.
    **/
 
-  @SuppressWarnings("unused")
   public final boolean checkGradient (final double[] p,
                                       final PrintWriter out) {
     final int n = p.length;
@@ -242,7 +241,7 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
           + String.format(" %#13.6e",Double.valueOf(fstep[i]))
           + String.format(" %#13.6e",Double.valueOf(bi))
           + "\n";
-        System.out.println(w); }
+        out.println(w); }
 
       final double diff = gi - ci;
       final double absdiff = Math.abs(diff);
@@ -267,58 +266,52 @@ implements IFn, IFn.DD, IFn.OD, Serializable {
 
     final double gnorm = zana.java.arrays.Arrays.l2norm(ag);
     final double cnorm = zana.java.arrays.Arrays.l2norm(cg);
-    final double cosine = (EPSILON < gnorm*cnorm)
-      ? zana.java.arrays.Arrays.dot(ag,cg) / (gnorm*cnorm)
-        : 1.0;
-      final double angle = (1.0 > cosine)
-        ? Math.acos(cosine)*180/Math.PI
-          : 0.0;
-        //final double dcnorm = Math.abs(gnorm-cnorm);
-        //final double rdcnorm = dcnorm/(1.0+gnorm+cnorm);
+    final double cosine = (EPSILON < gnorm*cnorm) ? zana.java.arrays.Arrays.dot(ag,cg) / (gnorm*cnorm) : 1.0;
+    final double angle = (1.0 > cosine) ? Math.acos(cosine)*180/Math.PI : 0.0;
 
-        m.append("  i");
-        m.append(String.format(" %13s","position"));
-        m.append(String.format(" %13s","step*10^6"));
-        m.append(String.format(" %13s","analytic"));
-        m.append(String.format(" %13s","central"));
-        m.append(String.format(" %13s","forward"));
-        m.append(String.format(" %13s","backward"));
-        m.append(String.format(" %13s","ratio"));
-        m.append(String.format(" %13s","absolute"));
-        m.append(String.format(" %13s","reference"));
-        m.append("\n");
-        m.append("\n");
-        m.append(String.format(" %#13.6e",Double.valueOf(val)));
-        m.append(" value"); m.append("\n");
-        m.append(String.format(" %#13.6e",Double.valueOf(accuracy())));
-        m.append(" estimated accuracy");
-        m.append("\n");
-        m.append(String.format(" %#13.6e",Double.valueOf(cosine)));
-        m.append(" cosine of error angle");
-        m.append("\n");
-        m.append(String.format(" %#13.6e",Double.valueOf(angle)));
-        m.append(" error angle degrees");
-        m.append("\n");
-        m.append(toString());
-        m.append("\n");
+    m.append("  i");
+    m.append(String.format(" %13s","position"));
+    m.append(String.format(" %13s","step*10^6"));
+    m.append(String.format(" %13s","analytic"));
+    m.append(String.format(" %13s","central"));
+    m.append(String.format(" %13s","forward"));
+    m.append(String.format(" %13s","backward"));
+    m.append(String.format(" %13s","ratio"));
+    m.append(String.format(" %13s","absolute"));
+    m.append(String.format(" %13s","reference"));
+    m.append("\n");
+    m.append("\n");
+    m.append(String.format(" %#13.6e",Double.valueOf(val)));
+    m.append(" value"); m.append("\n");
+    m.append(String.format(" %#13.6e",Double.valueOf(accuracy())));
+    m.append(" estimated accuracy");
+    m.append("\n");
+    m.append(String.format(" %#13.6e",Double.valueOf(cosine)));
+    m.append(" cosine of error angle");
+    m.append("\n");
+    m.append(String.format(" %#13.6e",Double.valueOf(angle)));
+    m.append(" error angle degrees");
+    m.append("\n");
+    m.append(toString());
+    m.append("\n");
 
-        final String msg = close_enough
-          ? this + " gradient ok"
-            + "\n" + m.toString()
-            : this + " gradient failed"
-            + "\n" + m.toString();
-        if (close_enough) {
-          System.out.println(msg); }
-        else {
-          System.out.println(msg); 
-          //throw new IllegalStateException(msg); 
-          }
+    final String msg = close_enough
+      ? this + " gradient ok"
+      + "\n" + m.toString()
+      : this + " gradient failed"
+      + "\n" + m.toString();
+      if (close_enough) {
+        out.println(msg); }
+      else {
+        out.println(msg); 
+        throw new IllegalStateException(msg); }
 
-        return close_enough; }
+      return close_enough; }
 
   public final boolean checkGradient (final double[] p,
                                       final OutputStream out) {
-   return checkGradient(p,new PrintWriter(out)); }
+    return checkGradient(p,new PrintWriter(out)); }
+
   //--------------------------------------------------------------
 
   /** If the {@link #codomain() codomain} of this function is

@@ -184,7 +184,7 @@
         _(assert (:start options)
                  "No :start point in options.")
         start (double-array (:start options))
-        _(println :start (Arrays/toString start))
+        #_(println :start (Arrays/toString start))
         maxeval (MaxEval. (int (:max-evaluations options)))
         maxiter (MaxIter. (int (:max-iterations options)))
         ^"[Lorg.apache.commons.math3.optim.OptimizationData;"
@@ -199,7 +199,7 @@
                                maxeval
                                maxiter]))
         point-value (.optimize solver opt)]
-    (println :iterations (.getIterations solver))
-    (println :evaluations (.getEvaluations solver))
+    #_(println :iterations (.getIterations solver))
+    #_(println :evaluations (.getEvaluations solver))
     [(.getPoint point-value) (.getValue point-value)]))
 ;;----------------------------------------------------------------
