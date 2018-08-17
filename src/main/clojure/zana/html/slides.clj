@@ -1,6 +1,7 @@
-(set! *warn-on-reflection* true)
-(set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-08-31"
+(set! *warn-on-reflection* false)
+(ns ^{:author ["wahpenayo at gmail dot com"
+               "John Alan McDonald"] 
+      :date "2018-08-17"
       :doc "A slide show based on
             http://tympanus.net/codrops/2011/09/20/responsive-image-gallery/" }
     
@@ -8,6 +9,8 @@
   
   (:require [clojure.java.io :as io]
             [hiccup.page :as hiccup]))
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* :warn-on-boxed)
 ;;------------------------------------------------------------------------------
 (defn- thumb-path [dirname ^java.io.File f]
   (str dirname "/thumbs/" (.getName f)))
