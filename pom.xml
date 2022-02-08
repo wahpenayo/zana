@@ -9,11 +9,11 @@
  <artifactId>zana</artifactId>
  <description>Clojure utilities: higher performance (usually eager) versions of 
   standard Clojure functionality, espcially for primitive data.</description>
- <version>4.1.0-SNAPSHOT</version>
+ <version>4.1.1-SNAPSHOT</version>
  <parent>
   <groupId>wahpenayo</groupId>
   <artifactId>wahpenayo-parent</artifactId>
-  <version>4.1.0-SNAPSHOT</version>
+  <version>4.1.1-SNAPSHOT</version>
  </parent>
  <build>
   <plugins>
