@@ -5,7 +5,7 @@
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 >
  <modelVersion>4.0.0</modelVersion>
- <groupId>wahpenayo</groupId>
+ <!-- groupId>wahpenayo</groupId -->
  <artifactId>zana</artifactId>
  <description>Clojure utilities: higher performance (usually eager) versions of 
   standard Clojure functionality, espcially for primitive data.</description>
@@ -46,7 +46,7 @@
      </execution>
     </executions>
     <configuration>
-     <vmArgs>${clojure.vmargs}</vmArgs>
+     <vmargs>${clojure.vmargs}</vmargs>
      <clojureOptions>${clojure.options}</clojureOptions>
      <namespaces>
       <namespace>!zana.test.*</namespace>
