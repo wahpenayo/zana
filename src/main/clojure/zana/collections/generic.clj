@@ -1235,7 +1235,7 @@
   (if (clojure.core/empty? collections)
     s0
     (let [s (java.util.HashSet. s0)]
-      (doseq [^jav.util.Collection c collections] (.addAll s c))
+      (doseq [^java.util.Collection c collections] (.addAll s c))
       (Collections/unmodifiableSet s))))
 
 (prefer-method concat java.util.Set Iterable)
