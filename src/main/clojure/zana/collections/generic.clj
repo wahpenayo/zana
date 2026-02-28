@@ -1122,7 +1122,7 @@
 (defn pmap
   
   "Eager version of <code>clojure.core/pmap</code> that uses as 
-   any threads as there are 
+   many threads as there are
    <a href=\"https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#availableProcessors--\">
    available processors."
   

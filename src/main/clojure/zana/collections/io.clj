@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "John Alan McDonald" :date "2016-08-31"
-      :doc "Iteraable/Iterator wrappers for io" }
+      :doc "Iterable/Iterator wrappers for io" }
 
     zana.collections.io
   

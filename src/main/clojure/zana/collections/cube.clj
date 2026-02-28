@@ -1,6 +1,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2016-07-12"
+(ns ^{:author "John Alan McDonald"
+      :date "2026-02-28"
       :doc "Something like a data cube" }
     
     zana.collections.cube
