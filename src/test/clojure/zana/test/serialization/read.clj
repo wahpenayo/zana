@@ -1,10 +1,11 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "John Alan McDonald" :date "2015-11-25"
+(ns ^{:author "John Alan McDonald"
+      :date "2026-11-20"
       :doc "Function serialization experiments." }
-    
+
     zana.test.serialization.read
-  
+
   (:require [clojure.java.io :as io]
             [clojure.test :as test]
             [zana.api :as z]))
@@ -12,7 +13,7 @@
 (def file (io/file "tst" "fun.bin.gz"))
 (defn f ^double [^double x] (* x x))
 (let [y 3] (defn g ^double [^double x] (* x y)))
-(def fgs [(fn gf ^double [^double x] (g (f x))) 
+(def fgs [(fn gf ^double [^double x] (g (f x)))
           (fn fg ^double [^double x] (f (g x)))])
 ;;------------------------------------------------------------------------------
 (defn wrap-test [test]
