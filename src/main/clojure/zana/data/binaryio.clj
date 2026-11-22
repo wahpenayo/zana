@@ -1,23 +1,24 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "John Alan McDonald" :date "2016-09-16"
-      :doc "Data definition macro utilities." }
-    
-    zana.data.binaryio
-  
-  (:require [clojure.string :as s]
-            [clojure.pprint :as pp]
-            [zana.commons.core :as cc]
-            [zana.io.gz :as gz]
-            [zana.collections.generic :as g]
-            [zana.data.reflect :as r]))
-;;------------------------------------------------------------------------------
-;; Binary Output
-;;------------------------------------------------------------------------------
-;; TODO: DateTime, etc., support
-;; TODO: customize thru field-spec
-;; TODO: define writeObject methods for datum classes, instead of write-binary
-;; function.
+      :doc "Data definition macro utilities." } zana.data.binaryio
+
+    (:require [clojure.string :as s]
+     [clojure.pprint :as pp]
+     [zana.commons.core :as cc]
+     [zana.io.gz :as gz]
+     [zana.collections.generic :as g]
+     [zana.data.reflect :as r])
+    (:import
+     [com.google.common.collect ImmutableList]
+     [java.io EOFException]))
+    ;;------------------------------------------------------------------------------
+    ;; Binary Output
+    ;;------------------------------------------------------------------------------
+    ;; TODO: DateTime, etc., support
+    ;; TODO: customize thru field-spec
+    ;; TODO: define writeObject methods for datum classes, instead of write-binary
+    ;; function.
 
 (defn- binary-field-writer [field r o]
   (let [hint (:tag (meta field))
@@ -58,28 +59,28 @@
   (let [c (str (r/munge classname))
         r (with-meta (gensym "r") {:tag (r/munge classname)})
         o (with-meta (gensym "o") {:tag 'java.io.ObjectOutput})]
-    `(defn ~'write-binary 
+    `(defn ~'write-binary
        ~(str "Write the <code>^" classname " " r
              "</code> to <code>^java.io.ObjectOutput " o
              "</code> so that it can later be read with [[read-binary]].")
        [~o ~r]
        ;; classname first, to handle empty datum edge case, and safety
-       (.writeUTF ~o ~c) 
+       (.writeUTF ~o ~c)
        ~@(mapv #(binary-field-writer % r o) fields))))
 ;;------------------------------------------------------------------------------
 ;; Note: writing individual records to the file, rather than the collection.
-;; This mean the binary file reader has to catch EOFException to determine the 
-;; end of the input. 
+;; This mean the binary file reader has to catch EOFException to determine the
+;; end of the input.
 (defn binary-file-writer [classname]
   (let [r (with-meta (gensym "r") {:tag (r/munge classname)})
         rs (with-meta (gensym "rs") {:tag 'Iterable})
         o (with-meta (gensym "o") {:tag 'java.io.ObjectOutput})
         f (with-meta (gensym "f") {:tag 'java.io.File})]
     `((require '[zana.api])
-       (defn ~'write-binary-file 
-         ~(str "Write the instances of <code>" classname 
-               "</code> in <code>^Iterable " rs 
-               "</code> to the file <code>" f 
+       (defn ~'write-binary-file
+         ~(str "Write the instances of <code>" classname
+               "</code> in <code>^Iterable " rs
+               "</code> to the file <code>" f
                "</code> using [[write-binary]], so that the file"
                " can later be read with [[read-binary-file]].")
          [~rs ~f]
@@ -113,10 +114,10 @@
       ;; TODO: y,m,d,h,s as int,byte,byte,byte,byte?
       ;; java.time.LocalDate `(~a (java.time.LocalDate/parse (.readUTF ~i)))
       ;; java.time.LocalDateTime `(~a (java.time.LocalDateTime/parse (.readUTF ~i)))
-      ;; else 
+      ;; else
       (if (r/datum-class? c)
         ;; datum classes currently have identity semantics, so we can't de-dupe instances
-        `(~(r/qualified-symbol c "read-binary") ~i ~a) 
+        `(~(r/qualified-symbol c "read-binary") ~i ~a)
         `(~a (.readObject ~i ))))))
 ;;------------------------------------------------------------------------------
 ;; TODO: this should be a local fn inside binary-file-reader...
@@ -129,13 +130,13 @@
         eof (gensym "eof")]
     ;; EOF is the only way to detect end of input when we write individual
     ;; objects to the output stream.
-    ;; Alternatives are to write a Collection, or to adopt a convention where 
+    ;; Alternatives are to write a Collection, or to adopt a convention where
     ;; the number of instances is the first thing in the file.
-    `(defn ~'read-binary 
-       ~(str "Read an instance of <code>" classname 
-             "</code> from the <code>^java.io.ObjectInput " i 
+    `(defn ~'read-binary
+       ~(str "Read an instance of <code>" classname
+             "</code> from the <code>^java.io.ObjectInput " i
              "</code>, assuming it was written with [[write-binary]]."
-             " Call the archetyper function <code>" a 
+             " Call the archetyper function <code>" a
              "</code> to de-dupe (like <code>String/intern</code>"
              " any <code>Object</code> valued fields.")
        ~(with-meta `[~i ~a] {:tag (r/munge classname)})
@@ -145,7 +146,7 @@
            (assert (= ~c ~mc) (pr-str ~c ~mc))
            (~(r/constructor classname)
              ~@(mapv #(binary-field-reader % i a) fields)))
-         (catch java.io.EOFException ~eof nil)))))
+         (catch EOFException ~eof nil)))))
 ;;------------------------------------------------------------------------------
 (defn binary-file-reader [classname]
   (let [i (with-meta (gensym "i") {:tag 'java.io.ObjectInput})
@@ -155,16 +156,16 @@
         b (with-meta (gensym "b") {:tag 'com.google.common.collect.ImmutableList$Builder})
         r (with-meta (gensym "r") {:tag (r/munge classname)})]
     `((require '[zana.api])
-       (defn ~'read-binary-file 
-         ~(str "Read a list of instances of <code>" classname 
-               "</code> from the <code>^java.io.File " f 
+       (defn ~'read-binary-file
+         ~(str "Read a list of instances of <code>" classname
+               "</code> from the <code>^java.io.File " f
                "</code>, assuming it was written with [[write-binary-file]]."
                " Creates an object input stream and an archetyper function"
                " to pass to [[read-binary]].")
          ~args
          (let
            [~a (zana.api/archetyper)
-            ~b (com.google.common.collect.ImmutableList/builder)]
+            ~b (ImmutableList/builder)]
            (with-open [~i (zana.api/object-input-stream ~f)]
              (loop []
                (when-let

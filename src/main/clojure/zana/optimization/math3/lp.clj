@@ -1,25 +1,25 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
-(ns ^{:author "wahpenayo at gmail dot com" 
-      :date "2018-02-27"
-      :doc 
-      "Pose linear programming problems using 
+(ns ^{:author "wahpenayo at gmail dot com"
+      :date "2026-11-21"
+      :doc
+      "Pose linear programming problems using
        `AffineFunctional` and solve them with the
        commons math3 `SimplexSolver`." }
-    
+
     zana.optimization.math3.lp
-  
+
   (:require [zana.commons.core :as zcc]
             [zana.collections.generic :as zgc]
             [zana.geometry.functions :as zgf])
-  
+
   (:import [java.util Collection]
            [org.apache.commons.math3.optim
-            InitialGuess MaxEval MaxIter OptimizationData 
+            InitialGuess MaxEval MaxIter OptimizationData
             PointValuePair SimpleBounds]
            [org.apache.commons.math3.optim.linear
             LinearConstraint LinearConstraintSet
-            LinearObjectiveFunction NonNegativeConstraint 
+            LinearObjectiveFunction NonNegativeConstraint
             PivotSelectionRule Relationship SimplexSolver]
            [org.apache.commons.math3.optim.nonlinear.scalar
             GoalType]
@@ -44,9 +44,9 @@
 ;;----------------------------------------------------------------
 ;; TODO: accept symbols/keywords regardless of namespace?
 
-(defn- relationship 
-  
-  "Coerces `r` to one of the values of the 
+(defn- relationship
+
+  "Coerces `r` to one of the values of the
   `org.apache.commons.math3.optim.linear.Relationship` enum.
    `r` may a `Relationship`, function, var, or string
    like `==`, `<=`, `>=`, which translate to `Relationship/EQ`,
@@ -54,55 +54,55 @@
 
    The intent here is to accept any unambiguous specification
    of the numerical (in)equality."
-  
+
   ^Relationship [r]
-  (cond 
+  (cond
     (instance? Relationship r)
     r
-    
+
     (or (= clojure.core/== r)
         (= clojure.core/= r)
         (= #'clojure.core/== r)
         (= #'clojure.core/= r)
         (= "==" r)
         (= "=" r))
-    Relationship/EQ 
-    
+    Relationship/EQ
+
     (or (= clojure.core/<= r)
         (= #'clojure.core/<= r)
         (= "<=" r))
-    Relationship/LEQ 
-    
+    Relationship/LEQ
+
     (or (= clojure.core/>= r)
         (= #'clojure.core/>= r)
         (= ">=" r))
-    Relationship/GEQ 
-    
+    Relationship/GEQ
+
     :else
-    (throw 
+    (throw
       (IllegalArgumentException.
-        (print-str 
+        (print-str
           "Can't coerce to a Relationship:" r)))))
 ;;----------------------------------------------------------------
 ;; TODO: generic function/multimethod?
 ;; TODOL: accept double[] args as well as functionals?
 
-(defn- linearConstraint 
-  
-  "This constructs an instance of 
+(defn- linearConstraint
+
+  "This constructs an instance of
   `org.apache.commons.math3.optim.linear.LinearConstraint`.
-  That commons math3 class actually represents *affine* 
+  That commons math3 class actually represents *affine*
   constraints, meaning it restricts parameter values to a affine
   hyperplanes or half spaces in <b>R</b><sup>n</sup>.
   (A true linear constraint could only specify hyperplanes or
   halfspaces passing thru the origin.)
   <dl>
   <dt><code>f</code></dt>
-  <dd>An <code>AffineFunctional</code> 
+  <dd>An <code>AffineFunctional</code>
   or <code>LinearFunctional</code>.
   <dt><code>r</code>
-  <dd>Usually <code><=</code>, <code>==</code>, or 
-  <code>>=</code>, or something that can be translated 
+  <dd>Usually <code><=</code>, <code>==</code>, or
+  <code>>=</code>, or something that can be translated
   unambiguously, like <code>\"==\"</code>.
   </dl>
   `(linearConstraint f r)` is equivalent to the predicate
@@ -110,35 +110,35 @@
   `f(x) <r> 0.0`, where <r> is <=, =, or >=.
 
   <b>Note:</b> Commons math3 expressing constraints as
-  `(relationship ((linear-functional coefficients) x) value)`, 
-  which here is expressed as 
-  `(relationship ((affine-functional coefficients (- value)) x) 
+  `(relationship ((linear-functional coefficients) x) value)`,
+  which here is expressed as
+  `(relationship ((affine-functional coefficients (- value)) x)
     0.0)` Pay attention to the change in the sign of `value`
    when translating code back and forth."
-  
+
   ^LinearConstraint [[f r]]
-  
-  (cond 
+
+  (cond
     (instance? AffineFunctional f)
     (let [lhs (zgf/dual (zgf/linear-part f))
           rhs (- (zgf/translation f))]
       (LinearConstraint. lhs (relationship r) rhs))
-    
+
     (instance? LinearFunctional f)
     (LinearConstraint. (zgf/dual f) (relationship r) 0.0)
-    
+
     :else
-    (throw 
+    (throw
       (IllegalArgumentException.
-        (print-str 
-          "Can't construct a LinearConstraint from:" 
+        (print-str
+          "Can't construct a LinearConstraint from:"
           f "and" r)))))
 ;;----------------------------------------------------------------
 (defn- linearConstraintSet ^LinearConstraintSet [constraints]
-  (LinearConstraintSet. 
+  (LinearConstraintSet.
     ^Collection (mapv linearConstraint constraints)))
 ;;----------------------------------------------------------------
-;; TODO: if we had the dim could return 
+;; TODO: if we had the dim could return
 ;; (SimpleBounds/unbounded dim)
 
 (defn- simpleBounds ^SimpleBounds [bounds]
@@ -152,24 +152,24 @@
 
 (defn- linearObjectiveFunction
   ^LinearObjectiveFunction [f]
-  (cond 
+  (cond
     (instance? AffineFunctional f)
     (LinearObjectiveFunction. (zgf/dual (zgf/linear-part f))
                               (zgf/translation f))
-    
+
     (instance? LinearFunctional f)
-    (LinearObjectiveFunction. (zgf/dual f) 
+    (LinearObjectiveFunction. (zgf/dual f)
                               0.0)
-    
+
     :else
-    (throw 
+    (throw
       (IllegalArgumentException.
-        (print-str 
+        (print-str
           "can't construct a LinearObjectFunction from:" f)))))
 ;;----------------------------------------------------------------
 (defn- pivotSelectionRule [pivot-selection-rule]
-  (case 
-    :dantzig PivotSelectionRule/Dantzig
+  (case
+    :dantzig PivotSelectionRule/DANTZIG
     :bland PivotSelectionRule/BLAND))
 ;;----------------------------------------------------------------
 ;; TODO: look into spec
@@ -178,31 +178,31 @@
   some exception when one is invalid."
   [options]
   (assert (zgf/flat-functional? (:objective options))
-          (print-str "Not a valid :objective" 
+          (print-str "Not a valid :objective"
                      (:objective options)))
-  
+
   (let [dim (zgf/domain-dimension (:objective options))]
     (when-let [constraints (:constraints options)]
-      (zgc/mapc 
-        (fn check-constraint [c] 
+      (zgc/mapc
+        (fn check-constraint [c]
           (assert (== 2 (count c))
-                  (print-str 
+                  (print-str
                     "not a valid constraint spec:" c))
           (let [[f r] c]
             (assert (== dim (zgf/domain-dimension f))
-                    (print-str "domains don't match:" 
-                               f (:objective options))) 
+                    (print-str "domains don't match:"
+                               f (:objective options)))
             (assert (and (zgf/flat-functional? f)
                          (instance? Relationship (relationship r)))
-                    (print-str 
+                    (print-str
                       "Not a valid constraint spec:" f r))))
         constraints))
-    
+
     (when-let [bounds (:bounds options)]
       ;; TODO: arrays as an option?
       (assert (== dim (count bounds))
               (print-str "Need" dim "bounds" bounds))
-      (zgc/mapc 
+      (zgc/mapc
         (fn [b]
           (assert (== 2 (count b))
                   (print-str "not a valid bound:" b))
@@ -210,50 +210,50 @@
             (assert (and (number? l) (number? u) (<= l u))
                     (print-str "not valid bounds:" l u))))
         bounds))
-    
+
     (when-let [start (:start options)]
       (assert (and (zcc/double-array? start)
-                   
+
                    (== dim (alength (doubles start))))
-              (print-str 
+              (print-str
                 "Not an element of the objective domain:" start))))
   (assert (< 0 (int (:max-evaluations options)))
-          (print-str 
-            :max-evaluations "must be a positive integer:" 
+          (print-str
+            :max-evaluations "must be a positive integer:"
             (:max-evaluations options)))
   (assert (< 0 (int (:max-iterations options)))
-          (print-str 
-            :max-iterations "must be a positive integer:" 
+          (print-str
+            :max-iterations "must be a positive integer:"
             (int (:max-iterations options))))
   (assert (< 0.0 (double (:convergence-tolerance options)))
           (print-str
-            :convergence-tolerance "must be a positive dSouble:" 
+            :convergence-tolerance "must be a positive dSouble:"
             (double (:convergence-tolerance options))))
   (assert (< 0.0 (double (:==delta options)))
           (print-str
-            :==delta "must be a positive double:" 
+            :==delta "must be a positive double:"
             (double (:==delta options))))
   (assert (< 0.0 (double (:pivot-cutoff options)))
           (print-str
-            :pivot-cutoff "must be a positive double:" 
+            :pivot-cutoff "must be a positive double:"
             (double (:pivot-cutoff options))))
   (assert (boolean? (:nonnegative? options))
           (print-str "invalid" :nonnegative?
                      (:nonnegative? options)))
   (assert (#{:dantzig :bland} (:pivot-selection-rule options))
-          (print-str  :pivot-selection-rule "invalid" 
+          (print-str  :pivot-selection-rule "invalid"
                       (:pivot-selection-rule options))))
 ;;----------------------------------------------------------------
 ;; TODO: generic function/multimethod?
 
 (defn optimize
-  
+
   "Solve a linear program specified via `options`.
-   Returns `[x y]` where ``x` is the optimal location in the 
+   Returns `[x y]` where ``x` is the optimal location in the
    domain and `y` is the optimal value of the objective."
-  
+
   [options]
-  
+
   (let [options (merge defaults options)
         _ (check options)
         solver (SimplexSolver.
@@ -262,27 +262,27 @@
                  (double (:pivot-cutoff options)))
         objective (linearObjectiveFunction (:objective options))
         constraints (linearConstraintSet (:constraints options))
-        nonnegative (NonNegativeConstraint. 
+        nonnegative (NonNegativeConstraint.
                       (boolean (:nonnegative? options)))
         goaltype (if (:minimize? options)
                    GoalType/MINIMIZE
                    GoalType/MAXIMIZE)
-        start (when (:start options) 
-                (InitialGuess. (:start options))) 
+        start (when (:start options)
+                (InitialGuess. (:start options)))
         bounds (simpleBounds (:bounds options))
         maxeval (MaxEval. (int (:max-evaluations options)))
         maxiter (MaxIter. (int (:max-iterations options)))
-        pivot-selection-rule (pivotSelectionRule 
+        pivot-selection-rule (pivotSelectionRule
                                (:pivot-selection-rule options))
         ^"[Lorg.apache.commons.math3.optim.OptimizationData;"
-        opt (into-array OptimizationData 
-                        (keep identity  
-                              [objective 
-                               constraints 
+        opt (into-array OptimizationData
+                        (keep identity
+                              [objective
+                               constraints
                                nonnegative
                                pivot-selection-rule
-                               goaltype 
-                               start bounds 
+                               goaltype
+                               start bounds
                                maxeval maxiter]))
         point-value (.optimize solver opt)]
     ;; TODO: return the affine dual of the solution?

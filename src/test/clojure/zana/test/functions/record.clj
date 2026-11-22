@@ -2,16 +2,17 @@
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "John Alan McDonald" :date "2016-11-10"
       :doc "Artificial data for unit tests." }
-    
+
     zana.test.functions.record
-  
+
   (:require [clojure.string :as s]
             [clojure.test :as test]
             [clojure.repl :as repl]
             [zana.api :as z]
             [zana.test.functions.kolor :as kolor]
             [zana.test.functions.primate :as primate])
-  (:import [zana.test.java Kolor]))
+    (:import [clojure.lang IFn$D]
+     [zana.test.java Kolor]))
 ;; mvn -Dtest=zana.test.functions.record clojure:test
 ;;------------------------------------------------------------------------------
 (z/define-datum Record
@@ -28,7 +29,7 @@
    ^double predicted-probability
    ^double predicted-class])
 ;;------------------------------------------------------------------------------
-(def attributes {:x0 x0 :x1 x1 :x2 x2 :x3 x3 :x4 x4 :x5 x5 
+(def attributes {:x0 x0 :x1 x1 :x2 x2 :x3 x3 :x4 x4 :x5 x5
                  :kolor kolor :primate primate
                  :ground-truth true-class
                  :prediction predicted-class})
@@ -55,9 +56,9 @@
         l1 0.0
         w1 1.0]
     (fn pyramid ^double [^Record datum]
-      (let [u0 (/ (- (x0 datum) l0) w0)
+      (let [u0 (double (/ (- (x0 datum) l0) w0))
             _(assert (<= 0.0 u0 1.0))
-            u1 (/ (- (x1 datum) l1) w1)
+            u1 (double (/ (- (x1 datum) l1) w1))
             _(assert (<= 0.0 u1 1.0))
             u (* 0.5 (+ (Math/min u0 (- 1.0 u0))
                         (Math/min u1 (- 1.0 u1))))
@@ -83,7 +84,7 @@
           r (Math/sqrt (+ (* v0 v0) (* v1 v1)))
           a 0.3
           a-r (Math/max 0.0 (- a r))
-          p (* bias (/ (* a-r a-r) (* a a)))] 
+          p (* bias (/ (* a-r a-r) (* a a)))]
       (assert (<= 0.0 p 1.0))
       p)))
 ;;------------------------------------------------------------------------------
@@ -113,9 +114,9 @@
 (def ^:private seed8 "BD504A2D507F96F63889FFA3A1EBBAC6")
 ;;------------------------------------------------------------------------------
 (defn generator [^clojure.lang.IFn$OD prob]
-  
-  (let [^clojure.lang.IFn$D generate-x0 (z/continuous-uniform-generator seed0)
-        ^clojure.lang.IFn$D generate-x1 (z/continuous-uniform-generator seed1)
+
+  (let [^IFn$D generate-x0 (z/continuous-uniform-generator seed0)
+        ^IFn$D generate-x1 (z/continuous-uniform-generator seed1)
         ;;^clojure.lang.IFn$D generate-x2 (z/continuous-uniform-generator seed2)
         ;;^clojure.lang.IFn$D generate-x3 (z/continuous-uniform-generator seed3)
         ;;^clojure.lang.IFn$D generate-x4 (z/continuous-uniform-generator seed4)
@@ -123,7 +124,7 @@
         generate-kolor (kolor/generator seed6)
         generate-primate (primate/generator seed7)
         generate-01 (z/bernoulli-generator seed8)]
-    
+
     (fn random-record ^Record [_]
       (let [x0 (.invokePrim generate-x0)
             x1 (.invokePrim generate-x1)
@@ -133,7 +134,7 @@
             x5 (- x0 x1) ;;(.invokePrim generate-x5)
             kolor (generate-kolor)
             primate (generate-primate)
-            datum (Record. x0 x1 x2 x3 x4 x5 kolor primate 
+            datum (Record. x0 x1 x2 x3 x4 x5 kolor primate
                            Double/NaN Double/NaN Double/NaN Double/NaN)
             p (prob datum)
             _(assert (<= 0.0 p 1.0))
@@ -158,10 +159,10 @@
   (prn a)
   (prn (class codomain) codomain)
   (prn tf)
-  tf))  
+  tf))
 ;;------------------------------------------------------------------------------
 (test/deftest enum-codomain
- (enum-valued? x0) 
- (enum-valued? kolor) 
+ (enum-valued? x0)
+ (enum-valued? kolor)
  (enum-valued? primate)
  )

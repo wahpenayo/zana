@@ -1,33 +1,32 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (ns ^{:author "John Alan McDonald" :date "2017-10-21"
-      :doc "Text input." }
-    
-    zana.data.textin
-  
-  (:require [clojure.string :as s]
-            [clojure.pprint :as pp]
-            [zana.commons.core :as cc]
-            [zana.io.gz :as gz]
-            [zana.collections.generic :as g]
-            [zana.data.reflect :as r]))
-;;------------------------------------------------------------------------------
-;; Text Input
-;;------------------------------------------------------------------------------
-;; TODO: output format isn't the same as input format...
-;; TODO: put public functions in data.api
-;;------------------------------------------------------------------------------
+      :doc "Text input." } zana.data.textin
+
+    (:require
+     [clojure.pprint :as pp]
+     [clojure.string]
+     [zana.data.reflect :as r])
+    (:import
+     [com.google.common.base Splitter]
+     [java.util Collection]))
+    ;;------------------------------------------------------------------------------
+    ;; Text Input
+    ;;------------------------------------------------------------------------------
+    ;; TODO: output format isn't the same as input format...
+    ;; TODO: put public functions in data.api
+    ;;------------------------------------------------------------------------------
 (defn- child-header-key [^clojure.lang.Symbol field]
   (let [c (r/type field)]
-    (when (r/datum-class? c) 
+    (when (r/datum-class? c)
       [(keyword
-         (clojure.string/replace 
+         (clojure.string/replace
            (clojure.string/lower-case (str field)) "_" "-"))
        (r/qualified-symbol c "default-header-key")])))
 ;;------------------------------------------------------------------------------
-;; Return a definition for a function that converts a sequence of header String 
+;; Return a definition for a function that converts a sequence of header String
 ;; tokens into a sequence of keys. The key for a non-Datum (non-recursive) field
-;; is a Keyword. The key for a Datum field is a sequence of Keywords 
+;; is a Keyword. The key for a Datum field is a sequence of Keywords
 ;; corresponding to the field names of the nested fields.
 
 (defn emit-default-header-key [fields]
@@ -42,16 +41,16 @@
     `(let []
        (require '[clojure.string])
        ~(if-not (empty? child-keys)
-          `(let 
+          `(let
              [;; Assuming field names are lower case and have "-" not "_".
               ~standardize (fn ~'standardize ~(with-meta [arg] {:tag 'String})
                              (.replaceAll
-                               (.replaceAll 
-                                 ^String (clojure.string/lower-case ~token) 
+                               (.replaceAll
+                                 ^String (clojure.string/lower-case ~token)
                                  "[^\\-\\w]+" "")
                                "[\\s_]+" "-"))
               ]
-             (defn ~(with-meta 'default-header-key {:no-doc true}) 
+             (defn ~(with-meta 'default-header-key {:no-doc true})
                [~arg]
                (let [~token (~standardize ~token)
                      [~prefix ~suffix] (clojure.string/split ~token #"\-" 2)
@@ -60,24 +59,24 @@
                  (if ~child-key
                    (flatten (cons ~k [(~child-key ~suffix)]))
                    ~k))))
-          `(defn ~(with-meta 'default-header-key {:no-doc true}) 
+          `(defn ~(with-meta 'default-header-key {:no-doc true})
              [~arg]
-             (keyword 
+             (keyword
                (.replaceAll
-                 (.replaceAll 
-                   ^String (clojure.string/lower-case ~token) 
+                 (.replaceAll
+                   ^String (clojure.string/lower-case ~token)
                    "[^\\-\\w]+" "")
                  "[\\s_]+" "-")))))))
 ;;------------------------------------------------------------------------------
-;; return a function that takes a sequence of token strings and returns a tuple 
+;; return a function that takes a sequence of token strings and returns a tuple
 ;; tree. A tuple is a hashmap where the keys are keyword versions of the datum's
-;; field names. Most values are Strings, When the field type is a descendent of 
+;; field names. Most values are Strings, When the field type is a descendent of
 ;; Datum, the value is a tuple tree for that field's Datum.
 ;; Note: this is equivalent to zipmap in the simple case.
 
 (defn tuple-tree [^Iterable header ^Iterable tokens]
   #_(assert (== (count header)(count tokens))
-            (with-out-str 
+            (with-out-str
               (println (count header) (count tokens))
               (pp/pprint header)
               (println)
@@ -90,7 +89,7 @@
       ;; creating an empty extra token.
       ;; This ignores any mismatch between header and data token count, using the
       ;; shorter of the 2 (like zipmap).
-      (if-not (and (.hasNext ih) (.hasNext it)) 
+      (if-not (and (.hasNext ih) (.hasNext it))
         m
         (let [k (.next ih)
               v (.next it)
@@ -104,7 +103,7 @@
   (let [hint (:tag (meta field))
         c (r/type field)
         k (keyword field)
-        value (gensym "value") 
+        value (gensym "value")
         tuple (gensym "tuple")
         arg (with-meta tuple {:tag 'java.util.Map})
         archetype (gensym "archetype")]
@@ -112,7 +111,7 @@
       `(fn ~'parse-datum ~(with-meta `[~arg ~archetype] {:tag c})
          (let [^String ~value (~k ~tuple)]
            (when ~value
-             (~(r/qualified-symbol c "parse-tuple") 
+             (~(r/qualified-symbol c "parse-tuple")
                ~value ~archetype))))
       (case hint
         ;; map empty Strings, "nil", etc, to nil == missing
@@ -121,7 +120,7 @@
                   (let [~(with-meta value {:tag 'String}) (~k ~tuple)]
                     (when ~value
                       (case (.toLowerCase ~value)
-                        ("" "nil" "null") nil 
+                        ("" "nil" "null") nil
                         (~archetype ~value)))))
         ;; missing not possible for boolean, char, byte, short, int, and long
         boolean `(fn ~'parse-boolean ~(with-meta `[~arg ~archetype] {:tag 'Boolean})
@@ -129,8 +128,8 @@
                      (if ~value (Boolean/parseBoolean ~value) false)))
         char `(fn ~'parse-char ~(with-meta `[~arg ~archetype] {:tag 'Character})
                 (let [^String ~value (~k ~tuple)]
-                  (when ~value 
-                    (assert (== 1 (count ~value)) (pr-str ~value)) 
+                  (when ~value
+                    (assert (== 1 (count ~value)) (pr-str ~value))
                     (first ~value))))
         byte `(fn ~'parse-byte ~(with-meta `[~arg ~archetype] {:tag long})
                 (let [^String ~value (~k ~tuple)]
@@ -147,22 +146,22 @@
         ;; missing == NaN, map "NaN" and empty strings to NaN
         float `(fn ~'parse-float ~(with-meta `[~arg ~archetype] {:tag double})
                  (let [^String ~value (~k ~tuple)]
-                   (double (if-not (empty? ~value) 
-                             (Float/parseFloat ~value) 
+                   (double (if-not (empty? ~value)
+                             (Float/parseFloat ~value)
                              Float/NaN))))
         double `(fn ~'parse-double ~(with-meta `[~arg ~archetype] {:tag double})
                   (let [^String ~value (~k ~tuple)]
-                    (if-not (empty? ~value) 
-                      (Double/parseDouble ~value) 
+                    (if-not (empty? ~value)
+                      (Double/parseDouble ~value)
                       Double/NaN)))
-        java.time.LocalDate `(fn ~'parse-local-date 
+        java.time.LocalDate `(fn ~'parse-local-date
                                ~(with-meta `[~arg ~archetype] {:tag java.time.LocalDate})
                                (let [^String ~value (~k ~tuple)]
                                  (when-not (empty? ~value)
-                                   (~archetype 
+                                   (~archetype
                                      (java.time.LocalDate/parse ~value)))))
         java.time.LocalDateTime `(fn ~'parse-local-date-time
-                                   ~(with-meta `[~arg ~archetype] 
+                                   ~(with-meta `[~arg ~archetype]
                                       {:tag java.time.LocalDateTime})
                                    (let [^String ~value (~k ~tuple)]
                                      (when-not (empty? ~value)
@@ -189,14 +188,14 @@
         throwable (gensym "throwable")
         tuple (gensym "tuple")
         archetype (gensym "archetype")]
-    `(defn ~'parse-tuple 
-       ~(print-str 
-          "Constructs an instance of" 
+    `(defn ~'parse-tuple
+       ~(print-str
+          "Constructs an instance of"
           classname
           "from a tuple-tree, a nested map whose keys are keyword versions"
           "of the fields, where the nesting following the nesting of"
           "of datum-valued fields,")
-       ~(with-meta `[~(with-meta tuple 
+       ~(with-meta `[~(with-meta tuple
                         {:tag 'java.util.Map})
                      ~archetype]
           {:tag (r/munge classname)})
@@ -222,10 +221,10 @@
 
 (defn tsv-file-reader [classname field-specs]
   (let [;; TODO: generalize File arg
-        f (gensym "f") 
-        sep (gensym "sep")  
-        n (gensym "n") 
-        hk (gensym "hk") 
+        f (gensym "f")
+        sep (gensym "sep")
+        n (gensym "n")
+        hk (gensym "hk")
         r (gensym "r")
         lines (gensym "lines")
         splitter (with-meta (gensym "splitter")
@@ -241,9 +240,9 @@
     `((require '[clojure.string] '[zana.api])
        ~(emit-default-header-key fields)
        ~(tuple-parser classname field-specs)
-       (defn ~(with-meta 'read-tsv-file {:deprecated "2016-09-06"}) 
-         ~(str "Read instances of <code>" classname 
-               "</code> from the file <code>" f 
+       (defn ~(with-meta 'read-tsv-file {:deprecated "2016-09-06"})
+         ~(str "Read instances of <code>" classname
+               "</code> from the file <code>" f
                "</code>, assuming the field values separated by <code>" sep
                "</code> (which defaults to <code>\"\\t\"</code>.<br>"
                "This implements a complicated and restrictive strategy for "
@@ -252,8 +251,8 @@
          (~(with-meta `[~f ;; File, URL, etc.
                         ~(with-meta sep {:tag 'java.util.regex.Pattern})
                         ~(with-meta hk {:tag 'clojure.lang.IFn})
-                        ~(with-meta n {:tag Long/TYPE})] 
-             {:tag java.util.Collection})
+                        ~(with-meta n {:tag Long/TYPE})]
+             {:tag Collection})
            (with-open [~r (zana.api/reader ~f)]
              (let [~archetype (zana.api/archetyper)
                    ~lines (line-seq ~r)
@@ -268,7 +267,7 @@
 ;                                  (pp/pprint ~tuple)
 ;                                  (.printStackTrace t#)
 ;                                  (throw t#)))))
-                   ~splitter (com.google.common.base.Splitter/on ~sep)
+                   ~splitter (Splitter/on ~sep)
                    ~header (mapv ~hk (.split ~splitter (first ~lines)))
                    ~parse (fn ~'parse-line [~line]
                             (let [~tokens (.split ~splitter ~line)

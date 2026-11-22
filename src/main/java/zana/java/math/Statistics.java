@@ -16,10 +16,10 @@ public final class Statistics {
   // methods
   //--------------------------------------------------------------
   /** Naive sum of elements of <code>z</code>,
-   *  from <code>start</code> (inclusive) 
+   *  from <code>start</code> (inclusive)
    * up to <code>end</code> (exclusive).
    */
-  public static final double naiveSum (final double[] z, 
+  public static final double naiveSum (final double[] z,
                                        final int start,
                                        final int end) {
     assert start >= 0;
@@ -34,10 +34,10 @@ public final class Statistics {
     return naiveSum(z,0,z.length); }
   //--------------------------------------------------------------
   /** Kahan sum of elements of <code>z</code>,
-   *  from <code>start</code> (inclusive) 
+   *  from <code>start</code> (inclusive)
    * up to <code>end</code> (exclusive).
    */
-  public static final double kahanSum (final float[] z, 
+  public static final double kahanSum (final float[] z,
                                        final int start,
                                        final int end) {
     assert 0 <= start;
@@ -49,7 +49,7 @@ public final class Statistics {
       final double zi = z[i] - c;
       final double t = s + zi;
       c = (t - s) - zi;
-      s = t; } 
+      s = t; }
     return s; }
 
   /** Kahan sum of elements of <code>z</code>.
@@ -58,10 +58,10 @@ public final class Statistics {
     return kahanSum(z,0,z.length); }
   //--------------------------------------------------------------
   /** Kahan sum of elements of <code>z</code>,
-   *  from <code>start</code> (inclusive) 
+   *  from <code>start</code> (inclusive)
    * up to <code>end</code> (exclusive).
    */
-  public static final double kahanSum (final double[] z, 
+  public static final double kahanSum (final double[] z,
                                        final int start,
                                        final int end) {
     assert 0 <= start;
@@ -73,7 +73,7 @@ public final class Statistics {
       final double zi = z[i] - c;
       final double t = s + zi;
       c = (t - s) - zi;
-      s = t; } 
+      s = t; }
     return s; }
 
   /** Kahan sum of elements of <code>z</code>.
@@ -81,15 +81,15 @@ public final class Statistics {
   public static final double kahanSum (final double[] z) {
     return kahanSum(z,0,z.length); }
   //--------------------------------------------------------------
-  /** Replace the elements of <code>w</code>, 
-   * (from <code>start</code> (inclusive) 
+  /** Replace the elements of <code>w</code>,
+   * (from <code>start</code> (inclusive)
    * up to <code>end</code> (exclusive),
-   * with the normalized cumulative sums, 
+   * with the normalized cumulative sums,
    * using Kahan summation.
    * 'Normalized' means the partial sums are scaled so that
    *  <code>w[w.length-1]==1.0</code>.
    */
-  public static final void normalizeCumulativeSums (final double[] w, 
+  public static final void normalizeCumulativeSums (final double[] w,
                                                     final int start,
                                                     final int end) {
     assert 0 <= start;
@@ -101,11 +101,11 @@ public final class Statistics {
       final double wi = w[i] - c;
       final double t = s + wi;
       c = (t - s) - wi;
-      s = t; 
-      w[i] = s; } 
+      s = t;
+      w[i] = s; }
     for (int i=start;i<end;i++) { w[i] /= s; } }
 
-  /** Replace the elements of <code>w</code>, 
+  /** Replace the elements of <code>w</code>,
    * using Kahan summation.
    * 'Normalized' means the partial sums are scaled so that
    *  <code>w[w.length-1]==1.0</code>.
@@ -113,15 +113,15 @@ public final class Statistics {
   public static final void normalizeCumulativeSums (final double[] w) {
     normalizeCumulativeSums(w,0,w.length); }
   //--------------------------------------------------------------
-  /** Replace the elements of <code>w</code>, 
-   * (from <code>start</code> (inclusive) 
+  /** Replace the elements of <code>w</code>,
+   * (from <code>start</code> (inclusive)
    * up to <code>end</code> (exclusive),
-   * with the normalized cumulative sums, 
+   * with the normalized cumulative sums,
    * using Kahan summation.
    * 'Normalized' means the partial sums are scaled so that
    *  <code>w[w.length-1]==1.0</code>.
    */
-  public static final void normalizeCumulativeSums (final float[] w, 
+  public static final void normalizeCumulativeSums (final float[] w,
                                                     final int start,
                                                     final int end) {
     assert 0 <= start;
@@ -133,11 +133,11 @@ public final class Statistics {
       final double wi = w[i] - c;
       final double t = s + wi;
       c = (t - s) - wi;
-      s = t; 
-      w[i] = (float) s; } 
-    for (int i=start;i<end;i++) { w[i] /= s; } }
+      s = t;
+      w[i] = (float) s; }
+    for (int i=start;i<end;i++) { w[i] = w[i] / (float) s; } }
 
-  /** Replace the elements of <code>w</code>, 
+  /** Replace the elements of <code>w</code>,
    * using Kahan summation.
    * 'Normalized' means the partial sums are scaled so that
    *  <code>w[w.length-1]==1.0</code>.
@@ -145,8 +145,8 @@ public final class Statistics {
   public static final void normalizeCumulativeSums (final float[] w) {
     normalizeCumulativeSums(w,0,w.length); }
   //--------------------------------------------------------------
-  /** Replace the elements of <code>w</code>, 
-   * (from <code>start+1</code> (inclusive) 
+  /** Replace the elements of <code>w</code>,
+   * (from <code>start+1</code> (inclusive)
    * up to <code>end</code> (exclusive),
    * with <code>w[i]-w[i-1]</code>.
    */
@@ -161,27 +161,27 @@ public final class Statistics {
       final double w1 = w[i];
       w[i] = w1 - w0;
       w0 = w1; } }
-  
-  /** Replace the elements of <code>w</code>, 
-   * with <code>w[i]-w[i-1]</code>, interpreting 
+
+  /** Replace the elements of <code>w</code>,
+   * with <code>w[i]-w[i-1]</code>, interpreting
    * <code>w[-1]</code> as 0.0.
    */
   public static final void difference (final double[] w) {
     difference(w,0,w.length); }
 
-  /** Return a new array containing the differences of the 
-   * elements of <code>w</code>, 
-   * with <code>w[i]-w[i-1]</code>, interpreting 
+  /** Return a new array containing the differences of the
+   * elements of <code>w</code>,
+   * with <code>w[i]-w[i-1]</code>, interpreting
    * <code>w[-1]</code> as 0.0.
    */
   public static final double[] differences (final double[] w) {
     final int n = w.length;
     final double[] ww = Arrays.copyOf(w,n);
-    difference(ww); 
+    difference(ww);
     return ww; }
   //--------------------------------------------------------------
-  /** Replace the elements of <code>w</code>, 
-   * (from <code>start+1</code> (inclusive) 
+  /** Replace the elements of <code>w</code>,
+   * (from <code>start+1</code> (inclusive)
    * up to <code>end</code> (exclusive),
    * with <code>w[i]-w[i-1]</code>.
    */
@@ -196,23 +196,23 @@ public final class Statistics {
       final float w1 = w[i];
       w[i] = w1 - w0;
       w0 = w1; } }
-  
-  /** Replace the elements of <code>w</code>, 
-   * with <code>w[i]-w[i-1]</code>, interpreting 
+
+  /** Replace the elements of <code>w</code>,
+   * with <code>w[i]-w[i-1]</code>, interpreting
    * <code>w[-1]</code> as 0.0.
    */
   public static final void difference (final float[] w) {
     difference(w,0,w.length); }
 
-  /** Return a new array containing the differences of the 
-   * elements of <code>w</code>, 
-   * with <code>w[i]-w[i-1]</code>, interpreting 
+  /** Return a new array containing the differences of the
+   * elements of <code>w</code>,
+   * with <code>w[i]-w[i-1]</code>, interpreting
    * <code>w[-1]</code> as 0.0.
    */
   public static final float[] differences (final float[] w) {
     final int n = w.length;
     final float[] ww = Arrays.copyOf(w,n);
-    difference(ww); 
+    difference(ww);
     return ww; }
   //--------------------------------------------------------------
 
@@ -223,7 +223,7 @@ public final class Statistics {
 
   public static final boolean approximatelyEqual (final float z0,
                                                   final float z1) {
-    final float delta = 
+    final float delta =
       Math.ulp(10.0F * (Math.abs(z0) + Math.abs(z1)));
     return Math.abs(z0-z1) <= delta; }
 
@@ -282,7 +282,7 @@ public final class Statistics {
     final int n = w.length;
     final double[] u = new double[n];
     final double s = kahanSum(w);
-    for (int i=0;i<n;i++ ) { u[i] = w[i] / s; } 
+    for (int i=0;i<n;i++ ) { u[i] = w[i] / s; }
     return u; }
   //--------------------------------------------------------------
   public static final void normalize (final float[] w) {
@@ -293,7 +293,7 @@ public final class Statistics {
     final int n = w.length;
     final float[] u = new float[n];
     final double s = kahanSum(w);
-    for (int i=0;i<n;i++ ) { u[i] = (float) (w[i] / s); } 
+    for (int i=0;i<n;i++ ) { u[i] = (float) (w[i] / s); }
     return u; }
   //--------------------------------------------------------------
   public static final boolean isFinite (final double[] w) {
@@ -319,15 +319,15 @@ public final class Statistics {
     return true; }
   //--------------------------------------------------------------
   public static final boolean isConvex (final double[] w) {
-    return 
-      hasConvexElements(w) 
+    return
+      hasConvexElements(w)
       && approximatelyEqual(1.0,kahanSum(w)); }
   //--------------------------------------------------------------
   public static final boolean isIncreasing (final float[] z) {
     float z0 = z[0];
     for (int i=1;i<z.length;i++) {
       final float z1 = z[i];
-      if (z0 >= z1) { return false; } 
+      if (z0 >= z1) { return false; }
       z0 = z1; }
     return true; }
   //--------------------------------------------------------------
@@ -335,11 +335,11 @@ public final class Statistics {
     float z0 = z[0];
     for (int i=1;i<z.length;i++) {
       final float z1 = z[i];
-      if (z0 > z1) { 
-        System.out.println("Failed at " + i + " : " + z.length 
+      if (z0 > z1) {
+        System.out.println("Failed at " + i + " : " + z.length
           + " : " +  z0 + " > " + z1);
         System.out.println(Arrays.toString(z));
-        return false; } 
+        return false; }
       z0 = z1; }
     return true; }
   //--------------------------------------------------------------
@@ -366,8 +366,8 @@ public final class Statistics {
     return true; }
   //--------------------------------------------------------------
   public static final boolean isConvex (final float[] w) {
-    return 
-      hasConvexElements(w) 
+    return
+      hasConvexElements(w)
       && approximatelyEqual(1.0F,(float) kahanSum(w)); }
   //--------------------------------------------------------------
   public static final double presortedCDF (final double[] x,
@@ -439,7 +439,7 @@ public final class Statistics {
   //--------------------------------------------------------------
   /** Return a square: [min(xmin,ymin),max(xmax,ymax)]^2.
    */
-  public static final Rectangle2D.Double 
+  public static final Rectangle2D.Double
   symmetricBounds (final IFn.OD xf,
                    final IFn.OD yf,
                    final Iterable data) {

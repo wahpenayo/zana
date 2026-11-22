@@ -10,7 +10,7 @@ import java.util.List;
  * @version 2017-10-23
  */
 
-@SuppressWarnings("unchecked") 
+@SuppressWarnings("unchecked")
 public final class SortBy extends Object {
 
   //----------------------------------------------------------------------------
@@ -23,18 +23,13 @@ public final class SortBy extends Object {
   private static final void swap (final List a,
                                   final int i,
                                   final int j) {
-    final Object ai = a.get(i); 
-    a.set(i,a.get(j)); 
+    final Object ai = a.get(i);
+    a.set(i,a.get(j));
     a.set(j,ai); }
   //----------------------------------------------------------------------------
   /** Swap <code>n</code> items starting at <code>i0</code> with <code>n</code>
    * items starting at <code>i1</code> in <code>x</code> and <code>p</code>.
    * No check that ranges aren't overlapping.
-   * @param x modified by swap.
-   * @param p modified by swap.
-   * @param i0 starting index of 'source' elements.
-   * @param i1 starting index of 'destination' elements.
-   * @param n number of elements to swap.
    */
   private static final void swap (final List a,
                                   final int i0,
@@ -106,7 +101,7 @@ public final class SortBy extends Object {
     int j2 = endm1;
     int j3 = endm1;
     for (;;) {
-      while (j1 <= j2) { 
+      while (j1 <= j2) {
         final double z1 = z.invokePrim(a.get(j1));
         final int c = Double.compare(z1,v);
         if (c > 0) { break; }
